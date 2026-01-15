@@ -96,7 +96,7 @@ Deliverables
 ---
 
 ## Day 7 - Final Testing and Acceptance Validation
-Status: In progress
+Status: Done
 
 Checklist
 - [x] Valid login works.
@@ -111,13 +111,13 @@ Progress
 - Emulator test: login and signup confirmed working.
 
 Notes
-- Error message copy updated for invalid login and offline errors; re-test required.
+- Error message copy for invalid login and offline errors verified.
 - Fake repositories removed; all data flows from backend APIs.
 
 Artifacts to produce
 - [x] Test report (run locally): test_report.md.
 - [x] Release APK or AAB.
-- [ ] Backend deployed.
+- [x] Backend deployed (VPS + HTTPS).
 
 Build note
 - Debug build succeeded after configuring Android SDK.

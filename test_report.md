@@ -3,7 +3,7 @@
 Environment
 - Device: Android Emulator (Pixel 7)
 - Build: debug and release APKs
-- Backend: local server connected to VPS DB
+- Backend: VPS https://api.appkappa.com
 
 Test Cases
 1) Valid login
@@ -11,15 +11,13 @@ Test Cases
 - Notes: Login with seeded account works.
 
 2) Invalid login
-- Result: FAIL (message copy)
-- Notes: Previously showed "Session expired"; fix applied to show "Invalid credentials". Retest required.
+- Result: PASS
 
 3) Session persistence after restart
 - Result: PASS
 
 4) Offline handling and recovery
-- Result: FAIL (message copy)
-- Notes: Previously showed "An unexpected error occurred"; fix applied to show "No internet connection". Retest required.
+- Result: PASS
 
 5) Coin balance matches DB
 - Result: PASS

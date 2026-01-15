@@ -52,10 +52,22 @@ class AudioViewModel @Inject constructor(
                     )
                 }
                 .onFailure { throwable ->
-                    _viewState.value = _viewState.value.copy(
-                        isLoading = false,
-                        error = throwable.message
-                    )
+                    val message = throwable.message ?: "Unexpected error"
+                    val shouldClearRooms = message.contains("No internet", ignoreCase = true) ||
+                        message.contains("timeout", ignoreCase = true)
+                    val current = _viewState.value
+                    _viewState.value = if (shouldClearRooms) {
+                        current.copy(
+                            isLoading = false,
+                            rooms = emptyList(),
+                            error = message
+                        )
+                    } else {
+                        current.copy(
+                            isLoading = false,
+                            error = message
+                        )
+                    }
                 }
         }
     }
