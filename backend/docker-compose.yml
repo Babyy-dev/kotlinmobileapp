@@ -1,0 +1,33 @@
+﻿version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: kappa
+      POSTGRES_PASSWORD: kappa
+      POSTGRES_DB: kappa
+    ports:
+      - "5432:5432"
+    volumes:
+      - kappa_pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  livekit:
+    image: livekit/livekit-server:latest
+    command: ["--config", "/config/livekit.yaml"]
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+      - "50000-50020:50000-50020/udp"
+    volumes:
+      - ./livekit.yaml:/config/livekit.yaml
+    depends_on:
+      - redis
+
+volumes:
+  kappa_pgdata:

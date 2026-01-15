@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Kappa</string>
+    <string name="title_splash">Splash</string>
+    <string name="title_login">Login</string>
+    <string name="title_signup">Signup</string>
+    <string name="title_home">Home</string>
+    <string name="title_rooms">Rooms</string>
+    <string name="title_profile">Profile</string>
+</resources>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/navigation_splash">
+
+    <fragment
+        android:id="@+id/navigation_splash"
+        android:name="com.kappa.app.main.SplashFragment"
+        android:label="@string/title_splash"
+        tools:layout="@layout/fragment_splash" />
+
+    <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.kappa.app.main.LoginFragment"
+        android:label="@string/title_login"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/navigation_signup"
+        android:name="com.kappa.app.main.SignupFragment"
+        android:label="@string/title_signup"
+        tools:layout="@layout/fragment_signup" />
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.kappa.app.main.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_rooms"
+        android:name="com.kappa.app.audio.presentation.RoomsFragment"
+        android:label="@string/title_rooms"
+        tools:layout="@layout/fragment_rooms" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.kappa.app.main.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_room_detail"
+        android:name="com.kappa.app.audio.presentation.RoomDetailFragment"
+        android:label="@string/title_rooms"
+        tools:layout="@layout/fragment_room_detail" />
+
+</navigation>
