@@ -25,6 +25,17 @@ fun Route.economyRoutes(economyService: EconomyService) {
         call.respond(ApiResponse(success = true, data = balance))
     }
 
+    get("coins/transactions") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@get call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 50
+        val transactions = economyService.listTransactions(UUID.fromString(userId), limit)
+        call.respond(ApiResponse(success = true, data = transactions))
+    }
+
     post("coins/credit") {
         val principal = call.principal<JWTPrincipal>()
         val role = principal?.getClaim("role", String::class) ?: ""

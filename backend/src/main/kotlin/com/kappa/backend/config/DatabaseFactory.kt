@@ -2,6 +2,7 @@
 
 import com.kappa.backend.data.Agencies
 import com.kappa.backend.data.CoinWallets
+import com.kappa.backend.data.CoinTransactions
 import com.kappa.backend.data.RefreshTokens
 import com.kappa.backend.data.RoomParticipants
 import com.kappa.backend.data.Rooms
@@ -33,6 +34,7 @@ object DatabaseFactory {
                 Users,
                 Agencies,
                 CoinWallets,
+                CoinTransactions,
                 Rooms,
                 RoomParticipants,
                 RefreshTokens

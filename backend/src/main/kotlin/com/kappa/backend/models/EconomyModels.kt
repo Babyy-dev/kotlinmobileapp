@@ -21,3 +21,13 @@ data class CoinMutationResponse(
     val balance: Long,
     val currency: String = "coins"
 )
+
+@Serializable
+data class CoinTransactionResponse(
+    val id: String,
+    val userId: String,
+    val type: String,
+    val amount: Long,
+    val balanceAfter: Long,
+    val createdAt: Long
+)

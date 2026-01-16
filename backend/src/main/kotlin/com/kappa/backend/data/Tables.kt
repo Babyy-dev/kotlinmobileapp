@@ -32,6 +32,16 @@ object CoinWallets : Table("wallet_coins") {
     override val primaryKey = PrimaryKey(userId)
 }
 
+object CoinTransactions : Table("coin_transactions") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val type = varchar("type", 16)
+    val amount = long("amount")
+    val balanceAfter = long("balance_after")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
 object Rooms : Table("rooms") {
     val id = uuid("id")
     val agencyId = uuid("agency_id").nullable()

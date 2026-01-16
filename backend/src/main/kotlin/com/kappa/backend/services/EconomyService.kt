@@ -1,10 +1,14 @@
 ﻿package com.kappa.backend.services
 
+import com.kappa.backend.data.CoinTransactions
 import com.kappa.backend.data.CoinWallets
 import com.kappa.backend.models.CoinBalanceResponse
+import com.kappa.backend.models.CoinTransactionResponse
+import kotlin.math.abs
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
@@ -32,6 +36,26 @@ class EconomyService {
         return adjustBalance(userId, -amount)
     }
 
+    fun listTransactions(userId: UUID, limit: Int = 50): List<CoinTransactionResponse> {
+        val resolvedLimit = limit.coerceIn(1, 200)
+        return transaction {
+            CoinTransactions
+                .select { CoinTransactions.userId eq userId }
+                .orderBy(CoinTransactions.createdAt, SortOrder.DESC)
+                .limit(resolvedLimit)
+                .map { row ->
+                    CoinTransactionResponse(
+                        id = row[CoinTransactions.id].toString(),
+                        userId = row[CoinTransactions.userId].toString(),
+                        type = row[CoinTransactions.type],
+                        amount = row[CoinTransactions.amount],
+                        balanceAfter = row[CoinTransactions.balanceAfter],
+                        createdAt = row[CoinTransactions.createdAt]
+                    )
+                }
+        }
+    }
+
     private fun adjustBalance(userId: UUID, delta: Long): CoinBalanceResponse {
         return transaction {
             val now = System.currentTimeMillis()
@@ -51,6 +75,16 @@ class EconomyService {
                     it[balance] = newBalance
                     it[updatedAt] = now
                 }
+            }
+
+            val type = if (delta >= 0) "CREDIT" else "DEBIT"
+            CoinTransactions.insert {
+                it[id] = UUID.randomUUID()
+                it[CoinTransactions.userId] = userId
+                it[CoinTransactions.type] = type
+                it[amount] = abs(delta)
+                it[balanceAfter] = newBalance
+                it[createdAt] = now
             }
 
             CoinBalanceResponse(
