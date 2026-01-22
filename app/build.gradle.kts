@@ -22,8 +22,8 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
-            buildConfigField("String", "LIVEKIT_URL", "\"ws://10.0.2.2:7880\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/api/\"")
+            buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
         }
         release {
             isMinifyEnabled = true
