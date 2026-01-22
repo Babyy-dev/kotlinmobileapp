@@ -3,8 +3,13 @@
 import com.kappa.backend.data.Agencies
 import com.kappa.backend.data.CoinWallets
 import com.kappa.backend.data.CoinTransactions
+import com.kappa.backend.data.PhoneOtps
 import com.kappa.backend.data.RefreshTokens
+import com.kappa.backend.data.RoomBans
+import com.kappa.backend.data.RoomGifts
+import com.kappa.backend.data.RoomMessages
 import com.kappa.backend.data.RoomParticipants
+import com.kappa.backend.data.RoomSeats
 import com.kappa.backend.data.Rooms
 import com.kappa.backend.data.SeedData
 import com.kappa.backend.data.Users
@@ -30,13 +35,18 @@ object DatabaseFactory {
         Database.connect(dataSource)
 
         transaction {
-            SchemaUtils.create(
+            SchemaUtils.createMissingTablesAndColumns(
                 Users,
                 Agencies,
                 CoinWallets,
                 CoinTransactions,
+                PhoneOtps,
                 Rooms,
+                RoomSeats,
                 RoomParticipants,
+                RoomBans,
+                RoomMessages,
+                RoomGifts,
                 RefreshTokens
             )
             SeedData.seedIfEmpty()

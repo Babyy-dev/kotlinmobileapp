@@ -8,6 +8,12 @@ data class User(
     val username: String,
     val email: String,
     val role: Role,
+    val phone: String? = null,
+    val nickname: String? = null,
+    val avatarUrl: String? = null,
+    val country: String? = null,
+    val language: String? = null,
+    val isGuest: Boolean = false,
     val permissions: List<Permission> = emptyList()
 )
 
@@ -15,10 +21,27 @@ data class User(
  * User roles.
  */
 enum class Role {
-    MASTER,
+    ADMIN,
     RESELLER,
-    AGENCY_OWNER,
+    AGENCY,
+    HOST,
+    TEAM,
     USER,
+    ;
+
+    companion object {
+        fun fromApi(value: String): Role {
+            return when (value.uppercase()) {
+                "ADMIN", "MASTER" -> ADMIN
+                "RESELLER" -> RESELLER
+                "AGENCY", "AGENCY_OWNER" -> AGENCY
+                "HOST" -> HOST
+                "TEAM" -> TEAM
+                "USER" -> USER
+                else -> USER
+            }
+        }
+    }
 }
 
 /**
@@ -26,9 +49,11 @@ enum class Role {
  */
 fun Role.toDisplayName(): String {
     return when (this) {
-        Role.MASTER -> "Admin"
+        Role.ADMIN -> "Admin"
         Role.RESELLER -> "Reseller"
-        Role.AGENCY_OWNER -> "Agency"
+        Role.AGENCY -> "Agency"
+        Role.HOST -> "Host"
+        Role.TEAM -> "Team"
         Role.USER -> "User"
     }
 }

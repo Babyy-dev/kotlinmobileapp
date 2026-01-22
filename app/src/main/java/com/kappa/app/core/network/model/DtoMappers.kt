@@ -1,18 +1,27 @@
 ﻿package com.kappa.app.core.network.model
 
+import com.kappa.app.auth.domain.model.OtpInfo
 import com.kappa.app.domain.audio.AudioRoom
+import com.kappa.app.domain.audio.GiftLog
+import com.kappa.app.domain.audio.RoomMessage
 import com.kappa.app.domain.audio.SeatMode
 import com.kappa.app.domain.economy.CoinBalance
 import com.kappa.app.domain.user.Role
 import com.kappa.app.domain.user.User
 
 fun UserDto.toDomain(): User {
-    val resolvedRole = runCatching { Role.valueOf(role) }.getOrDefault(Role.USER)
+    val resolvedRole = Role.fromApi(role)
     return User(
         id = id,
         username = username,
         email = email,
         role = resolvedRole,
+        phone = phone,
+        nickname = nickname,
+        avatarUrl = avatarUrl,
+        country = country,
+        language = language,
+        isGuest = isGuest,
         permissions = emptyList()
     )
 }
@@ -25,6 +34,14 @@ fun CoinBalanceDto.toDomain(): CoinBalance {
     )
 }
 
+fun PhoneOtpResponse.toDomain(): OtpInfo {
+    return OtpInfo(
+        phone = phone,
+        code = code,
+        expiresAt = expiresAt
+    )
+}
+
 fun RoomDto.toDomain(): AudioRoom {
     val resolvedSeatMode = runCatching { SeatMode.valueOf(seatMode) }.getOrDefault(SeatMode.FREE)
     return AudioRoom(
@@ -32,6 +49,29 @@ fun RoomDto.toDomain(): AudioRoom {
         name = name,
         isActive = isActive,
         seatMode = resolvedSeatMode,
-        participantCount = participantCount
+        participantCount = participantCount,
+        maxSeats = maxSeats,
+        requiresPassword = requiresPassword
+    )
+}
+
+fun RoomMessageDto.toDomain(): RoomMessage {
+    return RoomMessage(
+        id = id,
+        userId = userId,
+        username = username,
+        message = message,
+        createdAt = createdAt
+    )
+}
+
+fun GiftSendDto.toDomain(): GiftLog {
+    return GiftLog(
+        id = id,
+        senderId = senderId,
+        recipientId = recipientId,
+        amount = amount,
+        senderBalance = senderBalance,
+        createdAt = createdAt
     )
 }

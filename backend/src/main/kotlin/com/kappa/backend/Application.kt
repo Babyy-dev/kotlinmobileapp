@@ -10,6 +10,7 @@ import com.kappa.backend.routes.userRoutes
 import com.kappa.backend.services.AuthService
 import com.kappa.backend.services.EconomyService
 import com.kappa.backend.services.LiveKitTokenService
+import com.kappa.backend.services.RoomInteractionService
 import com.kappa.backend.services.RoomService
 import com.kappa.backend.services.TokenService
 import io.ktor.http.HttpStatusCode
@@ -26,10 +27,12 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import io.ktor.server.http.content.staticFiles
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
 import org.slf4j.event.Level
+import java.io.File
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -43,6 +46,7 @@ fun Application.module() {
     val economyService = EconomyService()
     val tokenService = TokenService(config)
     val roomService = RoomService(config, LiveKitTokenService(config))
+    val roomInteractionService = RoomInteractionService()
 
     install(CallLogging) {
         level = Level.INFO
@@ -94,12 +98,13 @@ fun Application.module() {
     }
 
     routing {
+        staticFiles("/uploads", File("uploads"))
         route("api") {
             authRoutes(authService)
             authenticate {
                 userRoutes(authService)
                 economyRoutes(economyService)
-                roomRoutes(roomService, authService)
+                roomRoutes(roomService, authService, roomInteractionService)
             }
         }
     }

@@ -39,7 +39,7 @@ fun Route.economyRoutes(economyService: EconomyService) {
     post("coins/credit") {
         val principal = call.principal<JWTPrincipal>()
         val role = principal?.getClaim("role", String::class) ?: ""
-        if (role !in setOf("MASTER", "RESELLER")) {
+        if (role !in setOf("ADMIN", "RESELLER")) {
             call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "Insufficient permissions"))
             return@post
         }
@@ -56,7 +56,7 @@ fun Route.economyRoutes(economyService: EconomyService) {
     post("coins/debit") {
         val principal = call.principal<JWTPrincipal>()
         val role = principal?.getClaim("role", String::class) ?: ""
-        if (role != "MASTER") {
+        if (role != "ADMIN") {
             call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "Insufficient permissions"))
             return@post
         }

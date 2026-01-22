@@ -8,4 +8,5 @@ import com.kappa.app.domain.user.User
 interface UserRepository {
     suspend fun getUser(userId: String): Result<User>
     suspend fun updateUser(user: User): Result<User>
+    suspend fun uploadAvatar(bytes: ByteArray, fileName: String, mimeType: String): Result<User>
 }

@@ -1,7 +1,10 @@
 ﻿package com.kappa.backend.routes
 
 import com.kappa.backend.models.ApiResponse
+import com.kappa.backend.models.GuestLoginRequest
 import com.kappa.backend.models.LoginRequest
+import com.kappa.backend.models.PhoneOtpRequest
+import com.kappa.backend.models.PhoneOtpVerifyRequest
 import com.kappa.backend.models.RefreshRequest
 import com.kappa.backend.models.SignupRequest
 import com.kappa.backend.services.AuthService
@@ -40,6 +43,32 @@ fun Route.authRoutes(authService: AuthService) {
             call.respond(HttpStatusCode.Unauthorized, ApiResponse<Unit>(success = false, error = "Invalid credentials"))
             return@post
         }
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
+    post("auth/otp/request") {
+        val request = call.receive<PhoneOtpRequest>()
+        val response = authService.requestOtp(request)
+        if (response == null) {
+            call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, error = "Phone number required"))
+            return@post
+        }
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
+    post("auth/otp/verify") {
+        val request = call.receive<PhoneOtpVerifyRequest>()
+        val response = authService.verifyOtp(request)
+        if (response == null) {
+            call.respond(HttpStatusCode.Unauthorized, ApiResponse<Unit>(success = false, error = "Invalid or expired OTP"))
+            return@post
+        }
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
+    post("auth/guest") {
+        val request = call.receive<GuestLoginRequest>()
+        val response = authService.guestLogin(request)
         call.respond(ApiResponse(success = true, data = response))
     }
 

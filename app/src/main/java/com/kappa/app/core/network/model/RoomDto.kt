@@ -5,7 +5,9 @@ data class RoomDto(
     val name: String,
     val isActive: Boolean,
     val seatMode: String,
-    val participantCount: Int
+    val participantCount: Int,
+    val maxSeats: Int = 28,
+    val requiresPassword: Boolean = false
 )
 
 data class JoinRoomDto(

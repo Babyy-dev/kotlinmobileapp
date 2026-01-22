@@ -8,7 +8,9 @@ data class AudioRoom(
     val name: String,
     val isActive: Boolean,
     val seatMode: SeatMode,
-    val participantCount: Int
+    val participantCount: Int,
+    val maxSeats: Int = 28,
+    val requiresPassword: Boolean = false
 )
 
 enum class SeatMode {

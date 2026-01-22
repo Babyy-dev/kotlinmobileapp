@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -15,19 +17,38 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.kappa.app.R
+import com.kappa.app.core.network.NetworkMonitor
+import com.kappa.app.domain.audio.GiftLog
 import dagger.hilt.android.AndroidEntryPoint
 import io.livekit.android.LiveKit
+import io.livekit.android.RoomOptions
 import io.livekit.android.room.Room
+import io.livekit.android.room.track.LocalAudioTrackOptions
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RoomDetailFragment : Fragment() {
 
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
     private val audioViewModel: AudioViewModel by activityViewModels()
     private var liveKitRoom: Room? = null
     private var hasAudioPermission: Boolean = false
+    private val messagesAdapter = RoomMessagesAdapter()
+    private var isOnline: Boolean = true
+    private var isConnecting: Boolean = false
+    private var reconnectJob: Job? = null
+    private var enableEchoCancellation: Boolean = true
+    private var enableNoiseSuppression: Boolean = true
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -52,11 +73,62 @@ class RoomDetailFragment : Fragment() {
         val titleText = view.findViewById<TextView>(R.id.text_room_title)
         val statusText = view.findViewById<TextView>(R.id.text_room_status)
         val leaveButton = view.findViewById<MaterialButton>(R.id.button_leave_room)
+        val messageList = view.findViewById<RecyclerView>(R.id.recycler_room_messages)
+        val messageInput = view.findViewById<EditText>(R.id.input_message)
+        val sendMessageButton = view.findViewById<MaterialButton>(R.id.button_send_message)
+        val giftLogText = view.findViewById<TextView>(R.id.text_gift_log)
+        val giftAmountInput = view.findViewById<EditText>(R.id.input_gift_amount)
+        val giftRecipientInput = view.findViewById<EditText>(R.id.input_gift_recipient)
+        val sendGiftButton = view.findViewById<MaterialButton>(R.id.button_send_gift)
+        val refreshButton = view.findViewById<MaterialButton>(R.id.button_refresh_room)
+        val echoSwitch = view.findViewById<SwitchMaterial>(R.id.switch_echo_cancel)
+        val noiseSwitch = view.findViewById<SwitchMaterial>(R.id.switch_noise_suppression)
+        val applyAudioButton = view.findViewById<MaterialButton>(R.id.button_apply_audio_settings)
+
+        messageList.layoutManager = LinearLayoutManager(requireContext())
+        messageList.adapter = messagesAdapter
+
+        echoSwitch.isChecked = enableEchoCancellation
+        noiseSwitch.isChecked = enableNoiseSuppression
+        echoSwitch.setOnCheckedChangeListener { _, isChecked ->
+            enableEchoCancellation = isChecked
+        }
+        noiseSwitch.setOnCheckedChangeListener { _, isChecked ->
+            enableNoiseSuppression = isChecked
+        }
 
         leaveButton.setOnClickListener {
             disconnectRoom()
             audioViewModel.leaveRoom()
             findNavController().popBackStack()
+        }
+
+        sendMessageButton.setOnClickListener {
+            val text = messageInput.text?.toString().orEmpty()
+            audioViewModel.sendMessage(text)
+            messageInput.setText("")
+        }
+
+        sendGiftButton.setOnClickListener {
+            val amount = giftAmountInput.text?.toString()?.trim()?.toLongOrNull()
+            if (amount == null || amount <= 0L) {
+                Toast.makeText(requireContext(), "Enter a valid gift amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val recipient = giftRecipientInput.text?.toString()?.trim().orEmpty().ifBlank { null }
+            audioViewModel.sendGift(amount, recipient)
+            giftAmountInput.setText("")
+            giftRecipientInput.setText("")
+        }
+
+        refreshButton.setOnClickListener {
+            audioViewModel.loadRoomMessages()
+            audioViewModel.loadRoomGifts()
+        }
+
+        applyAudioButton.setOnClickListener {
+            disconnectRoom()
+            connectIfReady()
         }
 
         hasAudioPermission = ContextCompat.checkSelfPermission(
@@ -73,11 +145,32 @@ class RoomDetailFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 audioViewModel.viewState.collect { state ->
                     titleText.text = state.activeRoom?.name ?: "Room"
-                    if (state.token == null || state.livekitUrl == null) {
+                    if (!isOnline) {
+                        statusText.text = "No internet connection"
+                    } else if (state.token == null || state.livekitUrl == null) {
                         statusText.text = state.error ?: "Joining room..."
                     } else if (liveKitRoom == null && hasAudioPermission) {
                         connectIfReady()
                         statusText.text = "Connecting..."
+                    }
+                    if (state.error != null && state.token != null && isOnline) {
+                        statusText.text = state.error
+                    }
+                    messagesAdapter.submitList(state.messages)
+                    giftLogText.text = buildGiftLog(state.gifts)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                networkMonitor.isOnline.collect { online ->
+                    isOnline = online
+                    if (!online) {
+                        statusText.text = "No internet connection"
+                        disconnectRoom()
+                    } else if (liveKitRoom == null) {
+                        scheduleReconnect()
                     }
                 }
             }
@@ -91,18 +184,39 @@ class RoomDetailFragment : Fragment() {
         if (token.isNullOrBlank() || url.isNullOrBlank()) {
             return
         }
+        if (!hasAudioPermission) {
+            return
+        }
+        if (!isOnline) {
+            return
+        }
         if (liveKitRoom != null) {
             return
         }
+        if (isConnecting) {
+            return
+        }
+        isConnecting = true
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                liveKitRoom = LiveKit.connect(requireContext(), url, token)
+                liveKitRoom = LiveKit.connect(
+                    requireContext(),
+                    url,
+                    token,
+                    roomOptions = buildRoomOptions()
+                )
                 liveKitRoom?.localParticipant?.setMicrophoneEnabled(true)
                 view?.findViewById<TextView>(R.id.text_room_status)?.text = "Connected"
+                cancelReconnect()
             } catch (throwable: Throwable) {
                 liveKitRoom = null
                 view?.findViewById<TextView>(R.id.text_room_status)?.text =
                     throwable.message ?: "Connection failed"
+                if (isOnline) {
+                    scheduleReconnect()
+                }
+            } finally {
+                isConnecting = false
             }
         }
     }
@@ -111,11 +225,57 @@ class RoomDetailFragment : Fragment() {
         liveKitRoom?.disconnect()
         liveKitRoom?.release()
         liveKitRoom = null
+        isConnecting = false
+    }
+
+    private fun buildRoomOptions(): RoomOptions {
+        val audioOptions = LocalAudioTrackOptions(
+            echoCancellation = enableEchoCancellation,
+            noiseSuppression = enableNoiseSuppression,
+            autoGainControl = true,
+            highPassFilter = true,
+            typingNoiseDetection = true
+        )
+        return RoomOptions(audioTrackCaptureDefaults = audioOptions)
+    }
+
+    private fun scheduleReconnect() {
+        if (reconnectJob?.isActive == true) {
+            return
+        }
+        if (!hasAudioPermission) {
+            return
+        }
+        reconnectJob = viewLifecycleOwner.lifecycleScope.launch {
+            var delayMs = 1000L
+            while (isOnline && liveKitRoom == null && isAdded) {
+                view?.findViewById<TextView>(R.id.text_room_status)?.text = "Reconnecting..."
+                connectIfReady()
+                delay(delayMs)
+                delayMs = (delayMs * 2).coerceAtMost(10000L)
+            }
+        }
+    }
+
+    private fun cancelReconnect() {
+        reconnectJob?.cancel()
+        reconnectJob = null
+    }
+
+    private fun buildGiftLog(gifts: List<GiftLog>): String {
+        if (gifts.isEmpty()) {
+            return "No gifts yet"
+        }
+        return gifts.joinToString(separator = "\n") { gift ->
+            val target = gift.recipientId?.take(8) ?: "room"
+            "Gift ${gift.amount} coins to $target | Balance ${gift.senderBalance}"
+        }
     }
 
     override fun onDestroyView() {
         audioViewModel.leaveRoom()
         disconnectRoom()
+        cancelReconnect()
         super.onDestroyView()
     }
 }

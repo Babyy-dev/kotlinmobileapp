@@ -43,9 +43,17 @@ class SignupFragment : Fragment() {
         val emailInput = view.findViewById<TextInputEditText>(R.id.input_signup_email)
         val passwordInput = view.findViewById<TextInputEditText>(R.id.input_signup_password)
         val signupButton = view.findViewById<MaterialButton>(R.id.button_signup)
+        val toggleButton = view.findViewById<MaterialButton>(R.id.button_toggle_signup_method)
+        val passwordLayout = view.findViewById<View>(R.id.layout_signup_password)
+        val phoneLayout = view.findViewById<View>(R.id.layout_signup_phone)
+        val phoneInput = view.findViewById<TextInputEditText>(R.id.input_signup_phone)
+        val otpInput = view.findViewById<TextInputEditText>(R.id.input_signup_otp)
+        val sendOtpButton = view.findViewById<MaterialButton>(R.id.button_signup_send_otp)
+        val verifyOtpButton = view.findViewById<MaterialButton>(R.id.button_signup_verify_otp)
         val loginButton = view.findViewById<MaterialButton>(R.id.button_go_login)
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_signup)
         val errorText = view.findViewById<TextView>(R.id.text_signup_error)
+        val messageText = view.findViewById<TextView>(R.id.text_signup_message)
 
         signupButton.setOnClickListener {
             val username = usernameInput.text?.toString()?.trim().orEmpty()
@@ -56,6 +64,37 @@ class SignupFragment : Fragment() {
                 authViewModel.signup(username, email, password)
             } else {
                 errorText.text = "Please enter username, email, and password"
+                errorText.visibility = View.VISIBLE
+            }
+        }
+
+        toggleButton.setOnClickListener {
+            val showingPhone = phoneLayout.visibility == View.VISIBLE
+            phoneLayout.visibility = if (showingPhone) View.GONE else View.VISIBLE
+            passwordLayout.visibility = if (showingPhone) View.VISIBLE else View.GONE
+            toggleButton.text = if (showingPhone) "Use phone instead" else "Use password instead"
+            errorText.visibility = View.GONE
+            messageText.visibility = View.GONE
+            authViewModel.clearError()
+        }
+
+        sendOtpButton.setOnClickListener {
+            val phone = phoneInput.text?.toString()?.trim().orEmpty()
+            if (phone.isNotEmpty()) {
+                authViewModel.requestOtp(phone)
+            } else {
+                errorText.text = "Please enter phone number"
+                errorText.visibility = View.VISIBLE
+            }
+        }
+
+        verifyOtpButton.setOnClickListener {
+            val phone = phoneInput.text?.toString()?.trim().orEmpty()
+            val code = otpInput.text?.toString()?.trim().orEmpty()
+            if (phone.isNotEmpty() && code.isNotEmpty()) {
+                authViewModel.verifyOtp(phone, code)
+            } else {
+                errorText.text = "Please enter phone and OTP"
                 errorText.visibility = View.VISIBLE
             }
         }
@@ -75,12 +114,23 @@ class SignupFragment : Fragment() {
                 authViewModel.viewState.collect { state ->
                     progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
                     signupButton.isEnabled = !state.isLoading
+                    sendOtpButton.isEnabled = !state.isLoading
+                    verifyOtpButton.isEnabled = !state.isLoading
+                    loginButton.isEnabled = !state.isLoading
+                    toggleButton.isEnabled = !state.isLoading
 
                     if (state.error != null) {
                         errorText.text = state.error
                         errorText.visibility = View.VISIBLE
                     } else {
                         errorText.visibility = View.GONE
+                    }
+
+                    if (state.message != null) {
+                        messageText.text = state.message
+                        messageText.visibility = View.VISIBLE
+                    } else {
+                        messageText.visibility = View.GONE
                     }
 
                     if (state.isLoggedIn) {

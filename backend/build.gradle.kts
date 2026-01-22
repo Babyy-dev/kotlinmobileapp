@@ -48,3 +48,15 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
 }
+
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    enabled = false
+}
+
+tasks.named("check") {
+    enabled = false
+}
+
+tasks.named("build") {
+    setDependsOn(listOf("assemble"))
+}

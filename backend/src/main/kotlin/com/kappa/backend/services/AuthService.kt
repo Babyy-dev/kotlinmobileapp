@@ -3,23 +3,35 @@
 import com.kappa.backend.config.AppConfig
 import com.kappa.backend.data.Agencies
 import com.kappa.backend.data.CoinWallets
+import com.kappa.backend.data.PhoneOtps
 import com.kappa.backend.data.RefreshTokens
 import com.kappa.backend.data.Users
+import com.kappa.backend.models.GuestLoginRequest
 import com.kappa.backend.models.LoginResponse
+import com.kappa.backend.models.PhoneOtpRequest
+import com.kappa.backend.models.PhoneOtpResponse
+import com.kappa.backend.models.PhoneOtpVerifyRequest
+import com.kappa.backend.models.ProfileUpdateRequest
 import com.kappa.backend.models.SignupRequest
 import com.kappa.backend.models.UserResponse
 import com.kappa.backend.models.UserRole
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.mindrot.jbcrypt.BCrypt
+import kotlin.random.Random
 import java.util.UUID
 
 class AuthService(private val config: AppConfig) {
     private val tokenService = TokenService(config)
+    private val otpTtlMillis = 5 * 60 * 1000L
 
     enum class SignupFailureReason {
         USERNAME_TAKEN,
@@ -43,7 +55,7 @@ class AuthService(private val config: AppConfig) {
                 return@transaction null
             }
             val userId = row[Users.id]
-            val role = UserRole.valueOf(row[Users.role])
+            val role = UserRole.fromStorage(row[Users.role])
             val accessToken = tokenService.generateAccessToken(userId, role)
             val refreshToken = tokenService.generateRefreshToken(userId)
             val expiresAt = System.currentTimeMillis() + config.refreshTokenTtlSeconds * 1000
@@ -115,6 +127,12 @@ class AuthService(private val config: AppConfig) {
                 it[Users.email] = email
                 it[Users.passwordHash] = passwordHash
                 it[Users.role] = resolvedRole.name
+                it[Users.phone] = request.phone?.trim()?.ifBlank { null }
+                it[Users.nickname] = request.nickname?.trim()?.ifBlank { null }
+                it[Users.avatarUrl] = request.avatarUrl?.trim()?.ifBlank { null }
+                it[Users.country] = request.country?.trim()?.ifBlank { null }
+                it[Users.language] = request.language?.trim()?.ifBlank { null }
+                it[Users.isGuest] = false
                 it[Users.agencyId] = resolvedAgencyId
                 it[Users.status] = "active"
                 it[Users.createdAt] = now
@@ -141,6 +159,12 @@ class AuthService(private val config: AppConfig) {
                 username = username,
                 email = email,
                 role = resolvedRole,
+                phone = request.phone?.trim()?.ifBlank { null },
+                nickname = request.nickname?.trim()?.ifBlank { null },
+                avatarUrl = request.avatarUrl?.trim()?.ifBlank { null },
+                country = request.country?.trim()?.ifBlank { null },
+                language = request.language?.trim()?.ifBlank { null },
+                isGuest = false,
                 agencyId = resolvedAgencyId?.toString()
             )
 
@@ -166,7 +190,7 @@ class AuthService(private val config: AppConfig) {
 
             val userId = tokenRow[RefreshTokens.userId]
             val userRow = Users.select { Users.id eq userId }.singleOrNull() ?: return@transaction null
-            val role = UserRole.valueOf(userRow[Users.role])
+            val role = UserRole.fromStorage(userRow[Users.role])
             val accessToken = tokenService.generateAccessToken(userId, role)
             val newRefreshToken = tokenService.generateRefreshToken(userId)
             val newExpiresAt = now + config.refreshTokenTtlSeconds * 1000
@@ -199,12 +223,234 @@ class AuthService(private val config: AppConfig) {
         }
     }
 
+    fun requestOtp(request: PhoneOtpRequest): PhoneOtpResponse? {
+        val phone = request.phone.trim()
+        if (phone.isBlank()) {
+            return null
+        }
+        val code = Random.nextInt(100000, 999999).toString()
+        val now = System.currentTimeMillis()
+        val expiresAt = now + otpTtlMillis
+
+        transaction {
+            PhoneOtps.insert {
+                it[id] = UUID.randomUUID()
+                it[PhoneOtps.phone] = phone
+                it[PhoneOtps.code] = code
+                it[PhoneOtps.expiresAt] = expiresAt
+                it[PhoneOtps.consumedAt] = null
+                it[PhoneOtps.createdAt] = now
+            }
+        }
+
+        return PhoneOtpResponse(
+            phone = phone,
+            code = code,
+            expiresAt = expiresAt
+        )
+    }
+
+    fun verifyOtp(request: PhoneOtpVerifyRequest): LoginResponse? {
+        val phone = request.phone.trim()
+        val code = request.code.trim()
+        if (phone.isBlank() || code.isBlank()) {
+            return null
+        }
+
+        return transaction {
+            val now = System.currentTimeMillis()
+            val otpRow = PhoneOtps
+                .select { (PhoneOtps.phone eq phone) and PhoneOtps.consumedAt.isNull() and (PhoneOtps.expiresAt greater now) }
+                .orderBy(PhoneOtps.createdAt, SortOrder.DESC)
+                .limit(1)
+                .singleOrNull()
+                ?: return@transaction null
+
+            if (otpRow[PhoneOtps.code] != code) {
+                return@transaction null
+            }
+
+            PhoneOtps.update({ PhoneOtps.id eq otpRow[PhoneOtps.id] }) {
+                it[consumedAt] = now
+            }
+
+            val resolvedNickname = request.nickname?.trim()?.ifBlank { null }
+            val resolvedAvatar = request.avatarUrl?.trim()?.ifBlank { null }
+            val resolvedCountry = request.country?.trim()?.ifBlank { null }
+            val resolvedLanguage = request.language?.trim()?.ifBlank { null }
+
+            val existing = Users.select { Users.phone eq phone }.singleOrNull()
+            val userId: UUID
+            val role: UserRole
+
+            if (existing == null) {
+                val username = "phone_${phone.takeLast(4)}_${Random.nextInt(1000, 9999)}"
+                val email = "$username@kappa.local"
+                val passwordHash = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt())
+                userId = UUID.randomUUID()
+                role = UserRole.USER
+
+                Users.insert {
+                    it[id] = userId
+                    it[Users.username] = username
+                    it[Users.email] = email
+                    it[Users.passwordHash] = passwordHash
+                    it[Users.role] = role.name
+                    it[Users.phone] = phone
+                    it[Users.nickname] = resolvedNickname
+                    it[Users.avatarUrl] = resolvedAvatar
+                    it[Users.country] = resolvedCountry
+                    it[Users.language] = resolvedLanguage
+                    it[Users.isGuest] = false
+                    it[Users.status] = "active"
+                    it[Users.createdAt] = now
+                }
+
+                CoinWallets.insert {
+                    it[CoinWallets.userId] = userId
+                    it[CoinWallets.balance] = 0L
+                    it[CoinWallets.updatedAt] = now
+                }
+            } else {
+                userId = existing[Users.id]
+                role = UserRole.fromStorage(existing[Users.role])
+                Users.update({ Users.id eq userId }) {
+                    it[Users.phone] = phone
+                    if (resolvedNickname != null) {
+                        it[Users.nickname] = resolvedNickname
+                    }
+                    if (resolvedAvatar != null) {
+                        it[Users.avatarUrl] = resolvedAvatar
+                    }
+                    if (resolvedCountry != null) {
+                        it[Users.country] = resolvedCountry
+                    }
+                    if (resolvedLanguage != null) {
+                        it[Users.language] = resolvedLanguage
+                    }
+                }
+            }
+
+            val accessToken = tokenService.generateAccessToken(userId, role)
+            val refreshToken = tokenService.generateRefreshToken(userId)
+            val expiresAt = now + config.refreshTokenTtlSeconds * 1000
+
+            RefreshTokens.insert {
+                it[token] = refreshToken
+                it[RefreshTokens.userId] = userId
+                it[RefreshTokens.expiresAt] = expiresAt
+            }
+
+            val userRow = Users.select { Users.id eq userId }.single()
+            LoginResponse(
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                user = userRow.toUserResponse()
+            )
+        }
+    }
+
+    fun guestLogin(request: GuestLoginRequest): LoginResponse {
+        return transaction {
+            val now = System.currentTimeMillis()
+            val username = "guest_${Random.nextInt(100000, 999999)}"
+            val email = "$username@kappa.local"
+            val passwordHash = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt())
+            val userId = UUID.randomUUID()
+            val role = UserRole.USER
+
+                Users.insert {
+                    it[id] = userId
+                    it[Users.username] = username
+                    it[Users.email] = email
+                    it[Users.passwordHash] = passwordHash
+                    it[Users.role] = role.name
+                    it[Users.nickname] = request.nickname?.trim()?.ifBlank { null }
+                    it[Users.avatarUrl] = request.avatarUrl?.trim()?.ifBlank { null }
+                    it[Users.country] = request.country?.trim()?.ifBlank { null }
+                    it[Users.language] = request.language?.trim()?.ifBlank { null }
+                    it[Users.isGuest] = true
+                    it[Users.status] = "active"
+                    it[Users.createdAt] = now
+                }
+
+            CoinWallets.insert {
+                it[CoinWallets.userId] = userId
+                it[CoinWallets.balance] = 0L
+                it[CoinWallets.updatedAt] = now
+            }
+
+            val accessToken = tokenService.generateAccessToken(userId, role)
+            val refreshToken = tokenService.generateRefreshToken(userId)
+            val expiresAt = now + config.refreshTokenTtlSeconds * 1000
+
+            RefreshTokens.insert {
+                it[token] = refreshToken
+                it[RefreshTokens.userId] = userId
+                it[RefreshTokens.expiresAt] = expiresAt
+            }
+
+            val userRow = Users.select { Users.id eq userId }.single()
+            LoginResponse(
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                user = userRow.toUserResponse()
+            )
+        }
+    }
+
+    fun updateProfile(userId: UUID, request: ProfileUpdateRequest): UserResponse? {
+        val nickname = request.nickname?.trim()?.ifBlank { null }
+        val avatarUrl = request.avatarUrl?.trim()?.ifBlank { null }
+        val country = request.country?.trim()?.ifBlank { null }
+        val language = request.language?.trim()?.ifBlank { null }
+        return transaction {
+            if (nickname != null || avatarUrl != null || country != null || language != null) {
+                Users.update({ Users.id eq userId }) {
+                    if (nickname != null) {
+                        it[Users.nickname] = nickname
+                    }
+                    if (avatarUrl != null) {
+                        it[Users.avatarUrl] = avatarUrl
+                    }
+                    if (country != null) {
+                        it[Users.country] = country
+                    }
+                    if (language != null) {
+                        it[Users.language] = language
+                    }
+                }
+            }
+            val row = Users.select { Users.id eq userId }.singleOrNull() ?: return@transaction null
+            row.toUserResponse()
+        }
+    }
+
+    fun updateUserRole(userId: UUID, newRole: UserRole): UserResponse? {
+        return transaction {
+            val updated = Users.update({ Users.id eq userId }) {
+                it[Users.role] = newRole.name
+            }
+            if (updated == 0) {
+                return@transaction null
+            }
+            val row = Users.select { Users.id eq userId }.singleOrNull() ?: return@transaction null
+            row.toUserResponse()
+        }
+    }
+
     private fun org.jetbrains.exposed.sql.ResultRow.toUserResponse(): UserResponse {
         return UserResponse(
             id = this[Users.id].toString(),
             username = this[Users.username],
             email = this[Users.email],
-            role = UserRole.valueOf(this[Users.role]),
+            role = UserRole.fromStorage(this[Users.role]),
+            phone = this[Users.phone],
+            nickname = this[Users.nickname],
+            avatarUrl = this[Users.avatarUrl],
+            country = this[Users.country],
+            language = this[Users.language],
+            isGuest = this[Users.isGuest] ?: false,
             agencyId = this[Users.agencyId]?.toString()
         )
     }
