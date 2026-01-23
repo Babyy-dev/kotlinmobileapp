@@ -28,7 +28,7 @@ android {
         release {
             isMinifyEnabled = true
             buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/api/\"")
-            buildConfigField("String", "LIVEKIT_URL", "\"wss://live.kappa.app\"")
+            buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
