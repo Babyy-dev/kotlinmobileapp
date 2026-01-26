@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Room Name"
-                android:textAppearance="@style/TextAppearance.Kappa.Section" />
+                android:textAppearance="@style/TextAppearance.Kappa.Section.Dark" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -28,7 +28,6 @@ import com.kappa.backend.models.AgencyCommissionResponse
 import com.kappa.backend.models.RewardRequestResponse
 import kotlin.math.abs
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll

@@ -7,15 +7,30 @@
 
     <style name="TextAppearance.Kappa.Section" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:fontFamily">@font/cinzel</item>
-        <item name="android:textColor">@color/kappa_charcoal</item>
+        <item name="android:textColor">@color/kappa_cream</item>
     </style>
 
     <style name="TextAppearance.Kappa.Body" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:fontFamily">@font/manrope</item>
-        <item name="android:textColor">@color/kappa_charcoal</item>
+        <item name="android:textColor">@color/kappa_mint_100</item>
     </style>
 
     <style name="TextAppearance.Kappa.Muted" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textColor">@color/kappa_mint_50</item>
+    </style>
+
+    <style name="TextAppearance.Kappa.Section.Dark" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:fontFamily">@font/cinzel</item>
+        <item name="android:textColor">@color/kappa_charcoal</item>
+    </style>
+
+    <style name="TextAppearance.Kappa.Body.Dark" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textColor">@color/kappa_charcoal</item>
+    </style>
+
+    <style name="TextAppearance.Kappa.Muted.Dark" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:fontFamily">@font/manrope</item>
         <item name="android:textColor">@color/kappa_text_muted</item>
     </style>

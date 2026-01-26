@@ -117,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Details"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Section.Dark" />
 
                 <TextView
                     android:id="@+id/text_profile_email"
@@ -125,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Email: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
 
                 <TextView
                     android:id="@+id/text_profile_phone"
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Phone: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
 
                 <TextView
                     android:id="@+id/text_profile_nickname"
@@ -141,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Nickname: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
 
                 <TextView
                     android:id="@+id/text_profile_country"
@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Country: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
 
                 <TextView
                     android:id="@+id/text_profile_language"
@@ -157,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Language: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -184,7 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Role tools"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Section.Dark" />
 
                 <TextView
                     android:id="@+id/text_profile_role_tools_hint"
@@ -192,7 +192,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Moderator tools are enabled for your role."
-                    android:textAppearance="@style/TextAppearance.Kappa.Muted" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Muted.Dark" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

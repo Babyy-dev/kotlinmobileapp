@@ -135,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="User: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
 
                 <TextView
                     android:id="@+id/text_user_role"
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Role: Loading..."
-                    android:textAppearance="@style/TextAppearance.Kappa.Muted" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Muted.Dark" />
 
                 <TextView
                     android:id="@+id/text_coin_balance"
@@ -151,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="Coins: Loading..."
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body.Dark" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
