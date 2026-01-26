@@ -5,7 +5,6 @@ import com.kappa.app.auth.domain.repository.AuthRepository
 import com.kappa.app.audio.data.repository.RemoteAudioRepository
 import com.kappa.app.audio.domain.repository.AudioRepository
 import com.kappa.app.core.network.AuthInterceptor
-import com.kappa.app.core.network.AuthRefreshApi
 import com.kappa.app.core.network.ApiService
 import com.kappa.app.core.network.TokenAuthenticator
 import com.kappa.app.core.network.provideOkHttpClient
@@ -82,15 +81,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRefreshApi(@Named("refresh") retrofit: Retrofit): AuthRefreshApi {
-        return retrofit.create(AuthRefreshApi::class.java)
+    @Named("refresh")
+    fun provideRefreshApi(@Named("refresh") retrofit: Retrofit): ApiService {
+        return retrofit.create(ApiService::class.java)
     }
 
     @Provides
     @Singleton
     fun provideTokenAuthenticator(
         preferencesManager: PreferencesManager,
-        refreshApi: AuthRefreshApi
+        @Named("refresh") refreshApi: ApiService
     ): TokenAuthenticator {
         return TokenAuthenticator(preferencesManager, refreshApi)
     }

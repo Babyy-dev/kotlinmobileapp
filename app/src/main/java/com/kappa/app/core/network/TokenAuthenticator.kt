@@ -3,19 +3,22 @@ package com.kappa.app.core.network
 import com.kappa.app.core.network.model.RefreshRequest
 import com.kappa.app.core.storage.PreferencesManager
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val preferencesManager: PreferencesManager,
-    private val refreshApi: AuthRefreshApi
+    @Named("refresh") private val refreshApi: ApiService
 ) : Authenticator {
-    private val lock = Any()
+    private val mutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? {
         if (responseCount(response) >= 2) {
@@ -26,7 +29,7 @@ class TokenAuthenticator @Inject constructor(
         }
 
         return runBlocking {
-            synchronized(lock) {
+            mutex.withLock {
                 val latestToken = preferencesManager.getAccessTokenOnce()
                 val requestToken = response.request.header("Authorization")
                 if (!latestToken.isNullOrBlank() && requestToken != "Bearer $latestToken") {
