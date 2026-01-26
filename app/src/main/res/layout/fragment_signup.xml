@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/bg_screen_emerald"
     android:fillViewport="true"
     tools:context=".main.SignupFragment">
 
@@ -30,9 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Create your account"
-            android:textColor="@color/on_background"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.Kappa.Headline"
+            android:textColor="@color/kappa_gold_300"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/image_signup_logo" />
@@ -43,19 +42,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Sign up to start"
-            android:textColor="@color/on_surface"
-            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.Kappa.Body"
+            android:textColor="@color/kappa_mint_100"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_signup_title" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_signup_form"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="18dp"
             app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/kappa_surface"
+            app:strokeColor="@color/kappa_outline"
+            app:strokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_signup_subtitle">
@@ -77,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Username"
                         android:layout_marginBottom="16dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        style="@style/Widget.Kappa.TextInput">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/input_signup_username"
@@ -91,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Email"
                         android:layout_marginBottom="16dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        style="@style/Widget.Kappa.TextInput">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/input_signup_email"
@@ -105,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:hint="Password"
                         android:layout_marginBottom="24dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        style="@style/Widget.Kappa.TextInput">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/input_signup_password"
@@ -128,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Use phone instead"
-                    style="@style/Widget.MaterialComponents.Button.TextButton" />
+                    style="@style/Widget.Kappa.Button.Text" />
 
                 <LinearLayout
                     android:id="@+id/layout_signup_phone"
@@ -143,16 +145,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Sign up with your number"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_charcoal" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Phone number"
                         android:layout_marginTop="8dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        style="@style/Widget.Kappa.TextInput">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/input_signup_phone"
@@ -166,7 +167,7 @@
                         android:layout_height="wrap_content"
                         android:hint="OTP code"
                         android:layout_marginTop="8dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        style="@style/Widget.Kappa.TextInput">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/input_signup_otp"
@@ -214,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:textColor="@color/on_surface"
+                    android:textColor="@color/kappa_text_muted"
                     android:textSize="12sp"
                     android:visibility="gone" />
 
@@ -224,9 +225,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="Already have an account? Login"
-                    style="@style/Widget.MaterialComponents.Button.TextButton" />
+                    style="@style/Widget.Kappa.Button.Text" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

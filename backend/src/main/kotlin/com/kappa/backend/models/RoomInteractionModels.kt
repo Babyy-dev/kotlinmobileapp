@@ -20,7 +20,9 @@ data class RoomMessageResponse(
 @Serializable
 data class GiftSendRequest(
     val recipientId: String? = null,
-    val amount: Long
+    val amount: Long,
+    val giftId: String? = null,
+    val giftType: String? = null
 )
 
 @Serializable
@@ -31,5 +33,8 @@ data class GiftSendResponse(
     val recipientId: String? = null,
     val amount: Long,
     val senderBalance: Long,
-    val createdAt: Long
+    val createdAt: Long,
+    val giftType: String? = null,
+    val diamondsTotal: Long? = null,
+    val recipientCount: Int? = null
 )

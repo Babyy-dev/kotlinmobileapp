@@ -37,12 +37,19 @@ class RoomsAdapter(
         private val onJoinClicked: (AudioRoom) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private val nameText: TextView = itemView.findViewById(R.id.text_room_name)
-        private val detailsText: TextView = itemView.findViewById(R.id.text_room_details)
+        private val modeText: TextView = itemView.findViewById(R.id.text_room_mode)
+        private val lockText: TextView = itemView.findViewById(R.id.text_room_lock)
+        private val badgeText: TextView = itemView.findViewById(R.id.text_room_badge)
+        private val countText: TextView = itemView.findViewById(R.id.text_room_count)
         private val joinButton: MaterialButton = itemView.findViewById(R.id.button_join_room)
 
         fun bind(room: AudioRoom) {
             nameText.text = room.name
-            detailsText.text = "Seat mode: ${room.seatMode.name} | ${room.participantCount} listeners"
+            modeText.text = room.seatMode.name
+            lockText.text = if (room.requiresPassword) "Locked" else "Open"
+            badgeText.visibility = if (room.isActive) View.VISIBLE else View.INVISIBLE
+            badgeText.text = if (room.isActive) "LIVE" else "OFF"
+            countText.text = "${room.participantCount} listening"
             joinButton.isEnabled = room.isActive
             joinButton.setOnClickListener { onJoinClicked(room) }
         }

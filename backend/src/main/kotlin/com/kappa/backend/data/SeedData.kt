@@ -48,6 +48,16 @@ object SeedData {
         insertWallet(teamId, 25000, now)
         insertWallet(userId, 1250, now)
 
+        insertDiamondWallet(adminId, 0, now)
+        insertDiamondWallet(resellerId, 0, now)
+        insertDiamondWallet(agencyIdUser, 0, now)
+        insertDiamondWallet(hostId, 0, now)
+        insertDiamondWallet(teamId, 0, now)
+        insertDiamondWallet(userId, 0, now)
+
+        seedGifts(now)
+        seedCoinPackages(now)
+
         val loungeRoomId = UUID.randomUUID()
         Rooms.insert {
             it[id] = loungeRoomId
@@ -101,6 +111,52 @@ object SeedData {
             it[CoinWallets.userId] = userId
             it[CoinWallets.balance] = balance
             it[CoinWallets.updatedAt] = now
+        }
+    }
+
+    private fun insertDiamondWallet(userId: UUID, balance: Long, now: Long) {
+        DiamondWallets.insert {
+            it[DiamondWallets.userId] = userId
+            it[DiamondWallets.balance] = balance
+            it[DiamondWallets.locked] = 0
+            it[DiamondWallets.updatedAt] = now
+        }
+    }
+
+    private fun seedGifts(now: Long) {
+        val gifts = listOf(
+            Triple("Rose", "INDIVIDUAL", 100L) to 100,
+            Triple("Wave", "GROUP_FIXED", 20L) to 100,
+            Triple("Multiplier", "GROUP_MULTIPLIER", 20L) to 10
+        )
+        gifts.forEach { (gift, percent) ->
+            Gifts.insert {
+                it[id] = UUID.randomUUID()
+                it[name] = gift.first
+                it[giftType] = gift.second
+                it[costCoins] = gift.third
+                it[diamondPercent] = percent
+                it[isActive] = true
+                it[createdAt] = now
+            }
+        }
+    }
+
+    private fun seedCoinPackages(now: Long) {
+        val packages = listOf(
+            Triple("Starter Pack", 1000L, 0.99),
+            Triple("Value Pack", 5500L, 4.99),
+            Triple("Mega Pack", 12000L, 9.99)
+        )
+        packages.forEach { (name, coins, price) ->
+            CoinPackages.insert {
+                it[id] = UUID.randomUUID()
+                it[CoinPackages.name] = name
+                it[coinAmount] = coins
+                it[priceUsd] = price.toBigDecimal()
+                it[isActive] = true
+                it[createdAt] = now
+            }
         }
     }
 

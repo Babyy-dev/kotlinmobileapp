@@ -3,6 +3,7 @@
 import com.kappa.backend.config.AppConfig
 import com.kappa.backend.data.Agencies
 import com.kappa.backend.data.CoinWallets
+import com.kappa.backend.data.DiamondWallets
 import com.kappa.backend.data.PhoneOtps
 import com.kappa.backend.data.RefreshTokens
 import com.kappa.backend.data.Users
@@ -15,6 +16,7 @@ import com.kappa.backend.models.ProfileUpdateRequest
 import com.kappa.backend.models.SignupRequest
 import com.kappa.backend.models.UserResponse
 import com.kappa.backend.models.UserRole
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
 import org.jetbrains.exposed.sql.and
@@ -29,7 +31,10 @@ import org.mindrot.jbcrypt.BCrypt
 import kotlin.random.Random
 import java.util.UUID
 
-class AuthService(private val config: AppConfig) {
+class AuthService(
+    private val config: AppConfig,
+    private val smsService: TwilioSmsService
+) {
     private val tokenService = TokenService(config)
     private val otpTtlMillis = 5 * 60 * 1000L
 
@@ -47,9 +52,22 @@ class AuthService(private val config: AppConfig) {
         val failure: SignupFailureReason? = null
     )
 
+    enum class OtpFailureReason {
+        INVALID_PHONE,
+        SMS_FAILED
+    }
+
+    data class OtpSendResult(
+        val response: PhoneOtpResponse? = null,
+        val failure: OtpFailureReason? = null
+    )
+
     fun login(username: String, password: String): LoginResponse? {
         return transaction {
             val row = Users.select { Users.username eq username }.singleOrNull() ?: return@transaction null
+            if (!row[Users.status].equals("active", ignoreCase = true)) {
+                return@transaction null
+            }
             val passwordHash = row[Users.passwordHash]
             if (!BCrypt.checkpw(password, passwordHash)) {
                 return@transaction null
@@ -144,6 +162,13 @@ class AuthService(private val config: AppConfig) {
                 it[CoinWallets.updatedAt] = now
             }
 
+            DiamondWallets.insert {
+                it[DiamondWallets.userId] = userId
+                it[DiamondWallets.balance] = 0L
+                it[DiamondWallets.locked] = 0L
+                it[DiamondWallets.updatedAt] = now
+            }
+
             val accessToken = tokenService.generateAccessToken(userId, resolvedRole)
             val refreshToken = tokenService.generateRefreshToken(userId)
             val expiresAt = now + config.refreshTokenTtlSeconds * 1000
@@ -223,10 +248,10 @@ class AuthService(private val config: AppConfig) {
         }
     }
 
-    fun requestOtp(request: PhoneOtpRequest): PhoneOtpResponse? {
+    fun requestOtp(request: PhoneOtpRequest): OtpSendResult {
         val phone = request.phone.trim()
         if (phone.isBlank()) {
-            return null
+            return OtpSendResult(failure = OtpFailureReason.INVALID_PHONE)
         }
         val code = Random.nextInt(100000, 999999).toString()
         val now = System.currentTimeMillis()
@@ -243,10 +268,18 @@ class AuthService(private val config: AppConfig) {
             }
         }
 
-        return PhoneOtpResponse(
-            phone = phone,
-            code = code,
-            expiresAt = expiresAt
+        val smsSent = smsService.sendOtp(phone, code)
+        if (!smsSent && smsService.isEnabled) {
+            return OtpSendResult(failure = OtpFailureReason.SMS_FAILED)
+        }
+
+        val exposedCode = if (config.otpExposeCode) code else "sent"
+        return OtpSendResult(
+            response = PhoneOtpResponse(
+                phone = phone,
+                code = exposedCode,
+                expiresAt = expiresAt
+            )
         )
     }
 
@@ -311,7 +344,17 @@ class AuthService(private val config: AppConfig) {
                     it[CoinWallets.balance] = 0L
                     it[CoinWallets.updatedAt] = now
                 }
+
+                DiamondWallets.insert {
+                    it[DiamondWallets.userId] = userId
+                    it[DiamondWallets.balance] = 0L
+                    it[DiamondWallets.locked] = 0L
+                    it[DiamondWallets.updatedAt] = now
+                }
             } else {
+                if (!existing[Users.status].equals("active", ignoreCase = true)) {
+                    return@transaction null
+                }
                 userId = existing[Users.id]
                 role = UserRole.fromStorage(existing[Users.role])
                 Users.update({ Users.id eq userId }) {
@@ -380,6 +423,13 @@ class AuthService(private val config: AppConfig) {
                 it[CoinWallets.updatedAt] = now
             }
 
+            DiamondWallets.insert {
+                it[DiamondWallets.userId] = userId
+                it[DiamondWallets.balance] = 0L
+                it[DiamondWallets.locked] = 0L
+                it[DiamondWallets.updatedAt] = now
+            }
+
             val accessToken = tokenService.generateAccessToken(userId, role)
             val refreshToken = tokenService.generateRefreshToken(userId)
             val expiresAt = now + config.refreshTokenTtlSeconds * 1000
@@ -439,12 +489,55 @@ class AuthService(private val config: AppConfig) {
         }
     }
 
+    fun updateUserStatus(userId: UUID, status: String): UserResponse? {
+        val normalized = normalizeStatus(status) ?: throw IllegalArgumentException("Invalid status")
+        return transaction {
+            val updated = Users.update({ Users.id eq userId }) {
+                it[Users.status] = normalized
+            }
+            if (updated == 0) {
+                return@transaction null
+            }
+            val row = Users.select { Users.id eq userId }.singleOrNull() ?: return@transaction null
+            row.toUserResponse()
+        }
+    }
+
+    fun listUsers(
+        role: UserRole?,
+        status: String?,
+        limit: Int
+    ): List<UserResponse> {
+        val resolvedLimit = limit.coerceIn(1, 200)
+        val normalizedStatus = status?.let { normalizeStatus(it) }
+        return transaction {
+            var conditions: Op<Boolean>? = null
+            if (role != null) {
+                conditions = (conditions?.and(Users.role eq role.name) ?: (Users.role eq role.name))
+            }
+            if (normalizedStatus != null) {
+                conditions = (conditions?.and(Users.status eq normalizedStatus) ?: (Users.status eq normalizedStatus))
+            }
+
+            val query = if (conditions == null) {
+                Users.selectAll()
+            } else {
+                Users.select { conditions }
+            }
+
+            query.orderBy(Users.createdAt, SortOrder.DESC)
+                .limit(resolvedLimit)
+                .map { row -> row.toUserResponse() }
+        }
+    }
+
     private fun org.jetbrains.exposed.sql.ResultRow.toUserResponse(): UserResponse {
         return UserResponse(
             id = this[Users.id].toString(),
             username = this[Users.username],
             email = this[Users.email],
             role = UserRole.fromStorage(this[Users.role]),
+            status = this[Users.status],
             phone = this[Users.phone],
             nickname = this[Users.nickname],
             avatarUrl = this[Users.avatarUrl],
@@ -453,5 +546,14 @@ class AuthService(private val config: AppConfig) {
             isGuest = this[Users.isGuest] ?: false,
             agencyId = this[Users.agencyId]?.toString()
         )
+    }
+
+    private fun normalizeStatus(status: String): String? {
+        val normalized = status.trim().lowercase()
+        return if (normalized in setOf("active", "inactive", "blocked", "suspended")) {
+            normalized
+        } else {
+            null
+        }
     }
 }

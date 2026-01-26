@@ -17,6 +17,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
@@ -37,10 +38,14 @@ class RoomService(
         val failure: JoinRoomFailure? = null
     )
 
-    fun listRooms(): List<RoomResponse> {
+    fun listRooms(status: String? = "active"): List<RoomResponse> {
         return transaction {
-            Rooms.select { Rooms.status eq "active" }
-                .map { row ->
+            val query = if (status == null) {
+                Rooms.selectAll()
+            } else {
+                Rooms.select { Rooms.status eq status }
+            }
+            query.map { row ->
                     val roomId = row[Rooms.id]
                     val maxSeats = row[Rooms.maxSeats] ?: 28
                     RoomResponse(

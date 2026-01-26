@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="104dp"
+    android:layout_margin="4dp">
+
+    <LinearLayout
+        android:id="@+id/seat_card"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_seat_free"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/text_seat_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No.1"
+            android:textAppearance="@style/TextAppearance.Kappa.Section"
+            android:textColor="@color/kappa_cream" />
+
+        <TextView
+            android:id="@+id/text_seat_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Open"
+            android:textAppearance="@style/TextAppearance.Kappa.Muted"
+            android:textColor="@color/kappa_mint_100" />
+    </LinearLayout>
+</FrameLayout>

@@ -3,18 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/bg_screen_emerald"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".audio.presentation.RoomsFragment">
 
-    <TextView
-        android:id="@+id/text_rooms_title"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Live Rooms"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:background="@drawable/bg_header_panel">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/text_rooms_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Live Rooms"
+                android:textAppearance="@style/TextAppearance.Kappa.Headline"
+                android:textColor="@color/kappa_gold_300" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Pick a lounge and join the vibe."
+                android:textAppearance="@style/TextAppearance.Kappa.Body"
+                android:textColor="@color/kappa_mint_100" />
+        </LinearLayout>
+    </FrameLayout>
 
     <ProgressBar
         android:id="@+id/progress_rooms"
@@ -32,18 +53,36 @@
         android:textColor="@color/error"
         android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_refresh_rooms"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Refresh" />
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_refresh_rooms"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Refresh"
+            style="@style/Widget.Kappa.Button.Secondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_create_room"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Create Room" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_rooms"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
+        android:background="@drawable/bg_card_glass"
+        android:padding="8dp"
         android:layout_weight="1"
         tools:listitem="@layout/item_room" />
 

@@ -3,16 +3,20 @@ package com.kappa.backend
 import com.kappa.backend.config.DatabaseFactory
 import com.kappa.backend.config.loadConfig
 import com.kappa.backend.models.ApiResponse
+import com.kappa.backend.routes.agencyRoutes
 import com.kappa.backend.routes.authRoutes
 import com.kappa.backend.routes.economyRoutes
 import com.kappa.backend.routes.roomRoutes
 import com.kappa.backend.routes.userRoutes
 import com.kappa.backend.services.AuthService
+import com.kappa.backend.services.AgencyService
 import com.kappa.backend.services.EconomyService
 import com.kappa.backend.services.LiveKitTokenService
 import com.kappa.backend.services.RoomInteractionService
 import com.kappa.backend.services.RoomService
+import com.kappa.backend.services.SlotService
 import com.kappa.backend.services.TokenService
+import com.kappa.backend.services.TwilioSmsService
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -27,7 +31,10 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.http.content.staticFiles
+import io.ktor.server.http.content.staticResources
+import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
@@ -42,8 +49,11 @@ fun Application.module() {
     val config = loadConfig()
     DatabaseFactory.init(config)
 
-    val authService = AuthService(config)
+    val smsService = TwilioSmsService(config)
+    val authService = AuthService(config, smsService)
     val economyService = EconomyService()
+    val slotService = SlotService()
+    val agencyService = AgencyService()
     val tokenService = TokenService(config)
     val roomService = RoomService(config, LiveKitTokenService(config))
     val roomInteractionService = RoomInteractionService()
@@ -98,13 +108,18 @@ fun Application.module() {
     }
 
     routing {
+        get("/admin") {
+            call.respondRedirect("/admin/index.html")
+        }
         staticFiles("/uploads", File("uploads"))
+        staticResources("/admin", "admin")
         route("api") {
             authRoutes(authService)
             authenticate {
                 userRoutes(authService)
-                economyRoutes(economyService)
+                economyRoutes(economyService, slotService)
                 roomRoutes(roomService, authService, roomInteractionService)
+                agencyRoutes(agencyService)
             }
         }
     }

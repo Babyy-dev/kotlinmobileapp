@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@drawable/bg_screen_emerald"
     tools:context=".main.SplashFragment">
 
     <!-- Logo Image - Placeholder, replace with actual splash image -->
@@ -31,9 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="KAPPA"
-        android:textColor="#00FFFF"
-        android:textSize="48sp"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Kappa.Headline"
+        android:textColor="@color/kappa_gold_300"
         android:letterSpacing="0.1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

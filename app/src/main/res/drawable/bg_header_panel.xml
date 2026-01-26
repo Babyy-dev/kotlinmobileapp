@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/kappa_gold_500" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
+    <item android:inset="2dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="@color/kappa_teal_800"
+                android:endColor="@color/kappa_teal_900" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    <item android:inset="6dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#103D37" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</layer-list>

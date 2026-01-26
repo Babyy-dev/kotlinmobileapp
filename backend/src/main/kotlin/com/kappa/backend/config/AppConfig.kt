@@ -17,6 +17,7 @@ private const val DEFAULT_LIVEKIT_URL = "ws://10.0.2.2:7880"
 private const val DEFAULT_LIVEKIT_KEY = "devkey"
 private const val DEFAULT_LIVEKIT_SECRET = "devsecret"
 private const val DEFAULT_LIVEKIT_TTL = 3600L
+private const val DEFAULT_OTP_EXPOSE_CODE = true
 
 data class AppConfig(
     val dbUrl: String,
@@ -32,7 +33,13 @@ data class AppConfig(
     val livekitUrl: String,
     val livekitApiKey: String,
     val livekitApiSecret: String,
-    val livekitTokenTtlSeconds: Long
+    val livekitTokenTtlSeconds: Long,
+    val twilioAccountSid: String,
+    val twilioApiKeySid: String,
+    val twilioApiKeySecret: String,
+    val twilioAuthToken: String,
+    val twilioFromNumber: String,
+    val otpExposeCode: Boolean
 )
 
 fun Application.loadConfig(): AppConfig {
@@ -51,7 +58,13 @@ fun Application.loadConfig(): AppConfig {
         livekitUrl = config.stringOrEnv("livekit.url", "KAPPA_LIVEKIT_URL", DEFAULT_LIVEKIT_URL),
         livekitApiKey = config.stringOrEnv("livekit.apiKey", "KAPPA_LIVEKIT_API_KEY", DEFAULT_LIVEKIT_KEY),
         livekitApiSecret = config.stringOrEnv("livekit.apiSecret", "KAPPA_LIVEKIT_API_SECRET", DEFAULT_LIVEKIT_SECRET),
-        livekitTokenTtlSeconds = config.longOrEnv("livekit.tokenTtlSeconds", "KAPPA_LIVEKIT_TTL", DEFAULT_LIVEKIT_TTL)
+        livekitTokenTtlSeconds = config.longOrEnv("livekit.tokenTtlSeconds", "KAPPA_LIVEKIT_TTL", DEFAULT_LIVEKIT_TTL),
+        twilioAccountSid = config.stringOrEnv("twilio.accountSid", "KAPPA_TWILIO_ACCOUNT_SID", ""),
+        twilioApiKeySid = config.stringOrEnv("twilio.apiKeySid", "KAPPA_TWILIO_API_KEY_SID", ""),
+        twilioApiKeySecret = config.stringOrEnv("twilio.apiKeySecret", "KAPPA_TWILIO_API_KEY_SECRET", ""),
+        twilioAuthToken = config.stringOrEnv("twilio.authToken", "KAPPA_TWILIO_AUTH_TOKEN", ""),
+        twilioFromNumber = config.stringOrEnv("twilio.fromNumber", "KAPPA_TWILIO_FROM", ""),
+        otpExposeCode = config.booleanOrEnv("otp.exposeCode", "KAPPA_OTP_EXPOSE_CODE", DEFAULT_OTP_EXPOSE_CODE)
     )
 }
 
@@ -70,4 +83,13 @@ private fun ApplicationConfig.longOrEnv(path: String, envKey: String, defaultVal
     }
     val configValue = propertyOrNull(path)?.getString()
     return configValue?.toLongOrNull() ?: defaultValue
+}
+
+private fun ApplicationConfig.booleanOrEnv(path: String, envKey: String, defaultValue: Boolean): Boolean {
+    val envValue = System.getenv(envKey)
+    if (!envValue.isNullOrBlank()) {
+        return envValue.equals("true", ignoreCase = true) || envValue == "1"
+    }
+    val configValue = propertyOrNull(path)?.getString()
+    return configValue?.toBooleanStrictOrNull() ?: defaultValue
 }

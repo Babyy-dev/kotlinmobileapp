@@ -5,6 +5,8 @@ import com.kappa.app.domain.audio.AudioRoom
 import com.kappa.app.domain.audio.GiftLog
 import com.kappa.app.domain.audio.RoomMessage
 import com.kappa.app.domain.audio.SeatMode
+import com.kappa.app.domain.audio.RoomSeat
+import com.kappa.app.domain.audio.SeatStatus
 import com.kappa.app.domain.economy.CoinBalance
 import com.kappa.app.domain.user.Role
 import com.kappa.app.domain.user.User
@@ -52,6 +54,16 @@ fun RoomDto.toDomain(): AudioRoom {
         participantCount = participantCount,
         maxSeats = maxSeats,
         requiresPassword = requiresPassword
+    )
+}
+
+fun RoomSeatDto.toDomain(): RoomSeat {
+    val resolvedStatus = runCatching { SeatStatus.valueOf(status) }.getOrDefault(SeatStatus.FREE)
+    return RoomSeat(
+        seatNumber = seatNumber,
+        status = resolvedStatus,
+        userId = userId,
+        username = username
     )
 }
 

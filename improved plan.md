@@ -5,13 +5,13 @@ Legend: x = done, ! = in progress, ? = not started
 - ! Day 2: In progress
 - ! Day 3: In progress
 - ! Day 4: In progress
-- ? Day 5: Not started
-- ? Day 6: Not started
-- ? Day 7: Not started
-- ? Day 8: Not started
-- ? Day 9: Not started
+- ! Day 5: In progress
+- ! Day 6: In progress
+- ! Day 7: In progress
+- ! Day 8: In progress
+- ! Day 9: In progress
 - ? Day 10: Not started
-- ? Day 11: Not started
+- ! Day 11: In progress
 - ? Day 12: Not started
 - ? Day 13: Not started
 - ? Day 14: Not started
@@ -70,13 +70,13 @@ Artifacts
 ! Day 3 - Room Creation, Seats & Moderation
 
 Deliverables
-! Create / join / close rooms
-! Seat system expanded from 20 to 28
-! Speaker vs Listener roles
-! Mute/unmute
-! Kick/ban
-! Lock seat
-! Room password
+x Create / join / close rooms
+x Seat system expanded from 20 to 28
+x Speaker vs Listener roles
+x Mute/unmute
+x Kick/ban
+x Lock seat
+x Room password
 
 Acceptance Tests
 ? New room can be created and shown in room list
@@ -92,30 +92,30 @@ Artifacts
 
 Deliverables
 ? Two-device audio communication
-! In-room text chat
-! Gift sending inside rooms
-! Audio stability tweaks (echo suppression, drop handling)
+x In-room text chat
+x Gift sending inside rooms
+x Audio stability tweaks (echo suppression, drop handling)
 
 Acceptance Tests
 ? Two Android devices connected to same room with voice
-! Chat messages sent and received
-! Gift UI and backend gifting logs appear
+? Chat messages sent and received
+? Gift UI and backend gifting logs appear
 ? No crash in 10 min continuous test
 
 Artifacts
 � 10-minute test video showing voice + chat + gifts
 
-? Day 5 � Coins, Diamonds & Gift Economy
+! Day 5 � Coins, Diamonds & Gift Economy
 
 Deliverables
 ? Google Play Billing integration
-? Coin packages purchase
-? Wallet with coins and diamonds
-? Diamond conversion logic (e.g., 2 diamonds = 1 coin)
-? Transaction history
-? Refund / rollback handling
-? Gift catalog & animations
-? Commission on gifts
+! Coin packages purchase
+x Wallet with coins and diamonds
+x Diamond conversion logic (e.g., 2 diamonds = 1 coin)
+x Transaction history
+! Refund / rollback handling
+! Gift catalog & animations
+x Commission on gifts
 
 Acceptance Tests
 ? Coin purchase generates backend receipt + wallet increase
@@ -127,14 +127,14 @@ Artifacts
 � Billing logs
 � Backend transaction records
 
-? Day 6 � Minigames (Slots)
+! Day 6 � Minigames (Slots)
 
 Deliverables
 ? Slot game UI
-? Bet logic
-? Win/lose resolution
-? Reward crediting
-? Game history list
+x Bet logic
+x Win/lose resolution
+x Reward crediting
+x Game history list
 
 Acceptance Tests
 ? User bets coins and wallet updates correctly
@@ -145,12 +145,12 @@ Artifacts
 � Gameplay video
 � Game history screenshot
 
-? Day 7 � Agency, Reseller & Team System
+! Day 7 � Agency, Reseller & Team System
 
 Deliverables
-? Agency application + approval UI + API
-? Reseller application + admin approval
-? Team creation + member join/leave
+! Agency application + approval UI + API
+! Reseller application + admin approval
+! Team creation + member join/leave
 ? Hierarchy management UI
 ? Commission dashboard for each role
 
@@ -164,15 +164,15 @@ Artifacts
 � API logs
 � Dashboard screenshots
 
-? Day 8 � Commission Engine & Withdrawals
+! Day 8 � Commission Engine & Withdrawals
 
 Deliverables
-? Commission calculation rules implemented
-? Auto credit logic
-? Reward request system
+x Commission calculation rules implemented
+x Auto credit logic
+x Reward request system
 ? Country-specific rules
-? Admin approval module
-? Payout status & history
+x Admin approval module
+! Payout status & history
 
 Acceptance Tests
 ? Commission calculated per documented rules
@@ -184,15 +184,15 @@ Artifacts
 � Commission logs
 � Approval workflow video
 
-? Day 9 � Admin Panel (Web)
+! Day 9 � Admin Panel (Web)
 
 Deliverables
-? User management (roles, status)
-? Room monitoring (active rooms)
-? Economy control (coin packs, gifts)
-? Commission control (rules, overrides)
-? Reward approvals
-? Banners + announcements system
+ x User management (roles, status)
+ x Room monitoring (active rooms)
+x Economy control (coin packs, gifts)
+ x Commission control (rules, overrides)
+x Reward approvals
+x Banners + announcements system
 
 Acceptance Tests
 ? Admin can change user role
@@ -224,18 +224,18 @@ Acceptance Tests
 Artifacts
 � Side-by-side screenshots (design vs app)
 
-? Day 11 � Stability & Error Handling
+! Day 11 � Stability & Error Handling
 
 Deliverables
-? Network failure handling
-? Token expiry handling
-? Invalid state recovery
-? Graceful reconnect
+! Network failure handling
+! Token expiry handling
+! Invalid state recovery
+! Graceful reconnect
 
 Acceptance Tests
 ? Turn off internet ? app shows user-friendly message
 ? Reconnect ? app resumes gracefully
-? Token expiry triggers refresh without crash
+! Token expiry triggers refresh without crash
 
 Artifacts
 � Logcat evidence

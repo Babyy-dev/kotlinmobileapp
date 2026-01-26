@@ -15,7 +15,10 @@ object NetworkConfig {
     const val TIMEOUT_SECONDS = 30L
 }
 
-fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+fun provideOkHttpClient(
+    authInterceptor: AuthInterceptor,
+    tokenAuthenticator: TokenAuthenticator
+): OkHttpClient {
     val loggingInterceptor = HttpLoggingInterceptor { message ->
         Timber.d("OkHttp: $message")
     }.apply {
@@ -28,6 +31,26 @@ fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
 
     return OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
+        .addInterceptor(loggingInterceptor)
+        .authenticator(tokenAuthenticator)
+        .connectTimeout(NetworkConfig.TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .readTimeout(NetworkConfig.TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .writeTimeout(NetworkConfig.TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .build()
+}
+
+fun providePlainOkHttpClient(): OkHttpClient {
+    val loggingInterceptor = HttpLoggingInterceptor { message ->
+        Timber.d("OkHttp: $message")
+    }.apply {
+        level = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor.Level.BODY
+        } else {
+            HttpLoggingInterceptor.Level.NONE
+        }
+    }
+
+    return OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .connectTimeout(NetworkConfig.TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(NetworkConfig.TIMEOUT_SECONDS, TimeUnit.SECONDS)

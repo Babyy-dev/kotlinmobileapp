@@ -1,25 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary colors (same for dark mode) -->
-    <color name="primary">#BB86FC</color>
-    <color name="primary_variant">#3700B3</color>
-    <color name="on_primary">#000000</color>
+    <!-- Core palette -->
+    <color name="kappa_teal_950">#031E1B</color>
+    <color name="kappa_teal_900">#072E2A</color>
+    <color name="kappa_teal_800">#0A3A36</color>
+    <color name="kappa_teal_700">#0F4C46</color>
+    <color name="kappa_teal_600">#145C55</color>
+    <color name="kappa_mint_100">#C7EDE4</color>
+    <color name="kappa_mint_50">#E9F7F3</color>
+    <color name="kappa_gold_700">#A7792C</color>
+    <color name="kappa_gold_500">#D6B15E</color>
+    <color name="kappa_gold_300">#F2D79B</color>
+    <color name="kappa_cream">#E9E2CF</color>
+    <color name="kappa_surface">#0D2E2A</color>
+    <color name="kappa_charcoal">#F5F1E6</color>
+    <color name="kappa_text_muted">#C9C2B4</color>
+    <color name="kappa_outline">#9B7B39</color>
+
+    <!-- Primary colors -->
+    <color name="primary">@color/kappa_teal_700</color>
+    <color name="primary_variant">@color/kappa_teal_900</color>
+    <color name="on_primary">@color/kappa_cream</color>
 
     <!-- Secondary colors -->
-    <color name="secondary">#03DAC5</color>
-    <color name="secondary_variant">#03DAC5</color>
-    <color name="on_secondary">#000000</color>
+    <color name="secondary">@color/kappa_gold_500</color>
+    <color name="secondary_variant">@color/kappa_gold_700</color>
+    <color name="on_secondary">@color/kappa_charcoal</color>
 
     <!-- Background colors -->
-    <color name="background">#121212</color>
-    <color name="on_background">#FFFFFF</color>
+    <color name="background">@color/kappa_teal_950</color>
+    <color name="on_background">@color/kappa_charcoal</color>
 
     <!-- Surface colors -->
-    <color name="surface">#1E1E1E</color>
-    <color name="on_surface">#FFFFFF</color>
+    <color name="surface">@color/kappa_surface</color>
+    <color name="on_surface">@color/kappa_charcoal</color>
 
     <!-- Error colors -->
-    <color name="error">#CF6679</color>
+    <color name="error">#D8695C</color>
     <color name="on_error">#000000</color>
 
     <!-- Legacy colors for compatibility -->

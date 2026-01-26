@@ -86,9 +86,14 @@ class AuthViewModel @Inject constructor(
             _viewState.value = _viewState.value.copy(isLoading = true, error = null, message = null)
             requestOtpUseCase(phone)
                 .onSuccess { info ->
+                    val message = if (info.code.equals("sent", ignoreCase = true)) {
+                        "OTP sent to your phone"
+                    } else {
+                        "OTP: ${info.code} (dev only)"
+                    }
                     _viewState.value = _viewState.value.copy(
                         isLoading = false,
-                        message = "OTP: ${info.code} (dev only)"
+                        message = message
                     )
                 }
                 .onFailure { throwable ->

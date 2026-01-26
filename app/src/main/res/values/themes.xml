@@ -11,11 +11,23 @@
         <item name="colorSecondary">@color/secondary</item>
         <item name="colorSecondaryVariant">@color/secondary_variant</item>
         <item name="colorOnSecondary">@color/on_secondary</item>
+
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
         
         <!-- Background colors - using Android framework attributes -->
         <item name="android:colorBackground">@color/background</item>
         <item name="android:textColorPrimary">@color/on_background</item>
         <item name="android:textColorSecondary">@color/on_surface</item>
+        <item name="android:windowBackground">@drawable/bg_screen_emerald</item>
+        <item name="android:statusBarColor">@color/kappa_teal_900</item>
+
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="fontFamily">@font/manrope</item>
+
+        <item name="materialButtonStyle">@style/Widget.Kappa.Button</item>
+        <item name="textInputStyle">@style/Widget.Kappa.TextInput</item>
+        <item name="bottomNavigationStyle">@style/Widget.Kappa.BottomNav</item>
         
         <!-- Error colors -->
         <item name="colorError">@color/error</item>

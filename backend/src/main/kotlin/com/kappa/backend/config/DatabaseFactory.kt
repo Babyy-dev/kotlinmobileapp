@@ -2,7 +2,22 @@
 
 import com.kappa.backend.data.Agencies
 import com.kappa.backend.data.CoinWallets
+import com.kappa.backend.data.CoinPackages
+import com.kappa.backend.data.CoinPurchases
 import com.kappa.backend.data.CoinTransactions
+import com.kappa.backend.data.DiamondConversions
+import com.kappa.backend.data.DiamondTransactions
+import com.kappa.backend.data.DiamondWallets
+import com.kappa.backend.data.GiftTransactions
+import com.kappa.backend.data.Gifts
+import com.kappa.backend.data.AgencyCommissions
+import com.kappa.backend.data.AgencyApplications
+import com.kappa.backend.data.ResellerApplications
+import com.kappa.backend.data.RewardRequests
+import com.kappa.backend.data.SlotPlays
+import com.kappa.backend.data.TeamGroups
+import com.kappa.backend.data.TeamMembers
+import com.kappa.backend.data.Announcements
 import com.kappa.backend.data.PhoneOtps
 import com.kappa.backend.data.RefreshTokens
 import com.kappa.backend.data.RoomBans
@@ -38,8 +53,23 @@ object DatabaseFactory {
             SchemaUtils.createMissingTablesAndColumns(
                 Users,
                 Agencies,
+                AgencyApplications,
+                ResellerApplications,
+                TeamGroups,
+                TeamMembers,
                 CoinWallets,
                 CoinTransactions,
+                CoinPackages,
+                CoinPurchases,
+                DiamondWallets,
+                DiamondTransactions,
+                DiamondConversions,
+                RewardRequests,
+                Gifts,
+                GiftTransactions,
+                AgencyCommissions,
+                SlotPlays,
+                Announcements,
                 PhoneOtps,
                 Rooms,
                 RoomSeats,

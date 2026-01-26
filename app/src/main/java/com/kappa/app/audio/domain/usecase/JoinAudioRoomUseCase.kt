@@ -7,7 +7,7 @@ import javax.inject.Inject
 class JoinAudioRoomUseCase @Inject constructor(
     private val audioRepository: AudioRepository
 ) {
-    suspend operator fun invoke(roomId: String): Result<JoinRoomInfo> {
-        return audioRepository.joinRoom(roomId)
+    suspend operator fun invoke(roomId: String, password: String? = null): Result<JoinRoomInfo> {
+        return audioRepository.joinRoom(roomId, password)
     }
 }

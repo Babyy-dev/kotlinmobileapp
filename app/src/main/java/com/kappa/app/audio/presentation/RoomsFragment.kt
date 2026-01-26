@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -16,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kappa.app.R
 import com.kappa.app.core.network.NetworkMonitor
+import com.kappa.app.domain.audio.AudioRoom
+import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,9 +50,14 @@ class RoomsFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_rooms)
         val errorText = view.findViewById<TextView>(R.id.text_rooms_error)
         val refreshButton = view.findViewById<View>(R.id.button_refresh_rooms)
+        val createButton = view.findViewById<View>(R.id.button_create_room)
 
         roomsAdapter = RoomsAdapter { room ->
-            audioViewModel.joinRoom(room.id)
+            if (room.requiresPassword) {
+                showPasswordPrompt(room)
+            } else {
+                audioViewModel.joinRoom(room.id)
+            }
         }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -58,6 +67,10 @@ class RoomsFragment : Fragment() {
 
         refreshButton.setOnClickListener {
             audioViewModel.loadAudioRooms()
+        }
+
+        createButton.setOnClickListener {
+            showCreateRoomDialog()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -103,5 +116,48 @@ class RoomsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showCreateRoomDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_create_room, null)
+        val nameInput = dialogView.findViewById<TextInputEditText>(R.id.input_room_name)
+        val passwordInput = dialogView.findViewById<TextInputEditText>(R.id.input_room_password)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Create Room")
+            .setView(dialogView)
+            .setPositiveButton("Create") { _, _ ->
+                val name = nameInput.text?.toString()?.trim().orEmpty()
+                if (name.isBlank()) {
+                    Toast.makeText(requireContext(), "Room name is required", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                val password = passwordInput.text?.toString()?.trim().orEmpty().ifBlank { null }
+                audioViewModel.createRoom(name, password)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showPasswordPrompt(room: AudioRoom) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_create_room, null)
+        val nameInput = dialogView.findViewById<TextInputEditText>(R.id.input_room_name)
+        val passwordInput = dialogView.findViewById<TextInputEditText>(R.id.input_room_password)
+        nameInput.setText(room.name)
+        nameInput.isEnabled = false
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Room Password")
+            .setView(dialogView)
+            .setPositiveButton("Join") { _, _ ->
+                val password = passwordInput.text?.toString()?.trim().orEmpty()
+                if (password.isBlank()) {
+                    Toast.makeText(requireContext(), "Password is required", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                audioViewModel.joinRoom(room.id, password)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

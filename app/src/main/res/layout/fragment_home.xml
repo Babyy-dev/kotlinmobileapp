@@ -4,125 +4,125 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/bg_screen_emerald"
     android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="16dp"
         tools:context=".main.HomeFragment">
 
-        <!-- App Info Section -->
         <TextView
             android:id="@+id/text_section_app_info"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="App Information"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="Kappa Lounge"
+            android:textAppearance="@style/TextAppearance.Kappa.Headline"
+            android:textColor="@color/kappa_gold_300" />
 
-        <androidx.cardview.widget.CardView
+        <FrameLayout
             android:id="@+id/card_app_info"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_section_app_info">
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_header_panel">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
-                    android:id="@+id/text_app_version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Version: 1.0"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="4dp" />
+                    android:text="Seasonal rewards are live"
+                    android:textAppearance="@style/TextAppearance.Kappa.Body"
+                    android:textColor="@color/kappa_mint_100" />
 
-                <TextView
-                    android:id="@+id/text_build_type"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Build: Debug"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/text_environment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Environment: Dev"
-                    android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/text_app_version"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_chip"
+                        android:text="Version: 1.0"
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_mint_100" />
+
+                    <TextView
+                        android:id="@+id/text_build_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_chip"
+                        android:text="Build: Debug"
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_mint_100" />
+
+                    <TextView
+                        android:id="@+id/text_environment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip"
+                        android:text="Environment: Dev"
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_mint_100" />
+                </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </FrameLayout>
 
         <ProgressBar
             android:id="@+id/progress_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_app_info" />
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/text_home_error"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.Kappa.Body"
             android:textColor="@color/error"
-            android:textSize="12sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/progress_home" />
+            android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_refresh_home"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Refresh"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_home_error" />
+            style="@style/Widget.Kappa.Button.Secondary" />
 
-        <!-- User Info Section -->
         <TextView
             android:id="@+id/text_section_user"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Information"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_refresh_home" />
+            android:layout_marginTop="20dp"
+            android:text="Your Status"
+            android:textAppearance="@style/TextAppearance.Kappa.Section" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_user_info"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_section_user">
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/kappa_surface"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="3dp"
+            app:strokeColor="@color/kappa_outline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -135,49 +135,44 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="User: -"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="4dp" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
 
                 <TextView
                     android:id="@+id/text_user_role"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="Role: Loading..."
-                    android:textSize="14sp"
-                    android:layout_marginBottom="4dp" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Muted" />
 
                 <TextView
                     android:id="@+id/text_coin_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
                     android:text="Coins: Loading..."
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Quick Actions Section -->
         <TextView
             android:id="@+id/text_section_actions"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="Quick Actions"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_user_info" />
+            android:textAppearance="@style/TextAppearance.Kappa.Section" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_actions"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_section_actions">
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="@color/kappa_surface"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="3dp"
+            app:strokeColor="@color/kappa_outline"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -188,19 +183,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Jump into a live room or create your own."
-                    android:textSize="12sp"
-                    android:textColor="@color/on_surface"
-                    android:layout_marginBottom="12dp" />
+                    android:text="Jump into a live room or start your own lounge."
+                    android:textAppearance="@style/TextAppearance.Kappa.Body"
+                    android:textColor="@color/kappa_text_muted" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_open_rooms"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:text="Open Rooms" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </ScrollView>

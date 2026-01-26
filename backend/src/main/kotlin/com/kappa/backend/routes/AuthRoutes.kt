@@ -48,9 +48,15 @@ fun Route.authRoutes(authService: AuthService) {
 
     post("auth/otp/request") {
         val request = call.receive<PhoneOtpRequest>()
-        val response = authService.requestOtp(request)
+        val result = authService.requestOtp(request)
+        val response = result.response
         if (response == null) {
-            call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, error = "Phone number required"))
+            val (status, message) = when (result.failure) {
+                AuthService.OtpFailureReason.INVALID_PHONE -> HttpStatusCode.BadRequest to "Phone number required"
+                AuthService.OtpFailureReason.SMS_FAILED -> HttpStatusCode.BadGateway to "SMS delivery failed"
+                null -> HttpStatusCode.BadRequest to "OTP request failed"
+            }
+            call.respond(status, ApiResponse<Unit>(success = false, error = message))
             return@post
         }
         call.respond(ApiResponse(success = true, data = response))

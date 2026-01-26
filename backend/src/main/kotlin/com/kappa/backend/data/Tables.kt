@@ -38,6 +38,14 @@ object CoinWallets : Table("wallet_coins") {
     override val primaryKey = PrimaryKey(userId)
 }
 
+object DiamondWallets : Table("wallet_diamonds") {
+    val userId = uuid("user_id").uniqueIndex()
+    val balance = long("balance_diamonds")
+    val locked = long("locked_diamonds")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(userId)
+}
+
 object PhoneOtps : Table("phone_otps") {
     val id = uuid("id")
     val phone = varchar("phone", 32).index()
@@ -54,6 +62,150 @@ object CoinTransactions : Table("coin_transactions") {
     val type = varchar("type", 16)
     val amount = long("amount")
     val balanceAfter = long("balance_after")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object DiamondTransactions : Table("diamond_transactions") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val giftTransactionId = uuid("gift_transaction_id").nullable().index()
+    val type = varchar("type", 24)
+    val amount = long("amount")
+    val balanceAfter = long("balance_after")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Gifts : Table("gifts") {
+    val id = uuid("id")
+    val name = varchar("name", 120)
+    val giftType = varchar("gift_type", 32)
+    val costCoins = long("cost_coins")
+    val diamondPercent = integer("diamond_conversion_percent")
+    val isActive = bool("is_active")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object GiftTransactions : Table("gift_transactions") {
+    val id = uuid("id")
+    val giftId = uuid("gift_id").nullable().index()
+    val roomId = uuid("room_id").index()
+    val senderId = uuid("sender_id").index()
+    val recipientId = uuid("recipient_id").nullable().index()
+    val giftType = varchar("gift_type", 32)
+    val totalCostCoins = long("total_cost_coins")
+    val diamondsTotal = long("diamonds_total")
+    val recipientCount = integer("recipient_count")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AgencyCommissions : Table("agency_commissions") {
+    val id = uuid("id")
+    val agencyId = uuid("agency_id").index()
+    val userId = uuid("user_id").index()
+    val giftTransactionId = uuid("gift_transaction_id").nullable().index()
+    val diamondsAmount = long("diamonds_amount")
+    val commissionUsd = decimal("commission_usd", 10, 2)
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object DiamondConversions : Table("diamond_to_coin_conversions") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val diamondsUsed = long("diamonds_used")
+    val coinsGenerated = long("coins_generated")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object RewardRequests : Table("reward_requests") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val diamondsRequested = long("diamonds_requested")
+    val status = varchar("status", 16)
+    val createdAt = long("created_at")
+    val processedAt = long("processed_at").nullable()
+    val note = varchar("note", 255).nullable()
+    override val primaryKey = PrimaryKey(id)
+}
+
+object CoinPackages : Table("coin_packages") {
+    val id = uuid("id")
+    val name = varchar("name", 120)
+    val storeProductId = varchar("store_product_id", 120).nullable()
+    val coinAmount = long("coin_amount")
+    val priceUsd = decimal("price_usd", 10, 2)
+    val isActive = bool("is_active")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object CoinPurchases : Table("coin_purchases") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val packageId = uuid("package_id").index()
+    val provider = varchar("provider", 32)
+    val providerTxId = varchar("provider_tx_id", 128)
+    val status = varchar("status", 16)
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object SlotPlays : Table("slot_plays") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val betCoins = long("bet_coins")
+    val winCoins = long("win_coins")
+    val balanceAfter = long("balance_after")
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object TeamGroups : Table("teams") {
+    val id = uuid("id")
+    val agencyId = uuid("agency_id").nullable().index()
+    val name = varchar("name", 120)
+    val ownerUserId = uuid("owner_user_id").index()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object TeamMembers : Table("team_members") {
+    val teamId = uuid("team_id").index()
+    val userId = uuid("user_id").index()
+    val role = varchar("role", 16)
+    val joinedAt = long("joined_at")
+    override val primaryKey = PrimaryKey(teamId, userId)
+}
+
+object AgencyApplications : Table("agency_applications") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val agencyName = varchar("agency_name", 120)
+    val status = varchar("status", 16)
+    val createdAt = long("created_at")
+    val reviewedAt = long("reviewed_at").nullable()
+    override val primaryKey = PrimaryKey(id)
+}
+
+object ResellerApplications : Table("reseller_applications") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val status = varchar("status", 16)
+    val createdAt = long("created_at")
+    val reviewedAt = long("reviewed_at").nullable()
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Announcements : Table("announcements") {
+    val id = uuid("id")
+    val title = varchar("title", 120)
+    val message = varchar("message", 500)
+    val isActive = bool("is_active")
     val createdAt = long("created_at")
     override val primaryKey = PrimaryKey(id)
 }

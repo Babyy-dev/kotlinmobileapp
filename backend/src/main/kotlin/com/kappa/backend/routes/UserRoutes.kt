@@ -4,6 +4,7 @@ import com.kappa.backend.models.ApiResponse
 import com.kappa.backend.models.ProfileUpdateRequest
 import com.kappa.backend.models.RoleUpdateRequest
 import com.kappa.backend.models.UserRole
+import com.kappa.backend.models.UserStatusUpdateRequest
 import com.kappa.backend.services.AuthService
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
@@ -131,6 +132,48 @@ fun Route.userRoutes(authService: AuthService) {
             return@post
         }
         call.respond(ApiResponse(success = true, data = user))
+    }
+
+    get("admin/users") {
+        val principal = call.principal<JWTPrincipal>()
+        val roleClaim = principal?.getClaim("role", String::class) ?: ""
+        if (!isAdminRole(roleClaim)) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "Insufficient permissions"))
+            return@get
+        }
+        val roleParam = call.request.queryParameters["role"]
+        val statusParam = call.request.queryParameters["status"]
+        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+        val roleFilter = if (roleParam != null) {
+            UserRole.fromApi(roleParam) ?: return@get call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(success = false, error = "Invalid role")
+            )
+        } else {
+            null
+        }
+        val users = authService.listUsers(roleFilter, statusParam, limit)
+        call.respond(ApiResponse(success = true, data = users))
+    }
+
+    post("admin/users/{id}/status") {
+        val principal = call.principal<JWTPrincipal>()
+        val roleClaim = principal?.getClaim("role", String::class) ?: ""
+        if (!isAdminRole(roleClaim)) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "Insufficient permissions"))
+            return@post
+        }
+        val id = call.parameters["id"] ?: return@post call.respond(
+            HttpStatusCode.BadRequest,
+            ApiResponse<Unit>(success = false, error = "Missing user id")
+        )
+        val request = call.receive<UserStatusUpdateRequest>()
+        val updated = authService.updateUserStatus(UUID.fromString(id), request.status)
+        if (updated == null) {
+            call.respond(HttpStatusCode.NotFound, ApiResponse<Unit>(success = false, error = "User not found"))
+            return@post
+        }
+        call.respond(ApiResponse(success = true, data = updated))
     }
 }
 

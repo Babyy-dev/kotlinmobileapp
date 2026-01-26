@@ -32,6 +32,20 @@ fun Route.roomRoutes(
         call.respond(ApiResponse(success = true, data = rooms))
     }
 
+    get("admin/rooms") {
+        val principal = call.principal<JWTPrincipal>()
+        val role = principal?.getClaim("role", String::class) ?: ""
+        if (!isAdminRole(role)) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "Insufficient permissions"))
+            return@get
+        }
+        val statusParam = call.request.queryParameters["status"]
+        val normalized = statusParam?.trim()?.lowercase()
+        val statusFilter = if (normalized.isNullOrBlank() || normalized == "all") null else normalized
+        val rooms = roomService.listRooms(statusFilter)
+        call.respond(ApiResponse(success = true, data = rooms))
+    }
+
     post("rooms") {
         val principal = call.principal<JWTPrincipal>()
         val role = principal?.getClaim("role", String::class) ?: ""
@@ -367,11 +381,17 @@ fun Route.roomRoutes(
             runCatching { UUID.fromString(value) }.getOrNull()
                 ?: return@post call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, error = "Invalid recipient id"))
         }
+        val giftId = request.giftId?.let { value ->
+            runCatching { UUID.fromString(value) }.getOrNull()
+                ?: return@post call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, error = "Invalid gift id"))
+        }
         val result = roomInteractionService.sendGift(
             roomId = UUID.fromString(roomId),
             senderId = UUID.fromString(userId),
             recipientId = recipientId,
-            amount = request.amount
+            amount = request.amount,
+            giftId = giftId,
+            giftTypeOverride = request.giftType
         )
         if (result.response == null) {
             val (status, message) = when (result.failure) {
@@ -398,4 +418,8 @@ fun Route.roomRoutes(
 
 private fun isRoomModerator(role: String): Boolean {
     return role in setOf("ADMIN", "RESELLER", "AGENCY", "HOST", "TEAM")
+}
+
+private fun isAdminRole(role: String): Boolean {
+    return role == "ADMIN"
 }

@@ -1,138 +1,401 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/bg_room_interior"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/text_room_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Room"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_room_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Connecting..."
-        android:textSize="14sp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_room_banner">
 
-    <TextView
-        android:id="@+id/text_audio_processing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Audio processing"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_echo_cancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Echo cancellation" />
+                <TextView
+                    android:id="@+id/text_room_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Room"
+                    android:textAppearance="@style/TextAppearance.Kappa.Headline"
+                    android:textColor="@color/kappa_gold_300" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch_noise_suppression"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Noise suppression" />
+                <TextView
+                    android:id="@+id/text_room_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Connecting..."
+                    android:textAppearance="@style/TextAppearance.Kappa.Body"
+                    android:textColor="@color/kappa_mint_100" />
+            </LinearLayout>
+        </FrameLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_apply_audio_settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Apply Audio Settings" />
+        <TextView
+            android:id="@+id/text_room_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/error"
+            android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_leave_room"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Leave Room" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_room_panel"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_chat_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Chat"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+            <TextView
+                android:id="@+id/text_audio_processing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Audio processing"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_cream" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_room_messages"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="8dp" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_echo_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Echo cancellation"
+                android:textColor="@color/kappa_mint_100" />
 
-    <EditText
-        android:id="@+id/input_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Type a message"
-        android:inputType="text" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_noise_suppression"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Noise suppression"
+                android:textColor="@color/kappa_mint_100" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_send_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Send Message" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_apply_audio_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Apply Audio Settings"
+                style="@style/Widget.Kappa.Button.Secondary" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_gift_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Gifts"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_room_panel"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_gift_log"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="8dp"
-        android:text="No gifts yet"
-        android:textSize="13sp" />
+            <TextView
+                android:id="@+id/text_seats_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Stage Seats"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_cream" />
 
-    <EditText
-        android:id="@+id/input_gift_amount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Gift amount (coins)"
-        android:inputType="number" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_room_seats"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_marginTop="12dp"
+                android:nestedScrollingEnabled="false" />
 
-    <EditText
-        android:id="@+id/input_gift_recipient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Recipient user id (optional)"
-        android:inputType="text" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_refresh_seats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Refresh Seats"
+                style="@style/Widget.Kappa.Button.Secondary" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_send_gift"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Send Gift" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Seat number"
+                style="@style/Widget.Kappa.TextInput">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_refresh_room"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Refresh Chat + Gifts" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_seat_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_take_seat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Take Seat" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_leave_seat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Leave Seat"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_lock_seat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Lock Seat"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_unlock_seat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Unlock Seat"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_room_panel"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_chat_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chat"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_cream" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_room_messages"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_chat_list"
+                android:clipToPadding="false"
+                android:padding="10dp"
+                android:nestedScrollingEnabled="false" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Type a message"
+                style="@style/Widget.Kappa.TextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_send_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Send Message" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_room_panel"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_gift_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gifts"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_cream" />
+
+            <TextView
+                android:id="@+id/text_gift_log"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_gift_log"
+                android:gravity="start|top"
+                android:lineSpacingExtra="2dp"
+                android:text="No gifts yet"
+                android:textAppearance="@style/TextAppearance.Kappa.Muted"
+                android:textColor="@color/kappa_mint_100" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Gift amount (coins)"
+                style="@style/Widget.Kappa.TextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_gift_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Recipient user id (optional)"
+                style="@style/Widget.Kappa.TextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_gift_recipient"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_send_gift"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Send Gift" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_refresh_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Refresh Chat + Gifts"
+                style="@style/Widget.Kappa.Button.Secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_room_panel"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_moderation_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Room Tools"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_cream" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Target user id"
+                style="@style/Widget.Kappa.TextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_target_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_mute_user"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Mute User"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_unmute_user"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Unmute User"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_kick_user"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Kick User"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_ban_user"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ban User"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_close_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Close Room"
+                style="@style/Widget.Kappa.Button.Secondary" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_leave_room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Leave Room"
+            style="@style/Widget.Kappa.Button.Secondary" />
+
+    </LinearLayout>
+</ScrollView>

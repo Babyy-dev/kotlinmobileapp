@@ -1,8 +1,13 @@
 package com.kappa.backend.services
 
+import com.kappa.backend.data.Agencies
+import com.kappa.backend.data.AgencyCommissions
 import com.kappa.backend.data.CoinTransactions
 import com.kappa.backend.data.CoinWallets
-import com.kappa.backend.data.RoomGifts
+import com.kappa.backend.data.DiamondTransactions
+import com.kappa.backend.data.DiamondWallets
+import com.kappa.backend.data.GiftTransactions
+import com.kappa.backend.data.Gifts
 import com.kappa.backend.data.RoomMessages
 import com.kappa.backend.data.RoomParticipants
 import com.kappa.backend.data.Rooms
@@ -19,6 +24,7 @@ import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 import kotlin.math.abs
+import java.math.BigDecimal
 
 class RoomInteractionService {
     enum class MessageFailure {
@@ -129,25 +135,35 @@ class RoomInteractionService {
             if (!exists) {
                 return@transaction null
             }
-            RoomGifts.select { RoomGifts.roomId eq roomId }
-                .orderBy(RoomGifts.createdAt, SortOrder.DESC)
+            GiftTransactions.select { GiftTransactions.roomId eq roomId }
+                .orderBy(GiftTransactions.createdAt, SortOrder.DESC)
                 .limit(resolvedLimit)
                 .map { row ->
                     GiftSendResponse(
-                        id = row[RoomGifts.id].toString(),
-                        roomId = row[RoomGifts.roomId].toString(),
-                        senderId = row[RoomGifts.senderId].toString(),
-                        recipientId = row[RoomGifts.recipientId]?.toString(),
-                        amount = row[RoomGifts.amountCoins],
-                        senderBalance = currentBalance(row[RoomGifts.senderId]),
-                        createdAt = row[RoomGifts.createdAt]
+                        id = row[GiftTransactions.id].toString(),
+                        roomId = row[GiftTransactions.roomId].toString(),
+                        senderId = row[GiftTransactions.senderId].toString(),
+                        recipientId = row[GiftTransactions.recipientId]?.toString(),
+                        amount = row[GiftTransactions.totalCostCoins],
+                        senderBalance = currentBalance(row[GiftTransactions.senderId]),
+                        createdAt = row[GiftTransactions.createdAt],
+                        giftType = row[GiftTransactions.giftType],
+                        diamondsTotal = row[GiftTransactions.diamondsTotal],
+                        recipientCount = row[GiftTransactions.recipientCount]
                     )
                 }
                 .reversed()
         }
     }
 
-    fun sendGift(roomId: UUID, senderId: UUID, recipientId: UUID?, amount: Long): GiftResult {
+    fun sendGift(
+        roomId: UUID,
+        senderId: UUID,
+        recipientId: UUID?,
+        amount: Long,
+        giftId: UUID?,
+        giftTypeOverride: String?
+    ): GiftResult {
         if (amount <= 0) {
             return GiftResult(failure = GiftFailure.INVALID_AMOUNT)
         }
@@ -164,53 +180,114 @@ class RoomInteractionService {
             if (!senderInRoom) {
                 return@transaction GiftResult(failure = GiftFailure.USER_NOT_IN_ROOM)
             }
-            if (recipientId != null) {
+            val giftRow = if (giftId != null) {
+                Gifts.select { Gifts.id eq giftId }.singleOrNull()
+            } else {
+                Gifts.select { Gifts.costCoins eq amount }
+                    .orderBy(Gifts.createdAt, SortOrder.DESC)
+                    .limit(1)
+                    .singleOrNull()
+            }
+            val giftType = giftTypeOverride
+                ?: giftRow?.get(Gifts.giftType)
+                ?: if (recipientId != null) "INDIVIDUAL" else "GROUP_FIXED"
+            val unitCost = giftRow?.get(Gifts.costCoins) ?: amount
+            val diamondPercent = giftRow?.get(Gifts.diamondPercent)
+                ?: if (giftType == "GROUP_MULTIPLIER") 10 else 100
+
+            val recipients = if (giftType == "INDIVIDUAL") {
+                if (recipientId == null) {
+                    return@transaction GiftResult(failure = GiftFailure.RECIPIENT_NOT_FOUND)
+                }
                 val userExists = Users.select { Users.id eq recipientId }.any()
                 if (!userExists) {
                     return@transaction GiftResult(failure = GiftFailure.RECIPIENT_NOT_FOUND)
                 }
-                val recipientInRoom = RoomParticipants.select {
+                val recipientRow = RoomParticipants.select {
                     (RoomParticipants.roomId eq roomId) and
                         (RoomParticipants.userId eq recipientId) and
-                        RoomParticipants.leftAt.isNull()
-                }.any()
-                if (!recipientInRoom) {
-                    return@transaction GiftResult(failure = GiftFailure.RECIPIENT_NOT_IN_ROOM)
+                        (RoomParticipants.leftAt.isNull()) and
+                        RoomParticipants.seatNumber.isNotNull()
+                }.singleOrNull() ?: return@transaction GiftResult(failure = GiftFailure.RECIPIENT_NOT_IN_ROOM)
+                listOf(recipientRow[RoomParticipants.userId])
+            } else {
+                RoomParticipants.select {
+                    (RoomParticipants.roomId eq roomId) and
+                        (RoomParticipants.leftAt.isNull()) and
+                        RoomParticipants.seatNumber.isNotNull()
                 }
+                    .map { it[RoomParticipants.userId] }
+                    .filter { it != senderId }
+            }
+
+            if (recipients.isEmpty()) {
+                return@transaction GiftResult(failure = GiftFailure.RECIPIENT_NOT_IN_ROOM)
             }
 
             val now = System.currentTimeMillis()
+            val totalCost = unitCost * recipients.size
             val senderBalance = try {
-                debitCoins(senderId, amount)
+                debitCoins(senderId, totalCost, "GIFT")
             } catch (exception: IllegalArgumentException) {
                 return@transaction GiftResult(failure = GiftFailure.INSUFFICIENT_BALANCE)
             }
 
-            val giftId = UUID.randomUUID()
-            RoomGifts.insert {
-                it[id] = giftId
-                it[RoomGifts.roomId] = roomId
-                it[RoomGifts.senderId] = senderId
-                it[RoomGifts.recipientId] = recipientId
-                it[RoomGifts.amountCoins] = amount
-                it[createdAt] = now
+            val diamondsPerRecipient = (unitCost * diamondPercent) / 100L
+            val diamondsTotal = diamondsPerRecipient * recipients.size
+
+            val giftTransactionId = UUID.randomUUID()
+            GiftTransactions.insert {
+                it[id] = giftTransactionId
+                it[GiftTransactions.giftId] = giftRow?.get(Gifts.id)
+                it[GiftTransactions.roomId] = roomId
+                it[GiftTransactions.senderId] = senderId
+                it[GiftTransactions.recipientId] = if (giftType == "INDIVIDUAL") recipientId else null
+                it[GiftTransactions.giftType] = giftType
+                it[GiftTransactions.totalCostCoins] = totalCost
+                it[GiftTransactions.diamondsTotal] = diamondsTotal
+                it[GiftTransactions.recipientCount] = recipients.size
+                it[GiftTransactions.createdAt] = now
+            }
+
+            recipients.forEach { recipient ->
+                creditDiamonds(recipient, diamondsPerRecipient, giftTransactionId)
+                val agencyId = Users.select { Users.id eq recipient }
+                    .singleOrNull()
+                    ?.get(Users.agencyId)
+                    ?: return@forEach
+                val agencyRow = Agencies.select { Agencies.id eq agencyId }.singleOrNull()
+                    ?: return@forEach
+                val commissionUsd = BigDecimal(diamondsPerRecipient).multiply(agencyRow[Agencies.commissionValueUsd])
+                    .divide(BigDecimal(agencyRow[Agencies.commissionBlockDiamonds]), 4, java.math.RoundingMode.HALF_UP)
+                AgencyCommissions.insert {
+                    it[id] = UUID.randomUUID()
+                    it[AgencyCommissions.agencyId] = agencyId
+                    it[AgencyCommissions.userId] = recipient
+                    it[AgencyCommissions.giftTransactionId] = giftTransactionId
+                    it[AgencyCommissions.diamondsAmount] = diamondsPerRecipient
+                    it[AgencyCommissions.commissionUsd] = commissionUsd
+                    it[createdAt] = now
+                }
             }
 
             GiftResult(
                 response = GiftSendResponse(
-                    id = giftId.toString(),
+                    id = giftTransactionId.toString(),
                     roomId = roomId.toString(),
                     senderId = senderId.toString(),
                     recipientId = recipientId?.toString(),
-                    amount = amount,
+                    amount = totalCost,
                     senderBalance = senderBalance,
-                    createdAt = now
+                    createdAt = now,
+                    giftType = giftType,
+                    diamondsTotal = diamondsTotal,
+                    recipientCount = recipients.size
                 )
             )
         }
     }
 
-    private fun debitCoins(userId: UUID, amount: Long): Long {
+    private fun debitCoins(userId: UUID, amount: Long, typeOverride: String): Long {
         val now = System.currentTimeMillis()
         val row = CoinWallets.select { CoinWallets.userId eq userId }.singleOrNull()
         val currentBalance = row?.get(CoinWallets.balance) ?: 0L
@@ -233,13 +310,44 @@ class RoomInteractionService {
         CoinTransactions.insert {
             it[id] = UUID.randomUUID()
             it[CoinTransactions.userId] = userId
-            it[CoinTransactions.type] = "DEBIT"
+            it[CoinTransactions.type] = typeOverride
             it[CoinTransactions.amount] = abs(amount)
             it[balanceAfter] = newBalance
             it[createdAt] = now
         }
 
         return newBalance
+    }
+
+    private fun creditDiamonds(userId: UUID, amount: Long, giftTransactionId: UUID) {
+        val now = System.currentTimeMillis()
+        val wallet = DiamondWallets.select { DiamondWallets.userId eq userId }.singleOrNull()
+        val currentBalance = wallet?.get(DiamondWallets.balance) ?: 0L
+        val currentLocked = wallet?.get(DiamondWallets.locked) ?: 0L
+        val newBalance = currentBalance + amount
+        if (wallet == null) {
+            DiamondWallets.insert {
+                it[DiamondWallets.userId] = userId
+                it[DiamondWallets.balance] = newBalance
+                it[DiamondWallets.locked] = currentLocked
+                it[DiamondWallets.updatedAt] = now
+            }
+        } else {
+            DiamondWallets.update({ DiamondWallets.userId eq userId }) {
+                it[balance] = newBalance
+                it[locked] = currentLocked
+                it[updatedAt] = now
+            }
+        }
+        DiamondTransactions.insert {
+            it[id] = UUID.randomUUID()
+            it[DiamondTransactions.userId] = userId
+            it[DiamondTransactions.giftTransactionId] = giftTransactionId
+            it[type] = "GIFT"
+            it[DiamondTransactions.amount] = amount
+            it[balanceAfter] = newBalance
+            it[createdAt] = now
+        }
     }
 
     private fun currentBalance(userId: UUID): Long {

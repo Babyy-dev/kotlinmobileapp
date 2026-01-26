@@ -36,6 +36,7 @@ data class UserResponse(
     val username: String,
     val email: String,
     val role: UserRole,
+    val status: String = "active",
     val phone: String? = null,
     val nickname: String? = null,
     val avatarUrl: String? = null,
@@ -48,4 +49,9 @@ data class UserResponse(
 @Serializable
 data class RoleUpdateRequest(
     val role: String
+)
+
+@Serializable
+data class UserStatusUpdateRequest(
+    val status: String
 )
