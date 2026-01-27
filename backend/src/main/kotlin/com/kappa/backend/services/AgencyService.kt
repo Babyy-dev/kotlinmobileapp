@@ -194,6 +194,39 @@ class AgencyService {
         }
     }
 
+    fun listAgencyApplicationsForUser(userId: UUID): List<AgencyApplicationResponse> {
+        return transaction {
+            AgencyApplications.select { AgencyApplications.userId eq userId }
+                .orderBy(AgencyApplications.createdAt, SortOrder.DESC)
+                .map { row ->
+                    AgencyApplicationResponse(
+                        id = row[AgencyApplications.id].toString(),
+                        userId = row[AgencyApplications.userId].toString(),
+                        agencyName = row[AgencyApplications.agencyName],
+                        status = row[AgencyApplications.status],
+                        createdAt = row[AgencyApplications.createdAt],
+                        reviewedAt = row[AgencyApplications.reviewedAt]
+                    )
+                }
+        }
+    }
+
+    fun listResellerApplicationsForUser(userId: UUID): List<ResellerApplicationResponse> {
+        return transaction {
+            ResellerApplications.select { ResellerApplications.userId eq userId }
+                .orderBy(ResellerApplications.createdAt, SortOrder.DESC)
+                .map { row ->
+                    ResellerApplicationResponse(
+                        id = row[ResellerApplications.id].toString(),
+                        userId = row[ResellerApplications.userId].toString(),
+                        status = row[ResellerApplications.status],
+                        createdAt = row[ResellerApplications.createdAt],
+                        reviewedAt = row[ResellerApplications.reviewedAt]
+                    )
+                }
+        }
+    }
+
     fun createTeam(userId: UUID, name: String): TeamResponse {
         require(name.isNotBlank()) { "Team name is required" }
         return transaction {

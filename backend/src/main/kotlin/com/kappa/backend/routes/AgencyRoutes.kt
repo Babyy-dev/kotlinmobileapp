@@ -28,6 +28,16 @@ fun Route.agencyRoutes(agencyService: AgencyService) {
         call.respond(ApiResponse(success = true, data = response))
     }
 
+    get("agency/applications/me") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@get call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val response = agencyService.listAgencyApplicationsForUser(UUID.fromString(userId))
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
     post("reseller/apply") {
         val principal = call.principal<JWTPrincipal>()
         val userId = principal?.subject ?: return@post call.respond(
@@ -35,6 +45,16 @@ fun Route.agencyRoutes(agencyService: AgencyService) {
             ApiResponse<Unit>(success = false, error = "Unauthorized")
         )
         val response = agencyService.applyForReseller(UUID.fromString(userId))
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
+    get("reseller/applications/me") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@get call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val response = agencyService.listResellerApplicationsForUser(UUID.fromString(userId))
         call.respond(ApiResponse(success = true, data = response))
     }
 

@@ -21,6 +21,12 @@ import com.kappa.app.core.network.model.RoomSeatDto
 import com.kappa.app.core.network.model.SignupRequest
 import com.kappa.app.core.network.model.UserDto
 import com.kappa.app.core.network.model.MuteParticipantRequest
+import com.kappa.app.core.network.model.AgencyApplicationDto
+import com.kappa.app.core.network.model.AgencyApplicationRequestDto
+import com.kappa.app.core.network.model.AgencyCommissionDto
+import com.kappa.app.core.network.model.ResellerApplicationDto
+import com.kappa.app.core.network.model.TeamCreateRequestDto
+import com.kappa.app.core.network.model.TeamDto
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -137,4 +143,35 @@ interface ApiService {
         @Path("id") id: String,
         @Body request: GiftSendRequest
     ): BaseApiResponse<GiftSendDto>
+
+    // Agency / reseller
+    @POST("agency/apply")
+    suspend fun applyForAgency(@Body request: AgencyApplicationRequestDto): BaseApiResponse<AgencyApplicationDto>
+
+    @POST("reseller/apply")
+    suspend fun applyForReseller(): BaseApiResponse<ResellerApplicationDto>
+
+    @GET("agency/applications")
+    suspend fun getAgencyApplications(): BaseApiResponse<List<AgencyApplicationDto>>
+
+    @GET("agency/applications/me")
+    suspend fun getMyAgencyApplications(): BaseApiResponse<List<AgencyApplicationDto>>
+
+    @GET("reseller/applications/me")
+    suspend fun getMyResellerApplications(): BaseApiResponse<List<ResellerApplicationDto>>
+
+    @POST("teams")
+    suspend fun createTeam(@Body request: TeamCreateRequestDto): BaseApiResponse<TeamDto>
+
+    @GET("teams")
+    suspend fun listTeams(): BaseApiResponse<List<TeamDto>>
+
+    @POST("teams/{id}/join")
+    suspend fun joinTeam(@Path("id") teamId: String): BaseApiResponse<Unit>
+
+    @POST("teams/{id}/leave")
+    suspend fun leaveTeam(@Path("id") teamId: String): BaseApiResponse<Unit>
+
+    @GET("commissions/me")
+    suspend fun getMyCommissions(@Query("limit") limit: Int? = null): BaseApiResponse<List<AgencyCommissionDto>>
 }

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Core palette -->
-    <color name="kappa_teal_950">#062724</color>
-    <color name="kappa_teal_900">#0A3A36</color>
-    <color name="kappa_teal_800">#0E4C46</color>
-    <color name="kappa_teal_700">#135D56</color>
-    <color name="kappa_teal_600">#1A7066</color>
-    <color name="kappa_mint_100">#DDF4EE</color>
-    <color name="kappa_mint_50">#F2FBF7</color>
-    <color name="kappa_gold_700">#A7792C</color>
-    <color name="kappa_gold_500">#D6B15E</color>
-    <color name="kappa_gold_300">#F2D79B</color>
-    <color name="kappa_cream">#F6F1E3</color>
-    <color name="kappa_surface">#FCFBF6</color>
-    <color name="kappa_charcoal">#1B1A17</color>
-    <color name="kappa_text_muted">#5E5A51</color>
-    <color name="kappa_outline">#E5D7B5</color>
+    <color name="kappa_teal_950">#042623</color>
+    <color name="kappa_teal_900">#0E3B35</color>
+    <color name="kappa_teal_800">#0F4E47</color>
+    <color name="kappa_teal_700">#16614F</color>
+    <color name="kappa_teal_600">#1A7564</color>
+    <color name="kappa_mint_100">#E8F3EF</color>
+    <color name="kappa_mint_50">#F4FCF9</color>
+    <color name="kappa_gold_700">#C6953A</color>
+    <color name="kappa_gold_500">#E3C268</color>
+    <color name="kappa_gold_300">#F7DFA0</color>
+    <color name="kappa_cream">#FFF8EB</color>
+    <color name="kappa_surface">#0D332F</color>
+    <color name="kappa_charcoal">#FDF8F1</color>
+    <color name="kappa_text_muted">#F8F3E6</color>
+    <color name="kappa_outline">#F3D88E</color>
 
     <!-- Primary colors -->
     <color name="primary">@color/kappa_teal_700</color>
@@ -28,12 +28,12 @@
     <color name="on_secondary">@color/kappa_charcoal</color>
 
     <!-- Background colors -->
-    <color name="background">@color/kappa_cream</color>
-    <color name="on_background">@color/kappa_charcoal</color>
+    <color name="background">@color/kappa_teal_950</color>
+    <color name="on_background">@color/kappa_cream</color>
 
     <!-- Surface colors -->
     <color name="surface">@color/kappa_surface</color>
-    <color name="on_surface">@color/kappa_charcoal</color>
+    <color name="on_surface">@color/kappa_cream</color>
 
     <!-- Error colors -->
     <color name="error">#B3362D</color>

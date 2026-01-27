@@ -87,3 +87,40 @@ fun GiftSendDto.toDomain(): GiftLog {
         createdAt = createdAt
     )
 }
+
+fun AgencyApplicationDto.toDomain(): com.kappa.app.agency.domain.model.AgencyApplication {
+    return com.kappa.app.agency.domain.model.AgencyApplication(
+        id = id,
+        agencyName = agencyName,
+        status = status,
+        createdAt = createdAt,
+        reviewedAt = reviewedAt
+    )
+}
+
+fun ResellerApplicationDto.toDomain(): com.kappa.app.agency.domain.model.ResellerApplication {
+    return com.kappa.app.agency.domain.model.ResellerApplication(
+        id = id,
+        status = status,
+        createdAt = createdAt,
+        reviewedAt = reviewedAt
+    )
+}
+
+fun TeamDto.toDomain(): com.kappa.app.agency.domain.model.Team {
+    return com.kappa.app.agency.domain.model.Team(
+        id = id,
+        name = name,
+        ownerUserId = ownerUserId,
+        agencyId = agencyId
+    )
+}
+
+fun AgencyCommissionDto.toDomain(): com.kappa.app.agency.domain.model.AgencyCommission {
+    return com.kappa.app.agency.domain.model.AgencyCommission(
+        id = id,
+        diamondsAmount = diamondsAmount,
+        commissionUsd = commissionUsd,
+        createdAt = createdAt
+    )
+}
