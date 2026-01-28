@@ -9,6 +9,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -28,11 +29,13 @@ class TokenAuthenticator @Inject constructor(
             return null
         }
 
+        Timber.d("TokenAuthenticator: authenticate called for ${response.request.url.encodedPath}")
         return runBlocking {
             mutex.withLock {
                 val latestToken = preferencesManager.getAccessTokenOnce()
                 val requestToken = response.request.header("Authorization")
                 if (!latestToken.isNullOrBlank() && requestToken != "Bearer $latestToken") {
+                    Timber.d("TokenAuthenticator: reusing cached token for ${response.request.url.encodedPath}")
                     return@runBlocking response.request.newBuilder()
                         .header("Authorization", "Bearer $latestToken")
                         .build()
@@ -50,6 +53,7 @@ class TokenAuthenticator @Inject constructor(
 
                 val data = refreshResponse?.data
                 if (refreshResponse == null || !refreshResponse.success || data == null) {
+                    Timber.w("TokenAuthenticator: refresh failed for ${response.request.url.encodedPath}")
                     preferencesManager.clearAllTokens()
                     return@runBlocking null
                 }
@@ -57,6 +61,7 @@ class TokenAuthenticator @Inject constructor(
                 preferencesManager.saveAccessToken(data.accessToken)
                 preferencesManager.saveRefreshToken(data.refreshToken)
                 preferencesManager.saveUserId(data.user.id)
+                Timber.d("TokenAuthenticator: refreshed tokens for user ${data.user.id}")
 
                 return@runBlocking response.request.newBuilder()
                     .header("Authorization", "Bearer ${data.accessToken}")

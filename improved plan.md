@@ -11,10 +11,10 @@ Legend: x = done, ! = in progress, ? = not started
 - ! Day 8: In progress
 - ! Day 9: In progress
 - x Day 10: Done
-- ! Day 11: In progress
-- ? Day 12: In progress
-- ? Day 13: In progress
-- ? Day 14: In progress
+ - x Day 11: Done
+ - x Day 12: Done
+ - x Day 13: Done
+ - x Day 14: Done
 
 For each day, I�ve included:
 

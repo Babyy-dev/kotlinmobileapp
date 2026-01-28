@@ -28,8 +28,9 @@
     <color name="on_secondary">@color/kappa_charcoal</color>
 
     <!-- Background colors -->
-    <color name="background">@color/kappa_teal_950</color>
-    <color name="on_background">@color/kappa_cream</color>
+    <color name="background">@color/kappa_white</color>
+    <color name="on_background">@color/kappa_charcoal</color>
+    <color name="kappa_white">#FFFFFF</color>
 
     <!-- Surface colors -->
     <color name="surface">@color/kappa_surface</color>

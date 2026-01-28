@@ -16,6 +16,7 @@
     <color name="kappa_charcoal">#FDF8F1</color>
     <color name="kappa_text_muted">#F8F3E6</color>
     <color name="kappa_outline">#F3D88E</color>
+    <color name="kappa_white">#FFFFFFFF</color>
 
     <!-- Primary colors -->
     <color name="primary">@color/kappa_teal_700</color>
@@ -28,8 +29,8 @@
     <color name="on_secondary">@color/kappa_charcoal</color>
 
     <!-- Background colors -->
-    <color name="background">@color/kappa_teal_950</color>
-    <color name="on_background">@color/kappa_cream</color>
+    <color name="background">@color/kappa_white</color>
+    <color name="on_background">@color/kappa_charcoal</color>
 
     <!-- Surface colors -->
     <color name="surface">@color/kappa_surface</color>

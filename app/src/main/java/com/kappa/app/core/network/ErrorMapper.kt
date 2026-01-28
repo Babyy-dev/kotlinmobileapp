@@ -18,6 +18,10 @@ class ErrorMapper @Inject constructor() {
         return when (throwable) {
             is HttpException -> {
                 when (throwable.code()) {
+                    401 -> NetworkError.HttpError(
+                        code = 401,
+                        message = "Invalid credentials"
+                    )
                     in 500..599 -> NetworkError.ServerError(
                         message = throwable.message() ?: "Server error"
                     )
