@@ -1,0 +1,31 @@
+{
+  "type": "unique",
+  "conversion_rate": 1.0,
+  "rules": {
+    "visual_variations": 3,
+    "kappa_used_only_for_last_3": true
+  },
+  "gifts": [
+    { "value": 1000, "name": "Jewel Necklace", "variations": ["Ruby necklace", "Sapphire necklace", "Diamond necklace"] },
+    { "value": 2000, "name": "Luxury Watch", "variations": ["Gold watch", "Black watch", "Shiny watch"] },
+    { "value": 3000, "name": "Supreme Ring", "variations": ["Gold ring", "Platinum ring", "Diamond ring"] },
+    { "value": 4000, "name": "Exclusive Perfume", "variations": ["Gold bottle", "Blue bottle", "Premium bottle"] },
+    { "value": 5000, "name": "Sports Car", "variations": ["Red car", "Blue car", "Chrome car"] },
+    { "value": 6000, "name": "Premium Motorcycle", "variations": ["Black bike", "Red bike", "Neon bike"] },
+    { "value": 7000, "name": "Luxury Bag", "variations": ["Gold bag", "Pink bag", "Shiny bag"] },
+    { "value": 8000, "name": "Yacht", "variations": ["White yacht", "Blue yacht", "Premium yacht"] },
+    { "value": 9000, "name": "Private Jet", "variations": ["Silver jet", "Black jet", "Gold jet"] },
+    { "value": 10000, "name": "Private Island", "variations": ["Tropical island", "Gold island", "Paradise island"] },
+    { "value": 20000, "name": "Diamond Vault", "variations": ["Silver vault", "Gold vault", "Shiny vault"] },
+    { "value": 30000, "name": "Luxury Castle", "variations": ["Classic castle", "Gold castle", "Illuminated castle"] },
+    { "value": 40000, "name": "Mansion", "variations": ["Modern mansion", "White mansion", "Luxury mansion"] },
+    { "value": 50000, "name": "VIP Helicopter", "variations": ["Black helicopter", "Gold helicopter", "Premium helicopter"] },
+    { "value": 60000, "name": "Super Yacht", "variations": ["White super yacht", "Blue super yacht", "Luxury super yacht"] },
+    { "value": 70000, "name": "Hyper Car", "variations": ["Red hyper car", "Black hyper car", "Neon hyper car"] },
+    { "value": 80000, "name": "Imperial Crown", "variations": ["Gold crown", "Ruby crown", "Diamond crown"] },
+    { "value": 90000, "name": "Royal Throne", "variations": ["Gold throne", "Ruby throne", "Illuminated throne"] },
+    { "value": 100000, "name": "Kappa Legendary", "variations": ["Golden Kappa", "Kappa with golden aura", "Epic Kappa"] },
+    { "value": 500000, "name": "Kappa Eternal", "variations": ["Eternal light Kappa", "Celestial Kappa", "Infinite Kappa"] },
+    { "value": 1000000, "name": "Kappa Omega", "variations": ["Final Kappa", "Cosmic Kappa", "Absolute Kappa"] }
+  ]
+}

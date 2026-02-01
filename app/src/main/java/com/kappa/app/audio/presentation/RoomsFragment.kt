@@ -32,6 +32,7 @@ class RoomsFragment : Fragment() {
 
     private val audioViewModel: AudioViewModel by activityViewModels()
     private lateinit var roomsAdapter: RoomsAdapter
+    private lateinit var popularRoomsAdapter: RoomsAdapter
     private var lastNavigatedRoomId: String? = null
     private var shouldRefreshOnReconnect = false
 
@@ -47,10 +48,18 @@ class RoomsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_rooms)
+        val popularRecycler = view.findViewById<RecyclerView>(R.id.recycler_rooms_popular)
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_rooms)
         val errorText = view.findViewById<TextView>(R.id.text_rooms_error)
         val refreshButton = view.findViewById<View>(R.id.button_refresh_rooms)
         val createButton = view.findViewById<View>(R.id.button_create_room)
+        val gamesButton = view.findViewById<View>(R.id.button_open_games)
+        val tabMeu = view.findViewById<TextView>(R.id.tab_rooms_meu)
+        val tabPopular = view.findViewById<TextView>(R.id.tab_rooms_popular)
+        val tabPosts = view.findViewById<TextView>(R.id.tab_rooms_posts)
+        val sectionMeu = view.findViewById<View>(R.id.section_rooms_meu)
+        val sectionPopular = view.findViewById<View>(R.id.section_rooms_popular)
+        val sectionPosts = view.findViewById<View>(R.id.section_rooms_posts)
 
         roomsAdapter = RoomsAdapter { room ->
             if (room.requiresPassword) {
@@ -62,6 +71,15 @@ class RoomsFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = roomsAdapter
+        popularRoomsAdapter = RoomsAdapter { room ->
+            if (room.requiresPassword) {
+                showPasswordPrompt(room)
+            } else {
+                audioViewModel.joinRoom(room.id)
+            }
+        }
+        popularRecycler.layoutManager = LinearLayoutManager(requireContext())
+        popularRecycler.adapter = popularRoomsAdapter
 
         audioViewModel.loadAudioRooms()
 
@@ -71,6 +89,38 @@ class RoomsFragment : Fragment() {
 
         createButton.setOnClickListener {
             showCreateRoomDialog()
+        }
+
+        gamesButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_game_hub)
+        }
+
+        fun setActiveTab(active: TextView) {
+            val activeColor = resources.getColor(R.color.kappa_gold_300, null)
+            val inactiveColor = resources.getColor(R.color.kappa_cream, null)
+            tabMeu.setTextColor(inactiveColor)
+            tabPopular.setTextColor(inactiveColor)
+            tabPosts.setTextColor(inactiveColor)
+            active.setTextColor(activeColor)
+        }
+
+        fun showSection(meu: Boolean, popular: Boolean, posts: Boolean) {
+            sectionMeu.visibility = if (meu) View.VISIBLE else View.GONE
+            sectionPopular.visibility = if (popular) View.VISIBLE else View.GONE
+            sectionPosts.visibility = if (posts) View.VISIBLE else View.GONE
+        }
+
+        tabMeu.setOnClickListener {
+            setActiveTab(tabMeu)
+            showSection(meu = true, popular = false, posts = false)
+        }
+        tabPopular.setOnClickListener {
+            setActiveTab(tabPopular)
+            showSection(meu = false, popular = true, posts = false)
+        }
+        tabPosts.setOnClickListener {
+            setActiveTab(tabPosts)
+            showSection(meu = false, popular = false, posts = true)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -89,6 +139,7 @@ class RoomsFragment : Fragment() {
                         errorText.visibility = View.GONE
                     }
                     roomsAdapter.submitList(state.rooms)
+                    popularRoomsAdapter.submitList(state.rooms)
 
                     val activeRoom = state.activeRoom
                     if (activeRoom == null) {

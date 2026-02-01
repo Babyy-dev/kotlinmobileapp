@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_emerald"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="92dp"
+            android:background="@drawable/bg_top_header">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_game_detail_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Game"
+                    android:textAppearance="@style/TextAppearance.Kappa.Headline"
+                    android:textColor="@color/kappa_gold_300" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_game_detail_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Game description"
+            android:textAppearance="@style/TextAppearance.Kappa.Body"
+            android:textColor="@color/kappa_gold_300" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/text_game_timer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="00:30"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_gold_300" />
+
+            <TextView
+                android:id="@+id/text_game_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Balance: 0"
+                android:textAppearance="@style/TextAppearance.Kappa.Body"
+                android:textColor="@color/kappa_mint_100" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_game_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Score: 0"
+            android:textAppearance="@style/TextAppearance.Kappa.Section"
+            android:textColor="@color/kappa_gold_300" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_game_join_now"
+            style="@style/Widget.Kappa.Button.Glow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Join Game" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_game_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Start"
+            style="@style/Widget.Kappa.Button.Secondary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_game_action"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Action"
+                style="@style/Widget.Kappa.Button.Secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_game_action_alt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Action 2"
+                style="@style/Widget.Kappa.Button.Secondary" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Players"
+            android:textAppearance="@style/TextAppearance.Kappa.Section"
+            android:textColor="@color/kappa_gold_300" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_game_players"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    </LinearLayout>
+</ScrollView>

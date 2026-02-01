@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:strokeColor="@color/kappa_outline"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_admin_panel_soft"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/text_admin_config_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Config"
+            android:textAppearance="@style/TextAppearance.Kappa.Section"
+            android:textColor="@color/kappa_gold_300" />
+
+        <TextView
+            android:id="@+id/text_admin_config_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Details"
+            android:textAppearance="@style/TextAppearance.Kappa.Body"
+            android:textColor="@color/kappa_mint_100" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_admin_edit"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Edit"
+                style="@style/Widget.Kappa.Button.Secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_admin_delete"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="Delete"
+                style="@style/Widget.Kappa.Button.Secondary" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

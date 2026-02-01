@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_screen_emerald"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".game.presentation.GameHubFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="92dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_top_header">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Mini Games"
+            android:textAppearance="@style/TextAppearance.Kappa.Headline"
+            android:textColor="@color/kappa_gold_300" />
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_games"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_game_card" />
+</LinearLayout>

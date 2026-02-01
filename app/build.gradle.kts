@@ -24,11 +24,19 @@ android {
             isMinifyEnabled = false
             buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/api/\"")
             buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
+            buildConfigField("String", "GAME_WS_URL", "\"wss://example.com/games\"")
+            buildConfigField("String", "ADMIN_API_BASE", "\"https://api.appkappa.com/api/admin/\"")
+            buildConfigField("String", "RESELLER_API_BASE", "\"https://api.appkappa.com/api/reseller/\"")
+            buildConfigField("String", "AGENCY_API_BASE", "\"https://api.appkappa.com/api/agency/\"")
         }
         release {
             isMinifyEnabled = true
             buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/api/\"")
             buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
+            buildConfigField("String", "GAME_WS_URL", "\"wss://example.com/games\"")
+            buildConfigField("String", "ADMIN_API_BASE", "\"https://api.appkappa.com/api/admin/\"")
+            buildConfigField("String", "RESELLER_API_BASE", "\"https://api.appkappa.com/api/reseller/\"")
+            buildConfigField("String", "AGENCY_API_BASE", "\"https://api.appkappa.com/api/agency/\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

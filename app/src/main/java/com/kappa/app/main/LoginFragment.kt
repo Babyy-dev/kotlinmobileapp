@@ -17,8 +17,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.kappa.app.R
 import com.kappa.app.auth.presentation.AuthViewModel
+import com.kappa.app.core.storage.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Login screen fragment.
@@ -27,6 +29,11 @@ import kotlinx.coroutines.launch
 class LoginFragment : Fragment() {
 
     private val authViewModel: AuthViewModel by viewModels()
+
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
+
+    private var hasNavigated = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -128,13 +135,24 @@ class LoginFragment : Fragment() {
                     }
 
                     if (state.isLoggedIn) {
-                        findNavController().navigate(
-                            R.id.navigation_home,
-                            null,
-                            navOptions {
-                                popUpTo(R.id.navigation_login) { inclusive = true }
+                        if (!hasNavigated) {
+                            hasNavigated = true
+                            val userId = preferencesManager.getUserIdOnce()
+                            val destination = if (!userId.isNullOrBlank() &&
+                                preferencesManager.isOnboardingComplete(userId)
+                            ) {
+                                R.id.navigation_inbox
+                            } else {
+                                R.id.navigation_onboarding_country
                             }
-                        )
+                            findNavController().navigate(
+                                destination,
+                                null,
+                                navOptions {
+                                    popUpTo(R.id.navigation_login) { inclusive = true }
+                                }
+                            )
+                        }
                     }
                 }
             }

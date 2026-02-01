@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.kappa.app.R
 import com.kappa.app.auth.domain.repository.AuthRepository
+import com.kappa.app.core.storage.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +22,9 @@ class SplashFragment : Fragment() {
 
     @Inject
     lateinit var authRepository: AuthRepository
+
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +40,12 @@ class SplashFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val isLoggedIn = authRepository.isLoggedIn()
             val destination = if (isLoggedIn) {
-                R.id.navigation_home
+                val userId = preferencesManager.getUserIdOnce()
+                if (!userId.isNullOrBlank() && preferencesManager.isOnboardingComplete(userId)) {
+                    R.id.navigation_inbox
+                } else {
+                    R.id.navigation_onboarding_country
+                }
             } else {
                 R.id.navigation_login
             }

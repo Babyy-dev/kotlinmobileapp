@@ -25,6 +25,7 @@ class PreferencesManager @Inject constructor(
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
         private val USER_ID_KEY = stringPreferencesKey("user_id")
+        private val ONBOARDING_USER_ID_KEY = stringPreferencesKey("onboarding_user_id")
     }
 
     suspend fun saveAccessToken(token: String) {
@@ -93,5 +94,23 @@ class PreferencesManager @Inject constructor(
 
     suspend fun getUserIdOnce(): String? {
         return getUserId().first()
+    }
+
+    suspend fun setOnboardingComplete(userId: String) {
+        dataStore.edit { preferences ->
+            preferences[ONBOARDING_USER_ID_KEY] = userId
+        }
+    }
+
+    suspend fun isOnboardingComplete(userId: String): Boolean {
+        return dataStore.data.map { preferences ->
+            preferences[ONBOARDING_USER_ID_KEY]
+        }.first() == userId
+    }
+
+    suspend fun clearOnboardingComplete() {
+        dataStore.edit { preferences ->
+            preferences.remove(ONBOARDING_USER_ID_KEY)
+        }
     }
 }

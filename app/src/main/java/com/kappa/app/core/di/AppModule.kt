@@ -10,6 +10,8 @@ import com.kappa.app.core.network.TokenAuthenticator
 import com.kappa.app.core.network.provideOkHttpClient
 import com.kappa.app.core.network.providePlainOkHttpClient
 import com.kappa.app.core.network.provideRetrofit
+import com.kappa.app.core.network.provideGson
+import com.google.gson.Gson
 import com.kappa.app.core.storage.PreferencesManager
 import com.kappa.app.economy.data.repository.RemoteEconomyRepository
 import com.kappa.app.economy.domain.repository.EconomyRepository
@@ -70,6 +72,12 @@ object AppModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGsonInstance(): Gson {
+        return provideGson()
     }
 
     @Provides

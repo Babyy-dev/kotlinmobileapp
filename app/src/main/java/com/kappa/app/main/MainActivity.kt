@@ -75,6 +75,8 @@ class MainActivity : AppCompatActivity() {
                     R.id.navigation_splash,
                     R.id.navigation_login,
                     R.id.navigation_signup,
+                    R.id.navigation_onboarding_country,
+                    R.id.navigation_onboarding_profile,
                     R.id.navigation_room_detail
                 )
                 navView.visibility = if (hideBottomNav) android.view.View.GONE else android.view.View.VISIBLE

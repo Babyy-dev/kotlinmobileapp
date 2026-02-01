@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,8 +18,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.kappa.app.R
 import com.kappa.app.auth.presentation.AuthViewModel
+import com.kappa.app.core.storage.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Signup screen fragment.
@@ -27,6 +30,11 @@ import kotlinx.coroutines.launch
 class SignupFragment : Fragment() {
 
     private val authViewModel: AuthViewModel by viewModels()
+
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
+
+    private var hasNavigated = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,13 +67,31 @@ class SignupFragment : Fragment() {
             val username = usernameInput.text?.toString()?.trim().orEmpty()
             val email = emailInput.text?.toString()?.trim().orEmpty()
             val password = passwordInput.text?.toString()?.trim().orEmpty()
+            val usingPhone = phoneLayout.visibility == View.VISIBLE
 
-            if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                authViewModel.signup(username, email, password)
-            } else {
-                errorText.text = "Please enter username, email, and password"
+            if (usingPhone) {
+                errorText.text = "Use phone OTP to signup"
                 errorText.visibility = View.VISIBLE
+                return@setOnClickListener
             }
+
+            if (username.isBlank()) {
+                errorText.text = "Username is required"
+                errorText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                errorText.text = "Enter a valid email address"
+                errorText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            if (password.length < 6) {
+                errorText.text = "Password must be at least 6 characters"
+                errorText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+
+            authViewModel.signup(username, email, password)
         }
 
         toggleButton.setOnClickListener {
@@ -134,13 +160,24 @@ class SignupFragment : Fragment() {
                     }
 
                     if (state.isLoggedIn) {
-                        findNavController().navigate(
-                            R.id.navigation_home,
-                            null,
-                            navOptions {
-                                popUpTo(R.id.navigation_signup) { inclusive = true }
+                        if (!hasNavigated) {
+                            hasNavigated = true
+                            val userId = preferencesManager.getUserIdOnce()
+                            val destination = if (!userId.isNullOrBlank() &&
+                                preferencesManager.isOnboardingComplete(userId)
+                            ) {
+                                R.id.navigation_inbox
+                            } else {
+                                R.id.navigation_onboarding_country
                             }
-                        )
+                            findNavController().navigate(
+                                destination,
+                                null,
+                                navOptions {
+                                    popUpTo(R.id.navigation_signup) { inclusive = true }
+                                }
+                            )
+                        }
                     }
                 }
             }

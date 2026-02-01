@@ -17,7 +17,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/logo"
         app:layout_constraintBottom_toTopOf="@id/text_splash_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

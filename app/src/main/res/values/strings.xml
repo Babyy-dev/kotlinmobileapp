@@ -4,6 +4,37 @@
     <string name="title_login">Login</string>
     <string name="title_signup">Signup</string>
     <string name="title_home">Home</string>
+    <string name="title_inbox">Inbox</string>
     <string name="title_rooms">Rooms</string>
     <string name="title_profile">Profile</string>
+    <string name="title_onboarding_country">Choose Country</string>
+    <string name="title_onboarding_profile">Complete Profile</string>
+    <string name="onboarding_country_title">Where are you from?</string>
+    <string name="onboarding_country_subtitle">Select your country to personalize your lounge.</string>
+    <string name="onboarding_country_hint">Choose country</string>
+    <string name="onboarding_country_next">Next</string>
+    <string name="onboarding_profile_title">Finish your profile</string>
+    <string name="onboarding_profile_subtitle">Add your name, avatar, and details.</string>
+    <string name="onboarding_profile_display_name_hint">Display name</string>
+    <string name="onboarding_profile_country_hint">Country</string>
+    <string name="onboarding_profile_language_hint">Language</string>
+    <string name="onboarding_profile_avatar">Pick avatar</string>
+    <string name="onboarding_profile_continue">Continue</string>
+
+    <string-array name="country_list">
+        <item>United States</item>
+        <item>Brazil</item>
+        <item>Canada</item>
+        <item>India</item>
+        <item>Indonesia</item>
+        <item>Mexico</item>
+        <item>Nigeria</item>
+        <item>Philippines</item>
+        <item>Saudi Arabia</item>
+        <item>United Kingdom</item>
+    </string-array>
+
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+
 </resources>

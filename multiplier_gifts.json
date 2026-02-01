@@ -1,0 +1,163 @@
+{
+  "type": "multiplier",
+  "conversion_rate": 0.1,
+  "rules": {
+    "visual_variations": 3,
+    "kappa_allowed": false
+  },
+  "gifts": [
+    {
+      "value": 20,
+      "name": "Heart",
+      "variations": ["Red heart", "Blue heart", "Multicolor glowing heart"]
+    },
+    {
+      "value": 30,
+      "name": "Star",
+      "variations": ["Yellow star", "Purple star", "Pulsing glow star"]
+    },
+    {
+      "value": 40,
+      "name": "Fire",
+      "variations": ["Orange flame", "Blue flame", "Rainbow flame"]
+    },
+    {
+      "value": 50,
+      "name": "Lucky Coin",
+      "variations": ["Gold coin", "Neon green coin", "Spinning glowing coin"]
+    },
+    {
+      "value": 60,
+      "name": "Lightning",
+      "variations": [
+        "Yellow lightning",
+        "Electric blue lightning",
+        "Glow lightning"
+      ]
+    },
+    {
+      "value": 70,
+      "name": "Balloon",
+      "variations": ["Red balloon", "Pink balloon", "Bright multicolor balloon"]
+    },
+    {
+      "value": 80,
+      "name": "Arc",
+      "variations": ["Golden arc", "Blue arc", "Luminous arc"]
+    },
+    {
+      "value": 90,
+      "name": "Explosion",
+      "variations": [
+        "Orange explosion",
+        "Purple explosion",
+        "Multicolor explosion"
+      ]
+    },
+    {
+      "value": 100,
+      "name": "Rocket",
+      "variations": ["Red rocket", "Blue rocket", "Rainbow rocket"]
+    },
+    {
+      "value": 125,
+      "name": "Crystal",
+      "variations": ["Pink crystal", "Blue crystal", "Shiny crystal"]
+    },
+    {
+      "value": 150,
+      "name": "Diamond",
+      "variations": ["Blue diamond", "Purple diamond", "Radiant diamond"]
+    },
+    {
+      "value": 175,
+      "name": "Meteor",
+      "variations": ["Orange meteor", "Red meteor", "Flaming meteor"]
+    },
+    {
+      "value": 200,
+      "name": "Crown",
+      "variations": ["Gold crown", "Blue crown", "Glowing crown"]
+    },
+    {
+      "value": 250,
+      "name": "Portal",
+      "variations": ["Blue portal", "Purple portal", "Luminous portal"]
+    },
+    {
+      "value": 300,
+      "name": "Lightning X",
+      "variations": ["Yellow lightning", "Purple lightning", "Neon lightning"]
+    },
+    {
+      "value": 350,
+      "name": "Star X",
+      "variations": ["Gold star", "Blue star", "Explosive star"]
+    },
+    {
+      "value": 400,
+      "name": "Orb",
+      "variations": ["Blue orb", "Purple orb", "Luminous orb"]
+    },
+    {
+      "value": 450,
+      "name": "Turbo",
+      "variations": ["Red turbo", "Blue turbo", "Flaming turbo"]
+    },
+    {
+      "value": 500,
+      "name": "Super Rocket",
+      "variations": ["Gold rocket", "Neon rocket", "Intense trail rocket"]
+    },
+    {
+      "value": 1000,
+      "name": "Mega Crystal",
+      "variations": ["Blue crystal", "Green crystal", "Giant glowing crystal"]
+    },
+    {
+      "value": 2000,
+      "name": "Mega Diamond",
+      "variations": ["Blue diamond", "Pink diamond", "Rainbow diamond"]
+    },
+    {
+      "value": 3000,
+      "name": "Gold Rain",
+      "variations": ["Gold coins", "Green coins", "Multicolor coins"]
+    },
+    {
+      "value": 4000,
+      "name": "Super Explosion",
+      "variations": ["Gold explosion", "Purple explosion", "Full explosion"]
+    },
+    {
+      "value": 5000,
+      "name": "Mega Crown",
+      "variations": ["Gold crown", "Red crown", "Flaming crown"]
+    },
+    {
+      "value": 10000,
+      "name": "Ultra Rocket",
+      "variations": ["Gold rocket", "Blue rocket", "Supreme rocket"]
+    },
+    {
+      "value": 50000,
+      "name": "Impact X",
+      "variations": ["Gold impact", "Purple impact", "Legendary impact"]
+    },
+    {
+      "value": 100000,
+      "name": "Max Energy",
+      "variations": ["Blue energy", "Red energy", "Rainbow energy"]
+    },
+    {
+      "value": 500000,
+      "name": "Final Explosion",
+      "variations": ["Gold explosion", "Blue explosion", "Supreme explosion"]
+    },
+    {
+      "value": 1000000,
+      "name": "Big Bang",
+      "variations": ["Blue big bang", "Purple big bang", "Multicolor big bang"]
+    }
+  ]
+}

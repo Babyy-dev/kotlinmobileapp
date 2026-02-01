@@ -5,22 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
 import com.kappa.app.R
-import com.kappa.app.auth.domain.repository.AuthRepository
-import com.kappa.app.core.config.AppConfig
-import com.kappa.app.core.network.NetworkMonitor
-import com.kappa.app.domain.user.toDisplayName
-import com.kappa.app.economy.presentation.EconomyViewModel
-import com.kappa.app.user.presentation.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Home screen fragment with technical dashboard.
@@ -28,21 +17,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
-    @Inject
-    lateinit var authRepository: AuthRepository
-
-    @Inject
-    lateinit var networkMonitor: NetworkMonitor
-
-    private val userViewModel: UserViewModel by viewModels()
-    private val economyViewModel: EconomyViewModel by viewModels()
-
-    private var loadedUserId: String? = null
-    private var hasLoggedOut = false
-    private var forceReloadCoins = false
-    private var shouldRefreshOnReconnect = false
-    private var isUserLoading = false
-    private var isEconomyLoading = false
+    private val inboxAdapter = InboxAdapter()
+    private val friendsAdapter = InboxAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,140 +31,63 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Display app configuration
-        displayAppInfo()
+        val messagesRecycler = view.findViewById<RecyclerView>(R.id.recycler_inbox_messages)
+        val friendsRecycler = view.findViewById<RecyclerView>(R.id.recycler_inbox_friends)
+        messagesRecycler.layoutManager = LinearLayoutManager(requireContext())
+        messagesRecycler.adapter = inboxAdapter
+        friendsRecycler.layoutManager = LinearLayoutManager(requireContext())
+        friendsRecycler.adapter = friendsAdapter
 
-        val progressBar = view.findViewById<android.widget.ProgressBar>(R.id.progress_home)
-        val errorText = view.findViewById<android.widget.TextView>(R.id.text_home_error)
-        val refreshButton = view.findViewById<android.view.View>(R.id.button_refresh_home)
+        val tabMensagem = view.findViewById<TextView>(R.id.tab_inbox_mensagem)
+        val tabAmigos = view.findViewById<TextView>(R.id.tab_inbox_amigos)
+        val tabFamilia = view.findViewById<TextView>(R.id.tab_inbox_familia)
+        val sectionMensagem = view.findViewById<View>(R.id.section_inbox_mensagem)
+        val sectionAmigos = view.findViewById<View>(R.id.section_inbox_amigos)
+        val sectionFamilia = view.findViewById<View>(R.id.section_inbox_familia)
 
-        refreshButton.setOnClickListener {
-            refreshHomeData()
+        fun setActiveTab(active: TextView) {
+            val activeColor = resources.getColor(R.color.kappa_gold_300, null)
+            val inactiveColor = resources.getColor(R.color.kappa_cream, null)
+            tabMensagem.setTextColor(inactiveColor)
+            tabAmigos.setTextColor(inactiveColor)
+            tabFamilia.setTextColor(inactiveColor)
+            active.setTextColor(activeColor)
         }
 
-        // Load current user and balance from backend
-        userViewModel.loadUser("me")
-
-        // Observe view states
-        observeUserState(progressBar, errorText)
-        observeEconomyState(progressBar, errorText)
-        observeNetworkState()
-
-        view.findViewById<android.view.View>(R.id.button_open_rooms).setOnClickListener {
-            findNavController().navigate(R.id.navigation_rooms)
+        fun showSection(mensagem: Boolean, amigos: Boolean, familia: Boolean) {
+            sectionMensagem.visibility = if (mensagem) View.VISIBLE else View.GONE
+            sectionAmigos.visibility = if (amigos) View.VISIBLE else View.GONE
+            sectionFamilia.visibility = if (familia) View.VISIBLE else View.GONE
         }
-    }
 
-    private fun displayAppInfo() {
-        view?.findViewById<android.widget.TextView>(R.id.text_app_version)?.text =
-            "Version: ${AppConfig.appVersion}"
-        view?.findViewById<android.widget.TextView>(R.id.text_build_type)?.text =
-            "Build: ${AppConfig.buildType}"
-        view?.findViewById<android.widget.TextView>(R.id.text_environment)?.text =
-            "Environment: ${AppConfig.currentEnvironment.name}"
-    }
-
-    private fun observeUserState(
-        progressBar: android.widget.ProgressBar,
-        errorText: android.widget.TextView
-    ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                userViewModel.viewState.collect { state ->
-                    // Update UI with user data
-                    val user = state.user
-                    updateUserDisplay(user?.username ?: "-", user?.role?.toDisplayName() ?: "Unknown")
-                    if (user != null && (loadedUserId != user.id || forceReloadCoins)) {
-                        loadedUserId = user.id
-                        economyViewModel.loadCoinBalance(user.id)
-                        forceReloadCoins = false
-                    }
-                    val error = state.error
-                    isUserLoading = state.isLoading
-                    updateLoading(progressBar)
-                    if (!hasLoggedOut && !error.isNullOrBlank() && error.contains("Session expired")) {
-                        hasLoggedOut = true
-                        authRepository.logout()
-                        findNavController().navigate(
-                            R.id.navigation_login,
-                            null,
-                            navOptions {
-                                popUpTo(R.id.navigation_home) { inclusive = true }
-                            }
-                        )
-                    }
-
-                    updateErrorState(error, errorText)
-                }
-            }
+        tabMensagem.setOnClickListener {
+            setActiveTab(tabMensagem)
+            showSection(mensagem = true, amigos = false, familia = false)
         }
-    }
-
-    private fun observeEconomyState(
-        progressBar: android.widget.ProgressBar,
-        errorText: android.widget.TextView
-    ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                economyViewModel.viewState.collect { state ->
-                    // Update UI with coin balance
-                    updateCoinBalanceDisplay(state.coinBalance?.balance ?: 0L)
-                    isEconomyLoading = state.isLoading
-                    updateLoading(progressBar)
-                    updateErrorState(state.error, errorText)
-                }
-            }
+        tabAmigos.setOnClickListener {
+            setActiveTab(tabAmigos)
+            showSection(mensagem = false, amigos = true, familia = false)
         }
-    }
-
-    private fun observeNetworkState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                networkMonitor.isOnline.collect { isOnline ->
-                    if (isOnline && shouldRefreshOnReconnect) {
-                        shouldRefreshOnReconnect = false
-                        refreshHomeData()
-                    }
-                }
-            }
+        tabFamilia.setOnClickListener {
+            setActiveTab(tabFamilia)
+            showSection(mensagem = false, amigos = false, familia = true)
         }
-    }
 
-    private fun refreshHomeData() {
-        forceReloadCoins = true
-        userViewModel.loadUser("me")
-        loadedUserId?.let { economyViewModel.loadCoinBalance(it) }
-    }
+        inboxAdapter.submitList(
+            listOf(
+                InboxItem(name = "User10", message = "Esse cara é tão preguiçoso...", badge = "VIP", isOnline = true),
+                InboxItem(name = "Be crazy", message = "Be crazy enough to know...", badge = null, isOnline = false),
+                InboxItem(name = "Admin Japinha", message = "ABRIMOS SUA A...", badge = "ADM", isOnline = true),
+                InboxItem(name = "AGT.JÜH", message = "Águia não anda com hiena.", badge = null, isOnline = true)
+            )
+        )
 
-    private fun updateLoading(progressBar: android.widget.ProgressBar) {
-        progressBar.visibility = if (isUserLoading || isEconomyLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun updateErrorState(
-        error: String?,
-        errorText: android.widget.TextView
-    ) {
-        if (error.isNullOrBlank()) {
-            if (!shouldRefreshOnReconnect) {
-                errorText.visibility = View.GONE
-            }
-            return
-        }
-        errorText.text = error
-        errorText.visibility = View.VISIBLE
-        if (error.contains("No internet", ignoreCase = true) ||
-            error.contains("timeout", ignoreCase = true)
-        ) {
-            shouldRefreshOnReconnect = true
-        }
-    }
-
-    private fun updateUserDisplay(username: String, role: String) {
-        view?.findViewById<android.widget.TextView>(R.id.text_user_name)?.text = "User: $username"
-        view?.findViewById<android.widget.TextView>(R.id.text_user_role)?.text = "Role: $role"
-    }
-
-    private fun updateCoinBalanceDisplay(balance: Long) {
-        view?.findViewById<android.widget.TextView>(R.id.text_coin_balance)?.text = "Coins: $balance"
+        friendsAdapter.submitList(
+            listOf(
+                InboxItem(name = "Sophie", message = "Online agora", badge = null, isOnline = true),
+                InboxItem(name = "Luna", message = "Saiu há 5 min", badge = null, isOnline = false),
+                InboxItem(name = "Admin Japinha", message = "Disponível", badge = "ADM", isOnline = true)
+            )
+        )
     }
 }

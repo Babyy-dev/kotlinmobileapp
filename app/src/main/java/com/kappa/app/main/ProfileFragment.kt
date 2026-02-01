@@ -24,6 +24,8 @@ import com.kappa.app.domain.user.toDisplayName
 import com.kappa.app.user.presentation.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -40,12 +42,16 @@ class ProfileFragment : Fragment() {
             return@registerForActivityResult
         }
         val context = context ?: return@registerForActivityResult
-        val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        if (bytes != null) {
-            selectedAvatarBytes = bytes
-            selectedAvatarName = resolveDisplayName(uri) ?: "avatar.png"
-            selectedAvatarMime = context.contentResolver.getType(uri) ?: "image/png"
-            avatarNameText?.text = selectedAvatarName
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            if (bytes != null) {
+                selectedAvatarBytes = bytes
+                selectedAvatarName = resolveDisplayName(uri) ?: "avatar.png"
+                selectedAvatarMime = context.contentResolver.getType(uri) ?: "image/png"
+                withContext(Dispatchers.Main) {
+                    avatarNameText?.text = selectedAvatarName
+                }
+            }
         }
     }
 
@@ -78,6 +84,15 @@ class ProfileFragment : Fragment() {
         val roleToolsLayout = view.findViewById<View>(R.id.layout_profile_role_tools)
         val roleToolsTitle = view.findViewById<TextView>(R.id.text_profile_role_tools_title)
         avatarNameText = view.findViewById(R.id.text_profile_avatar_name)
+        val tabOverview = view.findViewById<MaterialButton>(R.id.button_profile_tab_overview)
+        val tabEdit = view.findViewById<MaterialButton>(R.id.button_profile_tab_edit)
+        val tabTools = view.findViewById<MaterialButton>(R.id.button_profile_tab_tools)
+        val sectionOverview = view.findViewById<View>(R.id.section_profile_overview)
+        val sectionEdit = view.findViewById<View>(R.id.section_profile_edit)
+        val sectionTools = view.findViewById<View>(R.id.section_profile_tools)
+        val adminButton = view.findViewById<MaterialButton>(R.id.button_role_admin)
+        val agencyButton = view.findViewById<MaterialButton>(R.id.button_role_agency)
+        val resellerButton = view.findViewById<MaterialButton>(R.id.button_role_reseller)
 
         userViewModel.loadUser("me")
 
@@ -109,9 +124,25 @@ class ProfileFragment : Fragment() {
                 R.id.navigation_login,
                 null,
                 navOptions {
-                    popUpTo(R.id.navigation_home) { inclusive = true }
+                    popUpTo(R.id.navigation_inbox) { inclusive = true }
                 }
             )
+        }
+
+        fun showSection(overview: Boolean, edit: Boolean, tools: Boolean) {
+            sectionOverview.visibility = if (overview) View.VISIBLE else View.GONE
+            sectionEdit.visibility = if (edit) View.VISIBLE else View.GONE
+            sectionTools.visibility = if (tools) View.VISIBLE else View.GONE
+        }
+
+        tabOverview.setOnClickListener {
+            showSection(overview = true, edit = false, tools = false)
+        }
+        tabEdit.setOnClickListener {
+            showSection(overview = false, edit = true, tools = false)
+        }
+        tabTools.setOnClickListener {
+            showSection(overview = false, edit = false, tools = true)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -140,6 +171,9 @@ class ProfileFragment : Fragment() {
                     if (showRoleTools) {
                         roleToolsTitle.text = "Role tools (${user?.role?.toDisplayName()})"
                     }
+                    adminButton.visibility = if (user?.role == Role.ADMIN) View.VISIBLE else View.GONE
+                    agencyButton.visibility = if (user?.role == Role.AGENCY) View.VISIBLE else View.GONE
+                    resellerButton.visibility = if (user?.role == Role.RESELLER) View.VISIBLE else View.GONE
                     saveButton.isEnabled = !state.isSaving
                     avatarButton.isEnabled = !state.isSaving
                     if (state.error != null) {
@@ -153,6 +187,16 @@ class ProfileFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        adminButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_admin_dashboard)
+        }
+        agencyButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_agency_tools)
+        }
+        resellerButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_reseller_tools)
         }
     }
 

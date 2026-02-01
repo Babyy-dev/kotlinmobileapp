@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/kappa_white"
+    android:background="@drawable/bg_screen_emerald"
     android:fillViewport="true">
 
     <LinearLayout
@@ -133,7 +133,9 @@
                     android:id="@+id/input_seat_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:textColor="@color/kappa_cream"
+                    android:textColorHint="@color/kappa_text_muted" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -144,6 +146,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_take_seat"
+            style="@style/Widget.Kappa.Button.Glow"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -221,11 +224,14 @@
                     android:id="@+id/input_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textColor="@color/kappa_cream"
+                    android:textColorHint="@color/kappa_text_muted" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_send_message"
+            style="@style/Widget.Kappa.Button.Glow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -260,19 +266,74 @@
                 android:textAppearance="@style/TextAppearance.Kappa.Muted"
                 android:textColor="@color/kappa_mint_100" />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:hint="Gift amount (coins)"
-                style="@style/Widget.Kappa.TextInput">
+                android:scrollbars="none">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/input_gift_amount"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_gift_category_common"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Comum"
+                        style="@style/Widget.Kappa.Button.Secondary" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_gift_category_party"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Festa"
+                        style="@style/Widget.Kappa.Button.Secondary" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_gift_category_vip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="VIP"
+                        style="@style/Widget.Kappa.Button.Secondary" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_gifts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/text_selected_gift"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Selecione um presente"
+                    android:textAppearance="@style/TextAppearance.Kappa.Body"
+                    android:textColor="@color/kappa_mint_100" />
+
+                <TextView
+                    android:id="@+id/text_selected_gift_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_gold_300" />
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -285,15 +346,51 @@
                     android:id="@+id/input_gift_recipient"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textColor="@color/kappa_cream"
+                    android:textColorHint="@color/kappa_text_muted" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_send_gift"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Send Gift" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_gift_quantity_minus"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:text="-"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <TextView
+                    android:id="@+id/text_gift_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:text="1"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_cream" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_gift_quantity_plus"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:text="+"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_send_gift"
+            style="@style/Widget.Kappa.Button.Glow"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="Send Gift" />
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_refresh_room"
@@ -331,7 +428,9 @@
                     android:id="@+id/input_target_user"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textColor="@color/kappa_cream"
+                    android:textColorHint="@color/kappa_text_muted" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout

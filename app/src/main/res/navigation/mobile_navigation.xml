@@ -24,9 +24,21 @@
         tools:layout="@layout/fragment_signup" />
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_onboarding_country"
+        android:name="com.kappa.app.main.OnboardingCountryFragment"
+        android:label="@string/title_onboarding_country"
+        tools:layout="@layout/fragment_onboarding_country" />
+
+    <fragment
+        android:id="@+id/navigation_onboarding_profile"
+        android:name="com.kappa.app.main.OnboardingProfileFragment"
+        android:label="@string/title_onboarding_profile"
+        tools:layout="@layout/fragment_onboarding_profile" />
+
+    <fragment
+        android:id="@+id/navigation_inbox"
         android:name="com.kappa.app.main.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_inbox"
         tools:layout="@layout/fragment_home" />
 
     <fragment
@@ -42,9 +54,39 @@
         tools:layout="@layout/fragment_profile" />
 
     <fragment
+        android:id="@+id/navigation_admin_dashboard"
+        android:name="com.kappa.app.main.AdminDashboardFragment"
+        android:label="Admin"
+        tools:layout="@layout/fragment_admin_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_agency_tools"
+        android:name="com.kappa.app.main.AgencyToolsFragment"
+        android:label="Agency"
+        tools:layout="@layout/fragment_agency_tools" />
+
+    <fragment
+        android:id="@+id/navigation_reseller_tools"
+        android:name="com.kappa.app.main.ResellerToolsFragment"
+        android:label="Reseller"
+        tools:layout="@layout/fragment_reseller_tools" />
+
+    <fragment
         android:id="@+id/navigation_room_detail"
         android:name="com.kappa.app.audio.presentation.RoomDetailFragment"
         android:label="@string/title_rooms"
         tools:layout="@layout/fragment_room_detail" />
+
+    <fragment
+        android:id="@+id/navigation_game_hub"
+        android:name="com.kappa.app.game.presentation.GameHubFragment"
+        android:label="Mini Games"
+        tools:layout="@layout/fragment_game_hub" />
+
+    <fragment
+        android:id="@+id/navigation_game_detail"
+        android:name="com.kappa.app.game.presentation.GameDetailFragment"
+        android:label="Game"
+        tools:layout="@layout/fragment_game_detail" />
 
 </navigation>

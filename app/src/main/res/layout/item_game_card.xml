@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="14dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:strokeColor="@color/kappa_outline"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_admin_panel_soft"
+        android:padding="18dp">
+
+        <TextView
+            android:id="@+id/text_game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lucky Draw"
+            android:textAppearance="@style/TextAppearance.Kappa.Section"
+            android:textColor="@color/kappa_gold_300" />
+
+        <TextView
+            android:id="@+id/text_game_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Spin and win rewards"
+            android:textAppearance="@style/TextAppearance.Kappa.Body"
+            android:textColor="@color/kappa_mint_100" />
+
+        <TextView
+            android:id="@+id/text_game_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Entry: 200 coins"
+            android:textAppearance="@style/TextAppearance.Kappa.Muted"
+            android:textColor="@color/kappa_mint_100" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_game_join"
+            style="@style/Widget.Kappa.Button.Glow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Open Game" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

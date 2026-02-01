@@ -15,11 +15,11 @@
 
         <ImageView
             android:id="@+id/image_signup_logo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
             android:layout_marginTop="32dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_launcher_foreground"
+            android:src="@drawable/logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -55,7 +55,7 @@
             android:layout_marginTop="32dp"
             app:cardCornerRadius="18dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/kappa_surface"
+            app:cardBackgroundColor="@android:color/transparent"
             app:strokeColor="@color/kappa_outline"
             app:strokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -65,6 +65,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_admin_panel"
                 android:orientation="vertical"
                 android:padding="24dp">
 
@@ -85,7 +86,9 @@
                             android:id="@+id/input_signup_username"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text" />
+                            android:inputType="text"
+                            android:textColor="@color/kappa_cream"
+                            android:textColorHint="@color/kappa_text_muted" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -99,7 +102,9 @@
                             android:id="@+id/input_signup_email"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textEmailAddress" />
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/kappa_cream"
+                            android:textColorHint="@color/kappa_text_muted" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -113,11 +118,14 @@
                             android:id="@+id/input_signup_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textPassword" />
+                            android:inputType="textPassword"
+                            android:textColor="@color/kappa_cream"
+                            android:textColorHint="@color/kappa_text_muted" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_signup"
+            style="@style/Widget.Kappa.Button.Glow"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Sign up"
@@ -146,7 +154,7 @@
                         android:layout_marginTop="16dp"
                         android:text="Sign up with your number"
                         android:textAppearance="@style/TextAppearance.Kappa.Section"
-                        android:textColor="@color/kappa_charcoal" />
+                        android:textColor="@color/kappa_teal_950" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -159,7 +167,9 @@
                             android:id="@+id/input_signup_phone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="phone" />
+                            android:inputType="phone"
+                            android:textColor="@color/kappa_cream"
+                            android:textColorHint="@color/kappa_text_muted" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -173,7 +183,9 @@
                             android:id="@+id/input_signup_otp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number" />
+                            android:inputType="number"
+                            android:textColor="@color/kappa_cream"
+                            android:textColorHint="@color/kappa_text_muted" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.button.MaterialButton

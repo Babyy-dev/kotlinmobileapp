@@ -8,14 +8,14 @@
     <color name="kappa_teal_600">#1A7564</color>
     <color name="kappa_mint_100">#E8F3EF</color>
     <color name="kappa_mint_50">#F4FCF9</color>
-    <color name="kappa_gold_700">#C6953A</color>
-    <color name="kappa_gold_500">#E3C268</color>
-    <color name="kappa_gold_300">#F7DFA0</color>
+    <color name="kappa_gold_700">#8E6A2F</color>
+    <color name="kappa_gold_500">#B8924E</color>
+    <color name="kappa_gold_300">#D6BD82</color>
     <color name="kappa_cream">#FFF8EB</color>
     <color name="kappa_surface">#0D332F</color>
     <color name="kappa_charcoal">#FDF8F1</color>
     <color name="kappa_text_muted">#F8F3E6</color>
-    <color name="kappa_outline">#F3D88E</color>
+    <color name="kappa_outline">#B89A5C</color>
     <color name="kappa_white">#FFFFFFFF</color>
 
     <!-- Primary colors -->
