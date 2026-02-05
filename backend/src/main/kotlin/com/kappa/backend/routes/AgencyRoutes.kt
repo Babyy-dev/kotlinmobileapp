@@ -5,6 +5,10 @@ import com.kappa.backend.models.AgencyUpdateRequest
 import com.kappa.backend.models.ApiResponse
 import com.kappa.backend.models.TeamCreateRequest
 import com.kappa.backend.services.AgencyService
+import com.kappa.backend.data.Users
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -243,6 +247,31 @@ fun Route.agencyRoutes(agencyService: AgencyService) {
             call.respond(HttpStatusCode.NotFound, ApiResponse<Unit>(success = false, error = "Agency not found"))
             return@post
         }
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
+    get("agency/logs") {
+        val principal = call.principal<JWTPrincipal>()
+        val role = principal?.getClaim("role", String::class) ?: ""
+        val userId = principal?.subject ?: return@get call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+        val agencyId = if (role == "ADMIN") {
+            call.request.queryParameters["agencyId"]?.let { UUID.fromString(it) }
+        } else {
+            transaction {
+                Users.select { Users.id eq UUID.fromString(userId) }
+                    .singleOrNull()
+                    ?.get(Users.agencyId)
+            }
+        }
+        if (agencyId == null) {
+            call.respond(ApiResponse(success = true, data = emptyList<Any>()))
+            return@get
+        }
+        val response = agencyService.listLogs(agencyId, limit)
         call.respond(ApiResponse(success = true, data = response))
     }
 }

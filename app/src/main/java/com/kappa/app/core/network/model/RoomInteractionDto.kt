@@ -6,16 +6,22 @@ data class RoomMessageDto(
     val userId: String,
     val username: String,
     val message: String,
-    val createdAt: Long
+    val createdAt: Long,
+    val type: String = "CHAT"
 )
 
 data class RoomMessageRequest(
-    val message: String
+    val message: String,
+    val type: String? = null
 )
 
 data class GiftSendRequest(
     val recipientId: String? = null,
-    val amount: Long
+    val amount: Long,
+    val giftId: String? = null,
+    val giftType: String? = null,
+    val target: String? = null,
+    val recipientIds: List<String>? = null
 )
 
 data class GiftSendDto(

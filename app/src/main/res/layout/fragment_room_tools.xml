@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/text_tools_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Room Tools"
+        android:textAppearance="@style/TextAppearance.Kappa.Section"
+        android:textColor="@color/kappa_gold_300"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/text_tools_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Select a user from seats or enter a user id to moderate."
+        android:textAppearance="@style/TextAppearance.Kappa.Body"
+        android:textColor="@color/kappa_mint_100"
+        app:layout_constraintTop_toBottomOf="@id/text_tools_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_tools_seats"
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="12dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/text_tools_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_tools_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="User ID"
+        style="@style/Widget.Kappa.TextInput"
+        app:layout_constraintTop_toBottomOf="@id/recycler_tools_seats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_tools_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/kappa_cream"
+            android:textColorHint="@color/kappa_text_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_tools_actions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_tools_user"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_tools_mute"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:text="Mute"
+            style="@style/Widget.Kappa.Button.Secondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_tools_unmute"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:text="Unmute"
+            style="@style/Widget.Kappa.Button.Secondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_tools_kick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:text="Kick"
+            style="@style/Widget.Kappa.Button.Secondary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_tools_ban"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ban"
+            style="@style/Widget.Kappa.Button.Secondary" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_tools_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text=""
+        android:textAppearance="@style/TextAppearance.Kappa.Muted"
+        android:textColor="@color/kappa_text_muted"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_tools_actions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

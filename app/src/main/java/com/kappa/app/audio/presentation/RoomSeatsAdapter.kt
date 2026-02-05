@@ -10,13 +10,16 @@ import com.kappa.app.R
 import com.kappa.app.domain.audio.RoomSeat
 import com.kappa.app.domain.audio.SeatStatus
 
-class RoomSeatsAdapter : RecyclerView.Adapter<RoomSeatsAdapter.SeatViewHolder>() {
+class RoomSeatsAdapter(
+    private val onSeatClick: (RoomSeat) -> Unit,
+    private val onSeatLongClick: (RoomSeat) -> Unit = {}
+) : RecyclerView.Adapter<RoomSeatsAdapter.SeatViewHolder>() {
 
     private val items = mutableListOf<RoomSeat>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeatViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_room_seat, parent, false)
-        return SeatViewHolder(view)
+        return SeatViewHolder(view, onSeatClick, onSeatLongClick)
     }
 
     override fun onBindViewHolder(holder: SeatViewHolder, position: Int) {
@@ -31,7 +34,11 @@ class RoomSeatsAdapter : RecyclerView.Adapter<RoomSeatsAdapter.SeatViewHolder>()
         notifyDataSetChanged()
     }
 
-    class SeatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class SeatViewHolder(
+        itemView: View,
+        private val onSeatClick: (RoomSeat) -> Unit,
+        private val onSeatLongClick: (RoomSeat) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
         private val seatCard: View = itemView.findViewById(R.id.seat_card)
         private val titleText: TextView = itemView.findViewById(R.id.text_seat_title)
         private val statusText: TextView = itemView.findViewById(R.id.text_seat_status)
@@ -62,6 +69,11 @@ class RoomSeatsAdapter : RecyclerView.Adapter<RoomSeatsAdapter.SeatViewHolder>()
                     statusText.setTextColor(mutedText)
                     statusText.text = "Locked"
                 }
+            }
+            itemView.setOnClickListener { onSeatClick(seat) }
+            itemView.setOnLongClickListener {
+                onSeatLongClick(seat)
+                true
             }
         }
     }

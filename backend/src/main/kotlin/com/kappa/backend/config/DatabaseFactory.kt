@@ -13,6 +13,12 @@ import com.kappa.backend.data.Gifts
 import com.kappa.backend.data.AgencyCommissions
 import com.kappa.backend.data.AgencyApplications
 import com.kappa.backend.data.ResellerApplications
+import com.kappa.backend.data.ResellerSellers
+import com.kappa.backend.data.ResellerSellerLimits
+import com.kappa.backend.data.ResellerSales
+import com.kappa.backend.data.ResellerPaymentProofs
+import com.kappa.backend.data.ResellerAuditLogs
+import com.kappa.backend.data.AgencyAuditLogs
 import com.kappa.backend.data.RewardRequests
 import com.kappa.backend.data.SlotPlays
 import com.kappa.backend.data.TeamGroups
@@ -26,6 +32,18 @@ import com.kappa.backend.data.RoomMessages
 import com.kappa.backend.data.RoomParticipants
 import com.kappa.backend.data.RoomSeats
 import com.kappa.backend.data.Rooms
+import com.kappa.backend.data.Families
+import com.kappa.backend.data.FamilyMembers
+import com.kappa.backend.data.Friends
+import com.kappa.backend.data.InboxMessages
+import com.kappa.backend.data.InboxThreads
+import com.kappa.backend.data.InboxThreadReads
+import com.kappa.backend.data.AdminGlobalConfigs
+import com.kappa.backend.data.AdminGameConfigs
+import com.kappa.backend.data.AdminUserConfigs
+import com.kappa.backend.data.AdminQualificationConfigs
+import com.kappa.backend.data.AdminLockRules
+import com.kappa.backend.data.AdminAuditLogs
 import com.kappa.backend.data.SeedData
 import com.kappa.backend.data.Users
 import com.zaxxer.hikari.HikariConfig
@@ -55,6 +73,12 @@ object DatabaseFactory {
                 Agencies,
                 AgencyApplications,
                 ResellerApplications,
+                ResellerSellers,
+                ResellerSellerLimits,
+                ResellerSales,
+                ResellerPaymentProofs,
+                ResellerAuditLogs,
+                AgencyAuditLogs,
                 TeamGroups,
                 TeamMembers,
                 CoinWallets,
@@ -77,7 +101,19 @@ object DatabaseFactory {
                 RoomBans,
                 RoomMessages,
                 RoomGifts,
-                RefreshTokens
+                RefreshTokens,
+                Families,
+                FamilyMembers,
+                Friends,
+                InboxThreads,
+                InboxMessages,
+                InboxThreadReads,
+                AdminGlobalConfigs,
+                AdminGameConfigs,
+                AdminUserConfigs,
+                AdminQualificationConfigs,
+                AdminLockRules,
+                AdminAuditLogs
             )
             SeedData.seedIfEmpty()
         }

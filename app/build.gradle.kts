@@ -22,12 +22,12 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/api/\"")
-            buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
-            buildConfigField("String", "GAME_WS_URL", "\"wss://example.com/games\"")
-            buildConfigField("String", "ADMIN_API_BASE", "\"https://api.appkappa.com/api/admin/\"")
-            buildConfigField("String", "RESELLER_API_BASE", "\"https://api.appkappa.com/api/reseller/\"")
-            buildConfigField("String", "AGENCY_API_BASE", "\"https://api.appkappa.com/api/agency/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
+            buildConfigField("String", "LIVEKIT_URL", "\"ws://10.0.2.2:7880\"")
+            buildConfigField("String", "GAME_WS_URL", "\"http://10.0.2.2:8081\"")
+            buildConfigField("String", "ADMIN_API_BASE", "\"http://10.0.2.2:8080/api/admin/\"")
+            buildConfigField("String", "RESELLER_API_BASE", "\"http://10.0.2.2:8080/api/reseller/\"")
+            buildConfigField("String", "AGENCY_API_BASE", "\"http://10.0.2.2:8080/api/agency/\"")
         }
         release {
             isMinifyEnabled = true
@@ -102,6 +102,14 @@ dependencies {
 
     // Audio
     implementation(libs.livekit.android)
+
+    // Socket.IO
+    implementation("io.socket:socket.io-client:2.1.0") {
+        exclude(group = "org.json", module = "json")
+    }
+
+    // Phone number utilities
+    implementation("com.googlecode.libphonenumber:libphonenumber:8.13.32")
 
     // Testing
     testImplementation(libs.junit)

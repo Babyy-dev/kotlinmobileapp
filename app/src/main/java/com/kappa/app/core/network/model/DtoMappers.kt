@@ -10,6 +10,10 @@ import com.kappa.app.domain.audio.SeatStatus
 import com.kappa.app.domain.economy.CoinBalance
 import com.kappa.app.domain.user.Role
 import com.kappa.app.domain.user.User
+import com.kappa.app.domain.home.HomeBanner
+import com.kappa.app.domain.home.MiniGame
+import com.kappa.app.domain.home.AgencySummary
+import com.kappa.app.domain.home.SearchResult
 
 fun UserDto.toDomain(): User {
     val resolvedRole = Role.fromApi(role)
@@ -53,7 +57,13 @@ fun RoomDto.toDomain(): AudioRoom {
         seatMode = resolvedSeatMode,
         participantCount = participantCount,
         maxSeats = maxSeats,
-        requiresPassword = requiresPassword
+        requiresPassword = requiresPassword,
+        country = country,
+        region = region,
+        agencyName = agencyName,
+        agencyIconUrl = agencyIconUrl,
+        roomCode = roomCode,
+        isFavorite = isFavorite
     )
 }
 
@@ -73,7 +83,8 @@ fun RoomMessageDto.toDomain(): RoomMessage {
         userId = userId,
         username = username,
         message = message,
-        createdAt = createdAt
+        createdAt = createdAt,
+        messageType = type
     )
 }
 
@@ -122,5 +133,104 @@ fun AgencyCommissionDto.toDomain(): com.kappa.app.agency.domain.model.AgencyComm
         diamondsAmount = diamondsAmount,
         commissionUsd = commissionUsd,
         createdAt = createdAt
+    )
+}
+
+fun AgencyRoomDto.toRow(): Pair<String, String> {
+    return name to status
+}
+
+fun AgencyHostDto.toRow(): Pair<String, String> {
+    return name to "Diamonds: $diamonds"
+}
+
+fun ResellerSellerDto.toDomain(): com.kappa.app.reseller.domain.model.ResellerSeller {
+    return com.kappa.app.reseller.domain.model.ResellerSeller(
+        id = id,
+        sellerId = sellerId,
+        createdAt = createdAt
+    )
+}
+
+fun ResellerSellerLimitDto.toDomain(): com.kappa.app.reseller.domain.model.ResellerSellerLimit {
+    return com.kappa.app.reseller.domain.model.ResellerSellerLimit(
+        sellerId = sellerId,
+        totalLimit = totalLimit,
+        dailyLimit = dailyLimit,
+        updatedAt = updatedAt
+    )
+}
+
+fun ResellerSaleDto.toDomain(): com.kappa.app.reseller.domain.model.ResellerSale {
+    return com.kappa.app.reseller.domain.model.ResellerSale(
+        id = id,
+        saleId = saleId,
+        sellerId = sellerId,
+        buyerId = buyerId,
+        amount = amount,
+        currency = currency,
+        destinationAccount = destinationAccount,
+        createdAt = createdAt
+    )
+}
+
+fun ResellerProofDto.toDomain(): com.kappa.app.reseller.domain.model.ResellerPaymentProof {
+    return com.kappa.app.reseller.domain.model.ResellerPaymentProof(
+        id = id,
+        uri = uri,
+        amount = amount,
+        date = date,
+        beneficiary = beneficiary,
+        note = note,
+        createdAt = createdAt
+    )
+}
+
+fun GiftCatalogDto.toDomain(): com.kappa.app.domain.audio.GiftCatalogItem {
+    return com.kappa.app.domain.audio.GiftCatalogItem(
+        id = id,
+        name = name,
+        giftType = giftType,
+        costCoins = costCoins,
+        diamondPercent = diamondPercent,
+        category = category,
+        imageUrl = imageUrl
+    )
+}
+
+fun HomeBannerDto.toDomain(): HomeBanner {
+    return HomeBanner(
+        id = id,
+        title = title,
+        subtitle = subtitle,
+        imageUrl = imageUrl,
+        actionType = actionType,
+        actionTarget = actionTarget
+    )
+}
+
+fun MiniGameDto.toDomain(): MiniGame {
+    return MiniGame(
+        id = id,
+        title = title,
+        description = description,
+        entryFee = entryFee,
+        iconUrl = iconUrl
+    )
+}
+
+fun AgencySummaryDto.toDomain(): AgencySummary {
+    return AgencySummary(
+        id = id,
+        name = name,
+        country = country
+    )
+}
+
+fun SearchResultDto.toDomain(): SearchResult {
+    return SearchResult(
+        rooms = rooms.map { it.toDomain() },
+        users = users.map { it.toDomain() },
+        agencies = agencies.map { it.toDomain() }
     )
 }

@@ -11,7 +11,8 @@ data class RoomCreateRequest(
     val name: String,
     val seatMode: String = "FREE",
     val maxSeats: Int = 28,
-    val password: String? = null
+    val password: String? = null,
+    val country: String? = null
 )
 
 data class JoinRoomRequest(

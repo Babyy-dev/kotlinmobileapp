@@ -15,9 +15,11 @@
 
         <ImageView
             android:id="@+id/image_onboarding_profile"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="180dp"
+            android:layout_height="90dp"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/onboarding_profile_title"
+            android:scaleType="fitCenter"
             android:src="@drawable/logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -107,13 +109,16 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/onboarding_profile_language_hint"
                     android:layout_marginBottom="12dp"
+                    android:popupBackground="@drawable/bg_dropdown"
+                    app:endIconMode="dropdown_menu"
                     style="@style/Widget.Kappa.TextInput">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/input_onboarding_language"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
+                        android:completionThreshold="0"
                         android:textColor="@color/kappa_cream"
                         android:textColorHint="@color/kappa_text_muted" />
                 </com.google.android.material.textfield.TextInputLayout>

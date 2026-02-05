@@ -59,7 +59,8 @@ fun Route.roomRoutes(
         val seatMode = jsonRequest?.seatMode?.name ?: params?.get("seatMode") ?: SeatMode.FREE.name
         val maxSeats = jsonRequest?.maxSeats ?: params?.get("maxSeats")?.toIntOrNull() ?: 28
         val password = jsonRequest?.password ?: params?.get("password")
-        val created = roomService.createRoom(name, seatMode, maxSeats, password)
+        val country = jsonRequest?.country ?: params?.get("country")
+        val created = roomService.createRoom(name, seatMode, maxSeats, password, country)
         call.respond(ApiResponse(success = true, data = created))
     }
 
@@ -126,6 +127,27 @@ fun Route.roomRoutes(
             return@post
         }
         call.respond(ApiResponse(success = true, data = Unit, message = "Room closed"))
+    }
+
+    post("rooms/{id}/family/{familyId}") {
+        val principal = call.principal<JWTPrincipal>()
+        val role = principal?.getClaim("role", String::class) ?: ""
+        if (!isRoomModerator(role)) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "Insufficient permissions"))
+            return@post
+        }
+        val roomId = call.parameters["id"] ?: return@post call.respond(
+            HttpStatusCode.BadRequest,
+            ApiResponse<Unit>(success = false, error = "Missing room id")
+        )
+        val familyId = call.parameters["familyId"]
+        val familyUuid = familyId?.let { value -> runCatching { UUID.fromString(value) }.getOrNull() }
+        val response = roomService.assignFamily(UUID.fromString(roomId), familyUuid)
+        if (response == null) {
+            call.respond(HttpStatusCode.NotFound, ApiResponse<Unit>(success = false, error = "Room not found"))
+            return@post
+        }
+        call.respond(ApiResponse(success = true, data = response))
     }
 
     get("rooms/{id}/seats") {

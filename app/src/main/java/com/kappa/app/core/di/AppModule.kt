@@ -90,8 +90,8 @@ object AppModule {
     @Provides
     @Singleton
     @Named("refresh")
-    fun provideRefreshApi(@Named("refresh") retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
+    fun provideRefreshApi(@Named("refresh") refreshRetrofit: Retrofit): ApiService {
+        return refreshRetrofit.create(ApiService::class.java)
     }
 
     @Provides

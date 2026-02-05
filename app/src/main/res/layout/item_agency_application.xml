@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_admin_panel_soft"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/text_agency_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Agency"
+        android:textAppearance="@style/TextAppearance.Kappa.Section"
+        android:textColor="@color/kappa_gold_300" />
+
+    <TextView
+        android:id="@+id/text_agency_app_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Status: PENDING"
+        android:textAppearance="@style/TextAppearance.Kappa.Body"
+        android:textColor="@color/kappa_mint_100" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_agency_app_approve"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Approve"
+            style="@style/Widget.Kappa.Button.Glow" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_agency_app_reject"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reject"
+            style="@style/Widget.Kappa.Button.Secondary" />
+    </LinearLayout>
+</LinearLayout>

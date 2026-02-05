@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Rule name"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Cooldown (minutes)"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_cooldown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Min turnover"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_turnover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Max loss"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_loss"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Period (minutes)"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Max actions per period"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_max_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Scope (user/agency/reseller)"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_scope"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Actions (comma separated)"
+            style="@style/Widget.Kappa.TextInput">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_admin_lock_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/kappa_cream"
+                android:textColorHint="@color/kappa_text_muted" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</ScrollView>

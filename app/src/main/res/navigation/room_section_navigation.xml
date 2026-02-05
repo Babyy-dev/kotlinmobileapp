@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/room_section_navigation"
+    app:startDestination="@id/room_section_chat">
+
+    <fragment
+        android:id="@+id/room_section_audio"
+        android:name="com.kappa.app.audio.presentation.RoomAudioFragment"
+        android:label="Audio"
+        tools:layout="@layout/fragment_room_audio" />
+
+    <fragment
+        android:id="@+id/room_section_seats"
+        android:name="com.kappa.app.audio.presentation.RoomSeatsFragment"
+        android:label="Seats"
+        tools:layout="@layout/fragment_room_seats" />
+
+    <fragment
+        android:id="@+id/room_section_chat"
+        android:name="com.kappa.app.audio.presentation.RoomChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_room_chat" />
+
+    <fragment
+        android:id="@+id/room_section_gifts"
+        android:name="com.kappa.app.audio.presentation.RoomGiftsFragment"
+        android:label="Gifts"
+        tools:layout="@layout/fragment_room_gifts" />
+
+    <fragment
+        android:id="@+id/room_section_tools"
+        android:name="com.kappa.app.audio.presentation.RoomToolsFragment"
+        android:label="Tools"
+        tools:layout="@layout/fragment_room_tools" />
+
+</navigation>

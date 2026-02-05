@@ -1,63 +1,96 @@
 package com.kappa.app.reseller.presentation
 
 import androidx.lifecycle.ViewModel
-import com.kappa.app.core.base.ViewState
+import androidx.lifecycle.viewModelScope
+import com.kappa.app.reseller.domain.model.ResellerPaymentProof
+import com.kappa.app.reseller.domain.model.ResellerSale
+import com.kappa.app.reseller.domain.model.ResellerSeller
+import com.kappa.app.reseller.domain.model.ResellerSellerLimit
+import com.kappa.app.reseller.domain.repository.ResellerRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
-data class SellerLimit(
-    val sellerId: String,
-    val totalLimit: Long,
-    val dailyLimit: Long
-)
-
-data class SellerSale(
-    val saleId: String,
-    val sellerId: String,
-    val buyerId: String,
-    val amount: Long,
-    val currency: String,
-    val timestamp: Long,
-    val destinationAccount: String
-)
-
-data class PaymentProof(
-    val uri: String,
-    val amount: Long,
-    val date: String,
-    val beneficiary: String,
-    val note: String?
-)
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class ResellerState(
-    val sellers: List<String> = emptyList(),
-    val limits: List<SellerLimit> = emptyList(),
-    val sales: List<SellerSale> = emptyList(),
-    val proofs: List<PaymentProof> = emptyList(),
-    val message: String? = null
-) : ViewState
+    val sellers: List<ResellerSeller> = emptyList(),
+    val limits: List<ResellerSellerLimit> = emptyList(),
+    val sales: List<ResellerSale> = emptyList(),
+    val proofs: List<ResellerPaymentProof> = emptyList(),
+    val message: String? = null,
+    val isLoading: Boolean = false
+) 
 
-class ResellerViewModel : ViewModel() {
+@HiltViewModel
+class ResellerViewModel @Inject constructor(
+    private val repository: ResellerRepository
+) : ViewModel() {
 
-    private val _viewState = MutableStateFlow(ResellerState())
+    private val _viewState = MutableStateFlow(ResellerState(isLoading = true))
     val viewState: StateFlow<ResellerState> = _viewState.asStateFlow()
 
+    init {
+        refreshAll()
+    }
+
+    fun refreshAll() {
+        viewModelScope.launch {
+            _viewState.update { it.copy(isLoading = true, message = null) }
+            val sellers = repository.listSellers().getOrElse {
+                emitMessage(it.message)
+                emptyList()
+            }
+            val limits = sellers.mapNotNull { seller ->
+                repository.getSellerLimit(seller.sellerId).getOrNull()
+            }
+            val sales = repository.listSales().getOrElse {
+                emitMessage(it.message)
+                emptyList()
+            }
+            val proofs = repository.listProofs().getOrElse {
+                emitMessage(it.message)
+                emptyList()
+            }
+            _viewState.update {
+                it.copy(
+                    sellers = sellers,
+                    limits = limits,
+                    sales = sales,
+                    proofs = proofs,
+                    isLoading = false
+                )
+            }
+        }
+    }
+
     fun addSeller(sellerId: String) {
-        _viewState.value = _viewState.value.copy(
-            sellers = _viewState.value.sellers + sellerId,
-            limits = _viewState.value.limits + SellerLimit(sellerId, 5000, 1000),
-            message = "Seller added"
-        )
+        viewModelScope.launch {
+            repository.addSeller(sellerId)
+                .onSuccess { seller ->
+                    _viewState.update { it.copy(sellers = it.sellers + seller, message = "Seller added") }
+                }
+                .onFailure { emitMessage(it.message) }
+            refreshAll()
+        }
     }
 
     fun setSellerLimits(sellerId: String, totalLimit: Long, dailyLimit: Long) {
-        val updated = _viewState.value.limits.filterNot { it.sellerId == sellerId } +
-            SellerLimit(sellerId, totalLimit, dailyLimit)
-        _viewState.value = _viewState.value.copy(
-            limits = updated,
-            message = "Limits updated"
-        )
+        viewModelScope.launch {
+            repository.setSellerLimit(sellerId, totalLimit, dailyLimit)
+                .onSuccess { limit ->
+                    _viewState.update {
+                        it.copy(
+                            limits = it.limits.filterNot { item -> item.sellerId == sellerId } + limit,
+                            message = "Limits updated"
+                        )
+                    }
+                }
+                .onFailure { emitMessage(it.message) }
+            refreshAll()
+        }
     }
 
     fun addSale(
@@ -68,33 +101,39 @@ class ResellerViewModel : ViewModel() {
         currency: String,
         destinationAccount: String
     ) {
-        _viewState.value = _viewState.value.copy(
-            sales = _viewState.value.sales + SellerSale(
-                saleId = saleId,
-                sellerId = sellerId,
-                buyerId = buyerId,
-                amount = amount,
-                currency = currency,
-                timestamp = System.currentTimeMillis(),
-                destinationAccount = destinationAccount
-            ),
-            message = "Sale recorded"
-        )
+        viewModelScope.launch {
+            repository.createSale(saleId, sellerId, buyerId, amount, currency, destinationAccount)
+                .onSuccess { sale ->
+                    _viewState.update { it.copy(sales = it.sales + sale, message = "Sale recorded") }
+                }
+                .onFailure { emitMessage(it.message) }
+            refreshAll()
+        }
     }
 
     fun addPaymentProof(uri: String, amount: Long, date: String, beneficiary: String, note: String?) {
-        _viewState.value = _viewState.value.copy(
-            proofs = _viewState.value.proofs + PaymentProof(uri, amount, date, beneficiary, note),
-            message = "Payment proof uploaded"
-        )
+        viewModelScope.launch {
+            repository.createProof(uri, amount, date, beneficiary, note)
+                .onSuccess { proof ->
+                    _viewState.update { it.copy(proofs = it.proofs + proof, message = "Payment proof uploaded") }
+                }
+                .onFailure { emitMessage(it.message) }
+            refreshAll()
+        }
     }
 
     fun sendCoins(recipient: String, amount: Long) {
-        val limit = _viewState.value.limits.find { it.sellerId == recipient }
-        if (limit != null && amount > limit.totalLimit) {
-            _viewState.value = _viewState.value.copy(message = "Amount exceeds seller limit")
-            return
+        viewModelScope.launch {
+            repository.sendCoins(recipient, amount, null)
+                .onSuccess { result ->
+                    _viewState.update { it.copy(message = "Coins sent. Balance ${result.balance}") }
+                }
+                .onFailure { emitMessage(it.message) }
         }
-        _viewState.value = _viewState.value.copy(message = "Coins sent to $recipient")
+    }
+
+    private fun emitMessage(message: String?) {
+        if (message.isNullOrBlank()) return
+        _viewState.update { it.copy(message = message, isLoading = false) }
     }
 }

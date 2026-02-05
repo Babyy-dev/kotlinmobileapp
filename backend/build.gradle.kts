@@ -33,6 +33,7 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.mindrot:jbcrypt:$bcryptVersion")
     implementation("com.nimbusds:nimbus-jose-jwt:$nimbusVersion")
+    implementation("com.corundumstudio.socketio:netty-socketio:2.0.9")
 }
 
 application {

@@ -33,14 +33,14 @@ class LocalGameEngine(
         sessionId = UUID.randomUUID().toString()
         pot += entryFee
         players[userId] = GamePlayer(userId, userId.take(8), 0)
-        events.tryEmit(GameSessionEvent.Joined(sessionId = sessionId, balance = balance - entryFee))
+        events.tryEmit(GameSessionEvent.Joined(sessionId = sessionId))
         if (!running) {
             startLoop()
         }
     }
 
     fun action(action: GameAction) {
-        if (!running || action.sessionId != sessionId || action.gameId != gameId || action.roomId != roomId) {
+        if (!running) {
             return
         }
         val player = players.values.firstOrNull() ?: return
@@ -51,7 +51,16 @@ class LocalGameEngine(
             GameType.TAP_SPEED -> player.copy(score = player.score + 1)
         }
         players[player.id] = updated
-        events.tryEmit(GameSessionEvent.State(players.values.toList(), timeLeft, pot))
+        events.tryEmit(
+            GameSessionEvent.State(
+                roomId = roomId,
+                phase = "running",
+                players = players.values.toList(),
+                updatedAt = System.currentTimeMillis(),
+                timeLeft = timeLeft,
+                pot = pot
+            )
+        )
     }
 
     private fun startLoop() {
@@ -59,7 +68,16 @@ class LocalGameEngine(
         scope.launch(Dispatchers.Default) {
             timeLeft = 30
             while (timeLeft >= 0) {
-                events.emit(GameSessionEvent.State(players.values.toList(), timeLeft, pot))
+                events.emit(
+                    GameSessionEvent.State(
+                        roomId = roomId,
+                        phase = "running",
+                        players = players.values.toList(),
+                        updatedAt = System.currentTimeMillis(),
+                        timeLeft = timeLeft,
+                        pot = pot
+                    )
+                )
                 delay(1000)
                 timeLeft -= 1
             }
@@ -72,7 +90,15 @@ class LocalGameEngine(
                 val perWinner = rewardPool / winners.size
                 winners.forEach { rewards[it.id] = perWinner }
             }
-            events.emit(GameSessionEvent.Result(winners, rewards))
+            val rewardTotal = rewards.values.sum()
+            events.emit(
+                GameSessionEvent.Result(
+                    roomId = roomId,
+                    status = "ended",
+                    reward = rewardTotal,
+                    balance = null
+                )
+            )
             players.clear()
             pot = 0
         }

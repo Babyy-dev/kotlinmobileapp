@@ -5,13 +5,18 @@ import com.kappa.app.audio.domain.repository.JoinRoomInfo
 import com.kappa.app.core.network.ApiService
 import com.kappa.app.core.network.ErrorMapper
 import com.kappa.app.core.network.model.GiftSendRequest
+import com.kappa.app.core.network.model.GiftCatalogDto
 import com.kappa.app.core.network.model.JoinRoomRequest
 import com.kappa.app.core.network.model.MuteParticipantRequest
 import com.kappa.app.core.network.model.RoomMessageRequest
 import com.kappa.app.core.network.model.toDomain
 import com.kappa.app.domain.audio.GiftLog
+import com.kappa.app.domain.audio.GiftCatalogItem
 import com.kappa.app.domain.audio.RoomMessage
 import com.kappa.app.domain.audio.RoomSeat
+import com.kappa.app.domain.home.HomeBanner
+import com.kappa.app.domain.home.MiniGame
+import com.kappa.app.domain.home.SearchResult
 import javax.inject.Inject
 
 class RemoteAudioRepository @Inject constructor(
@@ -26,6 +31,36 @@ class RemoteAudioRepository @Inject constructor(
                 Result.failure(Exception(response.error ?: "Failed to load rooms"))
             } else {
                 Result.success(rooms.map { it.toDomain() })
+            }
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
+    }
+
+    override suspend fun getHomeBanners(): Result<List<HomeBanner>> {
+        return try {
+            val response = apiService.getHomeBanners()
+            val banners = response.data
+            if (!response.success || banners == null) {
+                Result.failure(Exception(response.error ?: "Failed to load banners"))
+            } else {
+                Result.success(banners.map { it.toDomain() })
+            }
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
+    }
+
+    override suspend fun getPopularMiniGames(): Result<List<MiniGame>> {
+        return try {
+            val response = apiService.getPopularMiniGames()
+            val games = response.data
+            if (!response.success || games == null) {
+                Result.failure(Exception(response.error ?: "Failed to load mini games"))
+            } else {
+                Result.success(games.map { it.toDomain() })
             }
         } catch (throwable: Throwable) {
             val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
@@ -173,6 +208,20 @@ class RemoteAudioRepository @Inject constructor(
         }
     }
 
+    override suspend fun requestSeat(roomId: String, seat: Int): Result<Unit> {
+        return try {
+            val response = apiService.requestSeat(roomId, seat)
+            if (!response.success) {
+                Result.failure(Exception(response.error ?: "Failed to request seat"))
+            } else {
+                Result.success(Unit)
+            }
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
+    }
+
     override suspend fun muteParticipant(roomId: String, userId: String, muted: Boolean): Result<Unit> {
         return try {
             val response = apiService.muteParticipant(roomId, userId, MuteParticipantRequest(muted))
@@ -215,6 +264,21 @@ class RemoteAudioRepository @Inject constructor(
         }
     }
 
+    override suspend fun toggleRoomFavorite(roomId: String, favorite: Boolean): Result<com.kappa.app.domain.audio.AudioRoom> {
+        return try {
+            val response = apiService.toggleRoomFavorite(roomId, favorite)
+            val data = response.data
+            if (!response.success || data == null) {
+                Result.failure(Exception(response.error ?: "Failed to update favorite"))
+            } else {
+                Result.success(data.toDomain())
+            }
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
+    }
+
     override suspend fun getRoomMessages(roomId: String): Result<List<RoomMessage>> {
         return try {
             val response = apiService.getRoomMessages(roomId)
@@ -232,7 +296,7 @@ class RemoteAudioRepository @Inject constructor(
 
     override suspend fun sendRoomMessage(roomId: String, message: String): Result<RoomMessage> {
         return try {
-            val response = apiService.sendRoomMessage(roomId, RoomMessageRequest(message))
+            val response = apiService.sendRoomMessage(roomId, RoomMessageRequest(message, type = "CHAT"))
             val data = response.data
             if (!response.success || data == null) {
                 Result.failure(Exception(response.error ?: "Failed to send message"))
@@ -260,12 +324,60 @@ class RemoteAudioRepository @Inject constructor(
         }
     }
 
-    override suspend fun sendGift(roomId: String, amount: Long, recipientId: String?): Result<GiftLog> {
+    override suspend fun sendGift(
+        roomId: String,
+        amount: Long,
+        recipientId: String?,
+        giftId: String?,
+        giftType: String?,
+        target: String?,
+        recipientIds: List<String>?
+    ): Result<GiftLog> {
         return try {
-            val response = apiService.sendGift(roomId, GiftSendRequest(recipientId = recipientId, amount = amount))
+            val response = apiService.sendGift(
+                roomId,
+                GiftSendRequest(
+                    recipientId = recipientId,
+                    amount = amount,
+                    giftId = giftId,
+                    giftType = giftType,
+                    target = target,
+                    recipientIds = recipientIds
+                )
+            )
             val data = response.data
             if (!response.success || data == null) {
                 Result.failure(Exception(response.error ?: "Failed to send gift"))
+            } else {
+                Result.success(data.toDomain())
+            }
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
+    }
+
+    override suspend fun getGiftCatalog(): Result<List<GiftCatalogItem>> {
+        return try {
+            val response = apiService.getGiftCatalog()
+            val catalog = response.data
+            if (!response.success || catalog == null) {
+                Result.failure(Exception(response.error ?: "Failed to load gifts"))
+            } else {
+                Result.success(catalog.map(GiftCatalogDto::toDomain))
+            }
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
+    }
+
+    override suspend fun search(query: String): Result<SearchResult> {
+        return try {
+            val response = apiService.searchAll(query)
+            val data = response.data
+            if (!response.success || data == null) {
+                Result.failure(Exception(response.error ?: "Search failed"))
             } else {
                 Result.success(data.toDomain())
             }

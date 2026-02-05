@@ -1,270 +1,470 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_emerald"
-    android:fillViewport="true">
+    tools:context=".main.HomeFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        tools:context=".main.HomeFragment">
+    <ImageView
+        android:id="@+id/image_home_top_bg"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_top_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="104dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_top_header">
+    <ImageView
+        android:id="@+id/image_home_bottom_bg"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_bottom_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:paddingBottom="16dp"
-                android:weightSum="3">
-
-                <TextView
-                    android:id="@+id/tab_inbox_mensagem"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Mensagem"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section"
-                    android:textColor="@color/kappa_gold_300" />
-
-                <TextView
-                    android:id="@+id/tab_inbox_amigos"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Amigos"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section"
-                    android:textColor="@color/kappa_cream" />
-
-                <TextView
-                    android:id="@+id/tab_inbox_familia"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Família"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section"
-                    android:textColor="@color/kappa_cream" />
-            </LinearLayout>
-        </FrameLayout>
+    <ScrollView
+        android:id="@+id/scroll_home"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="140dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:id="@+id/section_inbox_mensagem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="120dp"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_inbox_search"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_rooms"
-                    android:tint="@color/kappa_mint_100" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="Digite o nome do seu amigo"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body"
-                    android:textColor="@color/kappa_mint_100" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mensagens"
-                android:textAppearance="@style/TextAppearance.Kappa.Section"
-                android:textColor="@color/kappa_gold_300"
-                android:layout_marginBottom="10dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_inbox_messages"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                tools:listitem="@layout/item_inbox_row" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/section_inbox_amigos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_inbox_search"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_rooms"
-                    android:tint="@color/kappa_mint_100" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="Digite o nome do seu amigo"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body"
-                    android:textColor="@color/kappa_mint_100" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Amigos"
-                android:textAppearance="@style/TextAppearance.Kappa.Section"
-                android:textColor="@color/kappa_gold_300"
-                android:layout_marginBottom="10dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_inbox_friends"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                tools:listitem="@layout/item_inbox_row" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/section_inbox_familia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/kappa_surface"
-                app:strokeColor="@color/kappa_gold_500"
-                app:strokeWidth="1dp">
+                android:background="@drawable/potalive_header">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_height="match_parent"
+                    android:gravity="bottom"
+                    android:orientation="horizontal"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:paddingBottom="16dp"
+                    android:weightSum="3">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tab_inbox_mensagem"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Família"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Mensagem"
                         android:textAppearance="@style/TextAppearance.Kappa.Section"
                         android:textColor="@color/kappa_gold_300" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tab_inbox_amigos"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Página inicial"
-                        android:textAppearance="@style/TextAppearance.Kappa.Body"
-                        android:textColor="@color/kappa_mint_100" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Amigos"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_cream" />
+
+                    <TextView
+                        android:id="@+id/tab_inbox_familia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Familia"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_cream" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/section_inbox_mensagem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_inbox_search"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_rooms"
+                        android:tint="@color/kappa_mint_100" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_friends_search"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:hint="Digite o nome do seu amigo"
+                        android:textColor="@color/kappa_mint_100"
+                        android:textColorHint="@color/kappa_text_muted" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Mensagens"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_gold_300" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_inbox_messages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/item_inbox_row" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/section_inbox_amigos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_inbox_search"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_rooms"
+                        android:tint="@color/kappa_mint_100" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Anúncio de família"
+                        android:layout_marginStart="10dp"
+                        android:text="Digite o nome do seu amigo"
                         android:textAppearance="@style/TextAppearance.Kappa.Body"
                         android:textColor="@color/kappa_mint_100" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sala da família"
-                android:textAppearance="@style/TextAppearance.Kappa.Section"
-                android:textColor="@color/kappa_gold_300"
-                android:layout_marginBottom="10dp" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginBottom="10dp"
+                    android:text="Amigos"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_gold_300" />
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
-                        android:layout_marginEnd="10dp"
-                        app:cardCornerRadius="18dp"
-                        app:cardElevation="4dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_inbox_friends"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"
+                    tools:listitem="@layout/item_inbox_row" />
+            </LinearLayout>
 
-                        <ImageView
+            <LinearLayout
+                android:id="@+id/section_inbox_familia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:strokeColor="@color/kappa_gold_500"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_admin_panel_soft"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Familia"
+                            android:textAppearance="@style/TextAppearance.Kappa.Section"
+                            android:textColor="@color/kappa_gold_300" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Pagina inicial"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body"
+                            android:textColor="@color/kappa_mint_100" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Anuncio de familia"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body"
+                            android:textColor="@color/kappa_mint_100" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Sala da familia"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_gold_300" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:layout_marginEnd="10dp"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="4dp">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/bg_room_thumbnail" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:layout_marginEnd="10dp"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="4dp">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/bg_room_thumbnail" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="4dp">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/bg_room_thumbnail" />
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:strokeColor="@color/kappa_gold_500"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_admin_panel_soft"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gerenciar familia"
+                            android:textAppearance="@style/TextAppearance.Kappa.Section"
+                            android:textColor="@color/kappa_gold_300" />
+
+                        <TextView
+                            android:id="@+id/text_family_current"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Nenhuma familia"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body"
+                            android:textColor="@color/kappa_mint_100" />
+
+                        <TextView
+                            android:id="@+id/text_family_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Codigo: -"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body"
+                            android:textColor="@color/kappa_text_muted" />
+
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/bg_room_thumbnail" />
-                    </com.google.android.material.card.MaterialCardView>
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:hint="Nome da familia"
+                            style="@style/Widget.Kappa.TextInput">
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
-                        android:layout_marginEnd="10dp"
-                        app:cardCornerRadius="18dp"
-                        app:cardElevation="4dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_family_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <ImageView
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/bg_room_thumbnail" />
-                    </com.google.android.material.card.MaterialCardView>
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="ID da familia"
+                            style="@style/Widget.Kappa.TextInput">
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="96dp"
-                        android:layout_height="96dp"
-                        app:cardCornerRadius="18dp"
-                        app:cardElevation="4dp">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_family_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <ImageView
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/bg_room_thumbnail" />
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-            </HorizontalScrollView>
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_family_create"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:layout_weight="1"
+                                android:text="Criar"
+                                style="@style/Widget.Kappa.Button.Glow" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_family_join"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Entrar"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:hint="Nome da sala da familia"
+                            style="@style/Widget.Kappa.TextInput">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_family_room_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_family_room_create"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Criar sala da familia"
+                            style="@style/Widget.Kappa.Button.Glow" />
+
+                        <TextView
+                            android:id="@+id/text_family_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text=""
+                            android:textAppearance="@style/TextAppearance.Kappa.Body"
+                            android:textColor="@color/kappa_text_muted"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Membros"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_gold_300" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_family_members"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:overScrollMode="never" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Salas da familia"
+                    android:textAppearance="@style/TextAppearance.Kappa.Section"
+                    android:textColor="@color/kappa_gold_300" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_family_rooms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:overScrollMode="never" />
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-﻿package com.kappa.app.audio.presentation
+package com.kappa.app.audio.presentation
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,20 +15,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.kappa.app.R
 import com.kappa.app.core.network.NetworkMonitor
-import com.kappa.app.domain.audio.GiftLog
-import com.kappa.app.domain.audio.RoomSeat
-import com.kappa.app.domain.audio.SeatStatus
-import com.kappa.app.gift.presentation.GiftCatalog
-import com.google.gson.Gson
-import java.io.IOException
 import dagger.hilt.android.AndroidEntryPoint
 import io.livekit.android.LiveKit
 import io.livekit.android.RoomOptions
@@ -49,18 +39,17 @@ class RoomDetailFragment : Fragment() {
     private val audioViewModel: AudioViewModel by activityViewModels()
     private var liveKitRoom: Room? = null
     private var hasAudioPermission: Boolean = false
-    private val messagesAdapter = RoomMessagesAdapter()
-    private val seatsAdapter = RoomSeatsAdapter()
-    private lateinit var giftAdapter: RoomGiftAdapter
     private var isOnline: Boolean = true
     private var isConnecting: Boolean = false
     private var reconnectJob: Job? = null
     private var lastErrorMessage: String? = null
     private var enableEchoCancellation: Boolean = true
     private var enableNoiseSuppression: Boolean = true
-    private var selectedGift: GiftItem? = null
-    private var selectedCategory: GiftCategory = GiftCategory.MULTIPLIER
-    private var giftQuantity: Int = 1
+    private var lastGiftId: String? = null
+    private var giftOverlayJob: Job? = null
+    private var micEnabledOnJoin: Boolean = true
+    private var hasSelectedMic: Boolean = false
+    private var shouldLeaveOnDestroy: Boolean = true
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -84,212 +73,91 @@ class RoomDetailFragment : Fragment() {
 
         val titleText = view.findViewById<TextView>(R.id.text_room_title)
         val statusText = view.findViewById<TextView>(R.id.text_room_status)
+        val agencyText = view.findViewById<TextView>(R.id.text_room_agency)
+        val roomCodeText = view.findViewById<TextView>(R.id.text_room_code)
+        val favoriteButton = view.findViewById<android.widget.ImageButton>(R.id.button_room_favorite)
+        val minimizeButton = view.findViewById<android.widget.ImageButton>(R.id.button_room_minimize)
         val errorText = view.findViewById<TextView>(R.id.text_room_error)
+        val giftOverlayText = view.findViewById<TextView>(R.id.text_gift_overlay)
+        val giftOverlayIcon = view.findViewById<android.widget.ImageView>(R.id.image_gift_overlay)
         val leaveButton = view.findViewById<MaterialButton>(R.id.button_leave_room)
-        val messageList = view.findViewById<RecyclerView>(R.id.recycler_room_messages)
-        val messageInput = view.findViewById<EditText>(R.id.input_message)
-        val sendMessageButton = view.findViewById<MaterialButton>(R.id.button_send_message)
-        val giftLogText = view.findViewById<TextView>(R.id.text_gift_log)
-        val giftRecipientInput = view.findViewById<EditText>(R.id.input_gift_recipient)
-        val sendGiftButton = view.findViewById<MaterialButton>(R.id.button_send_gift)
-        val giftList = view.findViewById<RecyclerView>(R.id.recycler_gifts)
-        val categoryCommon = view.findViewById<MaterialButton>(R.id.button_gift_category_common)
-        val categoryParty = view.findViewById<MaterialButton>(R.id.button_gift_category_party)
-        val categoryVip = view.findViewById<MaterialButton>(R.id.button_gift_category_vip)
-        val selectedGiftText = view.findViewById<TextView>(R.id.text_selected_gift)
-        val selectedGiftPrice = view.findViewById<TextView>(R.id.text_selected_gift_price)
-        val quantityMinus = view.findViewById<MaterialButton>(R.id.button_gift_quantity_minus)
-        val quantityPlus = view.findViewById<MaterialButton>(R.id.button_gift_quantity_plus)
-        val quantityText = view.findViewById<TextView>(R.id.text_gift_quantity)
-        val refreshButton = view.findViewById<MaterialButton>(R.id.button_refresh_room)
-        val seatsList = view.findViewById<RecyclerView>(R.id.recycler_room_seats)
-        val refreshSeatsButton = view.findViewById<MaterialButton>(R.id.button_refresh_seats)
-        val seatNumberInput = view.findViewById<EditText>(R.id.input_seat_number)
-        val takeSeatButton = view.findViewById<MaterialButton>(R.id.button_take_seat)
-        val leaveSeatButton = view.findViewById<MaterialButton>(R.id.button_leave_seat)
-        val lockSeatButton = view.findViewById<MaterialButton>(R.id.button_lock_seat)
-        val unlockSeatButton = view.findViewById<MaterialButton>(R.id.button_unlock_seat)
-        val targetUserInput = view.findViewById<EditText>(R.id.input_target_user)
-        val muteUserButton = view.findViewById<MaterialButton>(R.id.button_mute_user)
-        val unmuteUserButton = view.findViewById<MaterialButton>(R.id.button_unmute_user)
-        val kickUserButton = view.findViewById<MaterialButton>(R.id.button_kick_user)
-        val banUserButton = view.findViewById<MaterialButton>(R.id.button_ban_user)
-        val closeRoomButton = view.findViewById<MaterialButton>(R.id.button_close_room)
-        val echoSwitch = view.findViewById<SwitchMaterial>(R.id.switch_echo_cancel)
-        val noiseSwitch = view.findViewById<SwitchMaterial>(R.id.switch_noise_suppression)
-        val applyAudioButton = view.findViewById<MaterialButton>(R.id.button_apply_audio_settings)
+        val sectionAudio = view.findViewById<View>(R.id.card_section_audio)
+        val sectionSeats = view.findViewById<View>(R.id.card_section_seats)
+        val sectionChat = view.findViewById<View>(R.id.card_section_chat)
+        val sectionGifts = view.findViewById<View>(R.id.card_section_gifts)
+        val sectionTools = view.findViewById<View>(R.id.card_section_tools)
+        val chatUnreadBadge = view.findViewById<TextView>(R.id.text_room_chat_unread)
+        val actionSeat = view.findViewById<View>(R.id.button_room_action_seat)
+        val actionChat = view.findViewById<View>(R.id.button_room_action_chat)
+        val actionGift = view.findViewById<View>(R.id.button_room_action_gift)
+        val actionTools = view.findViewById<View>(R.id.button_room_action_tools)
 
-        messageList.layoutManager = LinearLayoutManager(requireContext())
-        messageList.adapter = messagesAdapter
-        seatsList.layoutManager = GridLayoutManager(requireContext(), 5)
-        seatsList.adapter = seatsAdapter
-        giftAdapter = RoomGiftAdapter { gift ->
-            selectedGift = gift
-            giftAdapter.setSelected(gift.id)
-            updateGiftSummary()
-        }
-        giftList.layoutManager = GridLayoutManager(requireContext(), 4)
-        giftList.adapter = giftAdapter
+        val sectionCards = listOf(sectionAudio, sectionSeats, sectionChat, sectionGifts, sectionTools)
+        val navController = getChildNavController()
+        val navOptions = NavOptions.Builder()
+            .setEnterAnim(R.anim.slide_in_right)
+            .setExitAnim(R.anim.slide_out_left)
+            .setPopEnterAnim(R.anim.slide_in_left)
+            .setPopExitAnim(R.anim.slide_out_right)
+            .build()
 
-        val allGifts = loadGiftCatalogs()
-        fun updateGiftList() {
-            val filtered = allGifts.filter { it.category == selectedCategory }
-            giftAdapter.submitList(filtered)
-            if (selectedGift == null || selectedGift?.category != selectedCategory) {
-                selectedGift = filtered.firstOrNull()
-                giftAdapter.setSelected(selectedGift?.id)
-            }
-            updateGiftSummary(selectedGiftText, selectedGiftPrice, quantityText)
-        }
-        updateGiftList()
-
-        fun setCategory(category: GiftCategory) {
-            selectedCategory = category
-            updateGiftList()
-        }
-        categoryCommon.text = "Multiplier"
-        categoryParty.text = "Unique"
-        categoryVip.visibility = View.GONE
-        categoryCommon.setOnClickListener { setCategory(GiftCategory.MULTIPLIER) }
-        categoryParty.setOnClickListener { setCategory(GiftCategory.UNIQUE) }
-
-        quantityMinus.setOnClickListener {
-            if (giftQuantity > 1) {
-                giftQuantity -= 1
-                updateGiftSummary(selectedGiftText, selectedGiftPrice, quantityText)
+        fun updateSelection(selectedId: Int) {
+            sectionCards.forEach { card ->
+                val isSelected = card.id == selectedId
+                card.isSelected = isSelected
+                card.alpha = if (isSelected) 1.0f else 0.6f
             }
         }
-        quantityPlus.setOnClickListener {
-            giftQuantity += 1
-            updateGiftSummary(selectedGiftText, selectedGiftPrice, quantityText)
+
+        fun navigateTo(destinationId: Int, selectedCardId: Int) {
+            navController?.navigate(destinationId, null, navOptions)
+            updateSelection(selectedCardId)
         }
 
-        echoSwitch.isChecked = enableEchoCancellation
-        noiseSwitch.isChecked = enableNoiseSuppression
-        echoSwitch.setOnCheckedChangeListener { _, isChecked ->
-            enableEchoCancellation = isChecked
+        sectionAudio.setOnClickListener { navigateTo(R.id.room_section_audio, R.id.card_section_audio) }
+        sectionSeats.setOnClickListener { navigateTo(R.id.room_section_seats, R.id.card_section_seats) }
+        sectionChat.setOnClickListener {
+            navigateTo(R.id.room_section_chat, R.id.card_section_chat)
+            audioViewModel.markMessagesSeen()
         }
-        noiseSwitch.setOnCheckedChangeListener { _, isChecked ->
-            enableNoiseSuppression = isChecked
+        sectionGifts.setOnClickListener { navigateTo(R.id.room_section_gifts, R.id.card_section_gifts) }
+        sectionTools.setOnClickListener { navigateTo(R.id.room_section_tools, R.id.card_section_tools) }
+
+        navController?.addOnDestinationChangedListener { _, destination, _ ->
+            val selected = when (destination.id) {
+                R.id.room_section_audio -> R.id.card_section_audio
+                R.id.room_section_seats -> R.id.card_section_seats
+                R.id.room_section_gifts -> R.id.card_section_gifts
+                R.id.room_section_tools -> R.id.card_section_tools
+                else -> R.id.card_section_chat
+            }
+            updateSelection(selected)
         }
 
         leaveButton.setOnClickListener {
+            shouldLeaveOnDestroy = true
             disconnectRoom()
             audioViewModel.leaveRoom()
             findNavController().popBackStack()
         }
 
-        sendMessageButton.setOnClickListener {
-            val text = messageInput.text?.toString().orEmpty()
-            audioViewModel.sendMessage(text)
-            messageInput.setText("")
+        minimizeButton.setOnClickListener {
+            shouldLeaveOnDestroy = false
+            findNavController().navigate(R.id.navigation_rooms)
         }
 
-        sendGiftButton.setOnClickListener {
-            val gift = selectedGift
-            if (gift == null) {
-                Toast.makeText(requireContext(), "Select a gift first", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            val amount = gift.price * giftQuantity
-            val recipient = giftRecipientInput.text?.toString()?.trim().orEmpty().ifBlank { null }
-            if (gift.category == GiftCategory.UNIQUE && recipient == null) {
-                Toast.makeText(requireContext(), "Unique gifts require a seated recipient", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.sendGift(amount, recipient)
-            giftRecipientInput.setText("")
+        favoriteButton.setOnClickListener {
+            val isFavorite = audioViewModel.viewState.value.activeRoom?.isFavorite ?: false
+            audioViewModel.toggleFavoriteRoom(!isFavorite)
         }
 
-        refreshButton.setOnClickListener {
-            audioViewModel.loadRoomMessages()
-            audioViewModel.loadRoomGifts()
+        actionSeat.setOnClickListener { navigateTo(R.id.room_section_seats, R.id.card_section_seats) }
+        actionChat.setOnClickListener {
+            navigateTo(R.id.room_section_chat, R.id.card_section_chat)
+            audioViewModel.markMessagesSeen()
         }
-
-        refreshSeatsButton.setOnClickListener {
-            audioViewModel.loadRoomSeats()
-        }
-
-        takeSeatButton.setOnClickListener {
-            val seatNumber = seatNumberInput.text?.toString()?.trim()?.toIntOrNull()
-            if (seatNumber == null) {
-                Toast.makeText(requireContext(), "Enter a valid seat number", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.takeSeat(seatNumber)
-        }
-
-        leaveSeatButton.setOnClickListener {
-            val seatNumber = seatNumberInput.text?.toString()?.trim()?.toIntOrNull()
-            if (seatNumber == null) {
-                Toast.makeText(requireContext(), "Enter a valid seat number", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.leaveSeat(seatNumber)
-        }
-
-        lockSeatButton.setOnClickListener {
-            val seatNumber = seatNumberInput.text?.toString()?.trim()?.toIntOrNull()
-            if (seatNumber == null) {
-                Toast.makeText(requireContext(), "Enter a valid seat number", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.lockSeat(seatNumber)
-        }
-
-        unlockSeatButton.setOnClickListener {
-            val seatNumber = seatNumberInput.text?.toString()?.trim()?.toIntOrNull()
-            if (seatNumber == null) {
-                Toast.makeText(requireContext(), "Enter a valid seat number", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.unlockSeat(seatNumber)
-        }
-
-        muteUserButton.setOnClickListener {
-            val userId = targetUserInput.text?.toString()?.trim().orEmpty()
-            if (userId.isBlank()) {
-                Toast.makeText(requireContext(), "Enter a user id", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.muteParticipant(userId, true)
-        }
-
-        unmuteUserButton.setOnClickListener {
-            val userId = targetUserInput.text?.toString()?.trim().orEmpty()
-            if (userId.isBlank()) {
-                Toast.makeText(requireContext(), "Enter a user id", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.muteParticipant(userId, false)
-        }
-
-        kickUserButton.setOnClickListener {
-            val userId = targetUserInput.text?.toString()?.trim().orEmpty()
-            if (userId.isBlank()) {
-                Toast.makeText(requireContext(), "Enter a user id", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.kickParticipant(userId)
-        }
-
-        banUserButton.setOnClickListener {
-            val userId = targetUserInput.text?.toString()?.trim().orEmpty()
-            if (userId.isBlank()) {
-                Toast.makeText(requireContext(), "Enter a user id", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            audioViewModel.banParticipant(userId)
-        }
-
-        closeRoomButton.setOnClickListener {
-            audioViewModel.closeRoom()
-        }
-
-        applyAudioButton.setOnClickListener {
-            disconnectRoom()
-            connectIfReady()
-        }
+        actionGift.setOnClickListener { navigateTo(R.id.room_section_gifts, R.id.card_section_gifts) }
+        actionTools.setOnClickListener { navigateTo(R.id.room_section_tools, R.id.card_section_tools) }
 
         hasAudioPermission = ContextCompat.checkSelfPermission(
             requireContext(),
@@ -301,10 +169,17 @@ class RoomDetailFragment : Fragment() {
             permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
 
+        showMicChoice()
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 audioViewModel.viewState.collect { state ->
                     titleText.text = state.activeRoom?.name ?: "Room"
+                    agencyText.text = state.activeRoom?.agencyName ?: "Agency"
+                    roomCodeText.text = "ID: ${state.activeRoom?.roomCode ?: "-"}"
+                    val favorite = state.activeRoom?.isFavorite == true
+                    favoriteButton.setImageResource(R.drawable.ic_star)
+                    favoriteButton.alpha = if (favorite) 1.0f else 0.5f
                     if (!isOnline) {
                         statusText.text = "No internet connection"
                     } else if (state.token == null || state.livekitUrl == null) {
@@ -324,28 +199,18 @@ class RoomDetailFragment : Fragment() {
                         errorText.visibility = View.GONE
                         lastErrorMessage = null
                     }
-                    messagesAdapter.submitList(state.messages)
-                    giftLogText.text = buildGiftLog(state.gifts)
-                    seatsAdapter.submitList(padSeats(state.seats, 20))
-                    val hasMessages = state.messages.isNotEmpty()
-                    if (hasMessages) {
-                        messageList.scrollToPosition(state.messages.size - 1)
+                    val latestGift = state.gifts.lastOrNull()
+                    if (latestGift != null && latestGift.id != lastGiftId) {
+                        lastGiftId = latestGift.id
+                        showGiftOverlay(giftOverlayText, giftOverlayIcon, "Gift +${latestGift.amount} coins")
                     }
-                    sendMessageButton.isEnabled = !state.isSendingMessage
-                    sendMessageButton.text = if (state.isSendingMessage) "Sending..." else "Send Message"
-                    sendGiftButton.isEnabled = !state.isSendingGift
-                    sendGiftButton.text = if (state.isSendingGift) "Sending..." else "Send Gift"
-                    val roomBusy = state.isRoomActionLoading || state.isSeatLoading
-                    refreshSeatsButton.isEnabled = !state.isSeatLoading
-                    takeSeatButton.isEnabled = !roomBusy
-                    leaveSeatButton.isEnabled = !roomBusy
-                    lockSeatButton.isEnabled = !roomBusy
-                    unlockSeatButton.isEnabled = !roomBusy
-                    muteUserButton.isEnabled = !roomBusy
-                    unmuteUserButton.isEnabled = !roomBusy
-                    kickUserButton.isEnabled = !roomBusy
-                    banUserButton.isEnabled = !roomBusy
-                    closeRoomButton.isEnabled = !roomBusy
+                    val unread = state.unreadRoomMessages
+                    if (unread > 0) {
+                        chatUnreadBadge.text = unread.coerceAtMost(99).toString()
+                        chatUnreadBadge.visibility = View.VISIBLE
+                    } else {
+                        chatUnreadBadge.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -377,6 +242,9 @@ class RoomDetailFragment : Fragment() {
         if (!hasAudioPermission) {
             return
         }
+        if (!hasSelectedMic) {
+            return
+        }
         if (!isOnline) {
             return
         }
@@ -395,7 +263,7 @@ class RoomDetailFragment : Fragment() {
                     token,
                     roomOptions = buildRoomOptions()
                 )
-                liveKitRoom?.localParticipant?.setMicrophoneEnabled(true)
+                liveKitRoom?.localParticipant?.setMicrophoneEnabled(micEnabledOnJoin)
                 view?.findViewById<TextView>(R.id.text_room_status)?.text = "Connected"
                 cancelReconnect()
             } catch (throwable: Throwable) {
@@ -461,89 +329,98 @@ class RoomDetailFragment : Fragment() {
         audioViewModel.clearError()
     }
 
-    private fun buildGiftLog(gifts: List<GiftLog>): String {
-        if (gifts.isEmpty()) {
-            return "No gifts yet"
+    private fun showGiftOverlay(view: TextView, icon: android.widget.ImageView, message: String) {
+        giftOverlayJob?.cancel()
+        view.text = message
+        view.alpha = 0f
+        view.scaleX = 0.9f
+        view.scaleY = 0.9f
+        view.visibility = View.VISIBLE
+        icon.setImageResource(R.drawable.ic_gift)
+        icon.alpha = 0f
+        icon.scaleX = 0.8f
+        icon.scaleY = 0.8f
+        icon.rotation = -10f
+        icon.visibility = View.VISIBLE
+        view.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(220)
+            .start()
+        icon.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .rotation(10f)
+            .setDuration(220)
+            .start()
+        giftOverlayJob = viewLifecycleOwner.lifecycleScope.launch {
+            delay(1800)
+            view.animate()
+                .alpha(0f)
+                .setDuration(220)
+                .withEndAction { view.visibility = View.GONE }
+                .start()
+            icon.animate()
+                .alpha(0f)
+                .rotation(0f)
+                .setDuration(220)
+                .withEndAction { icon.visibility = View.GONE }
+                .start()
         }
-        return gifts.joinToString(separator = "\n") { gift ->
-            val target = gift.recipientId?.take(8) ?: "room"
-            "Gift ${gift.amount} coins to $target | Balance ${gift.senderBalance}"
-        }
-    }
-
-    private fun loadGiftCatalogs(): List<GiftItem> {
-        val multiplier = loadCatalogFromAsset("multiplier_gifts.json")
-        val unique = loadCatalogFromAsset("unique_gifts.json")
-        val items = mutableListOf<GiftItem>()
-        items.addAll(mapGiftDefinitions(multiplier, GiftCategory.MULTIPLIER))
-        items.addAll(mapGiftDefinitions(unique, GiftCategory.UNIQUE))
-        return items
-    }
-
-    private fun loadCatalogFromAsset(fileName: String): GiftCatalog? {
-        val context = context ?: return null
-        return try {
-            context.assets.open(fileName).bufferedReader().use { reader ->
-                Gson().fromJson(reader.readText(), GiftCatalog::class.java)
-            }
-        } catch (_: IOException) {
-            null
-        }
-    }
-
-    private fun mapGiftDefinitions(
-        catalog: GiftCatalog?,
-        category: GiftCategory
-    ): List<GiftItem> {
-        if (catalog == null) return emptyList()
-        return catalog.gifts.map { def ->
-            GiftItem(
-                id = "${catalog.type}_${def.name.lowercase().replace(" ", "_")}",
-                name = def.name,
-                price = def.value,
-                conversionRate = catalog.conversion_rate,
-                category = category
-            )
-        }
-    }
-
-    private fun updateGiftSummary(
-        nameText: TextView? = view?.findViewById(R.id.text_selected_gift),
-        priceText: TextView? = view?.findViewById(R.id.text_selected_gift_price),
-        quantityText: TextView? = view?.findViewById(R.id.text_gift_quantity)
-    ) {
-        val gift = selectedGift
-        if (gift == null) {
-            nameText?.text = "Selecione um presente"
-            priceText?.text = "0"
-            quantityText?.text = giftQuantity.toString()
-            return
-        }
-        nameText?.text = gift.name
-        val totalCoins = gift.price * giftQuantity
-        val diamonds = (totalCoins * gift.conversionRate).toLong()
-        priceText?.text = "Coins $totalCoins | Diamonds +$diamonds"
-        quantityText?.text = giftQuantity.toString()
-    }
-
-    private fun padSeats(seats: List<RoomSeat>, totalSeats: Int): List<RoomSeat> {
-        if (seats.size >= totalSeats) {
-            return seats
-        }
-        val existingNumbers = seats.map { it.seatNumber }.toSet()
-        val padded = seats.toMutableList()
-        for (seatNumber in 1..totalSeats) {
-            if (!existingNumbers.contains(seatNumber)) {
-                padded.add(RoomSeat(seatNumber = seatNumber, status = SeatStatus.FREE))
-            }
-        }
-        return padded.sortedBy { it.seatNumber }
     }
 
     override fun onDestroyView() {
-        audioViewModel.leaveRoom()
+        giftOverlayJob?.cancel()
+        if (shouldLeaveOnDestroy) {
+            audioViewModel.leaveRoom()
+        }
         disconnectRoom()
         cancelReconnect()
         super.onDestroyView()
+    }
+
+    private fun showMicChoice() {
+        if (!isAdded) return
+        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Join with microphone")
+            .setMessage("Choose your microphone state when joining this room.")
+            .setPositiveButton("Mic On") { _, _ ->
+                micEnabledOnJoin = true
+                hasSelectedMic = true
+                connectIfReady()
+            }
+            .setNegativeButton("Muted") { _, _ ->
+                micEnabledOnJoin = false
+                hasSelectedMic = true
+                connectIfReady()
+            }
+            .setNeutralButton("Cancel", null)
+            .create()
+        dialog.show()
+    }
+
+    fun updateAudioOptions(echoCancellation: Boolean, noiseSuppression: Boolean) {
+        enableEchoCancellation = echoCancellation
+        enableNoiseSuppression = noiseSuppression
+    }
+
+    fun getAudioOptions(): Pair<Boolean, Boolean> {
+        return Pair(enableEchoCancellation, enableNoiseSuppression)
+    }
+
+    fun applyAudioSettings() {
+        disconnectRoom()
+        connectIfReady()
+    }
+
+    private fun getChildNavController(): androidx.navigation.NavController? {
+        val host = childFragmentManager.findFragmentById(R.id.room_section_nav_host)
+        return if (host is androidx.navigation.fragment.NavHostFragment) {
+            host.navController
+        } else {
+            null
+        }
     }
 }

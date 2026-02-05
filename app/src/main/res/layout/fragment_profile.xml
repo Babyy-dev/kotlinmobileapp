@@ -1,380 +1,519 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_screen_emerald">
+    android:background="@drawable/bg_screen_emerald"
+    tools:context=".main.ProfileFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+    <ImageView
+        android:id="@+id/image_profile_top_bg"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_top_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_profile_header">
+    <ImageView
+        android:id="@+id/image_profile_bottom_bg"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_bottom_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:id="@+id/text_profile_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Profile"
-                    android:textAppearance="@style/TextAppearance.Kappa.Headline"
-                    android:textColor="@color/kappa_gold_300" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_avatar_ring"
-                        android:padding="6dp">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/ic_profile"
-                            android:tint="@color/kappa_cream"
-                            android:contentDescription="@string/title_profile" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/text_profile_username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Username: -"
-                            android:textAppearance="@style/TextAppearance.Kappa.Section"
-                            android:textColor="@color/kappa_cream" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/text_profile_role"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_pill_gold"
-                                android:text="Role: -"
-                                android:textColor="@color/kappa_teal_950"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/text_profile_guest"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:background="@drawable/bg_pill_teal"
-                                android:text="Guest: -"
-                                android:textColor="@color/kappa_mint_100"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-        </FrameLayout>
+    <ScrollView
+        android:id="@+id/scroll_profile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="140dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_profile_tab_overview"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:text="Perfil"
-                style="@style/Widget.Kappa.Button.Secondary" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_profile_tab_edit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:text="Editar"
-                style="@style/Widget.Kappa.Button.Secondary" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_profile_tab_tools"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Menu"
-                style="@style/Widget.Kappa.Button.Secondary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/section_profile_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:strokeColor="@color/kappa_outline"
-                app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_admin_panel_soft"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Details"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section" />
-
-                <TextView
-                    android:id="@+id/text_profile_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Email: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
-
-                <TextView
-                    android:id="@+id/text_profile_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Phone: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
-
-                <TextView
-                    android:id="@+id/text_profile_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Nickname: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
-
-                <TextView
-                    android:id="@+id/text_profile_country"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Country: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
-
-                <TextView
-                    android:id="@+id/text_profile_language"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Language: -"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body" />
-            </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/section_profile_tools"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/layout_profile_role_tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:visibility="gone"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="3dp"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:strokeColor="@color/kappa_outline"
-                app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_admin_panel_soft"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/text_profile_role_tools_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Role tools"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section" />
-
-                <TextView
-                    android:id="@+id/text_profile_role_tools_hint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Moderator tools are enabled for your role."
-                    android:textAppearance="@style/TextAppearance.Kappa.Muted" />
+                android:background="@drawable/bg_profile_header">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_role_admin"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/text_profile_title"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
-                        android:text="Admin"
-                        style="@style/Widget.Kappa.Button.Secondary" />
+                        android:text="Profile"
+                        android:textAppearance="@style/TextAppearance.Kappa.Headline"
+                        android:textColor="@color/kappa_gold_300" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_role_agency"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
-                        android:layout_weight="1"
-                        android:text="Agency"
-                        style="@style/Widget.Kappa.Button.Secondary" />
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_role_reseller"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Reseller"
-                        style="@style/Widget.Kappa.Button.Secondary" />
+                        <FrameLayout
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_avatar_ring"
+                            android:padding="6dp">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:contentDescription="@string/title_profile"
+                                android:src="@drawable/ic_profile"
+                                android:tint="@color/kappa_cream" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/text_profile_username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Username: -"
+                                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                                android:textColor="@color/kappa_cream" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/text_profile_role"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_pill_gold"
+                                    android:text="Role: -"
+                                    android:textColor="@color/kappa_teal_950"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/text_profile_guest"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_pill_teal"
+                                    android:text="Guest: -"
+                                    android:textColor="@color/kappa_mint_100"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_profile_tab_overview"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Perfil"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_profile_tab_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Editar"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_profile_tab_tools"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Menu"
+                    style="@style/Widget.Kappa.Button.Secondary" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:id="@+id/section_profile_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="3dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:strokeColor="@color/kappa_outline"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_admin_panel_soft"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Details"
+                            android:textAppearance="@style/TextAppearance.Kappa.Section" />
+
+                        <TextView
+                            android:id="@+id/text_profile_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Email: -"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body" />
+
+                        <TextView
+                            android:id="@+id/text_profile_phone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Phone: -"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body" />
+
+                        <TextView
+                            android:id="@+id/text_profile_nickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Nickname: -"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body" />
+
+                        <TextView
+                            android:id="@+id/text_profile_country"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Country: -"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body" />
+
+                        <TextView
+                            android:id="@+id/text_profile_language"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Language: -"
+                            android:textAppearance="@style/TextAppearance.Kappa.Body" />
+                </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/section_profile_tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/layout_profile_role_tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="3dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:strokeColor="@color/kappa_outline"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_admin_panel_soft"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/text_profile_role_tools_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Role tools"
+                            android:textAppearance="@style/TextAppearance.Kappa.Section" />
+
+                        <TextView
+                            android:id="@+id/text_profile_role_tools_hint"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Moderator tools are enabled for your role."
+                            android:textAppearance="@style/TextAppearance.Kappa.Muted" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_role_admin"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:text="Admin"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_role_agency"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:text="Agency"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_role_reseller"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Reseller"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="3dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:strokeColor="@color/kappa_outline"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_admin_panel_soft"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Menu"
+                            android:textAppearance="@style/TextAppearance.Kappa.Section" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_menu_wallet"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:text="Wallet"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_menu_recharge"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Recharge"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_menu_backpack"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:text="Backpack"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_menu_settings"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Settings"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_menu_vip"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:text="VIP"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_menu_starpath"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Star Path"
+                                style="@style/Widget.Kappa.Button.Secondary" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/section_profile_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Update nickname"
+                    style="@style/Widget.Kappa.TextInput">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_profile_nickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/kappa_cream"
+                        android:textColorHint="@color/kappa_text_muted" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Update country"
+                    style="@style/Widget.Kappa.TextInput">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_profile_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textColor="@color/kappa_cream"
+                        android:textColorHint="@color/kappa_text_muted" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Update language"
+                    style="@style/Widget.Kappa.TextInput">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_profile_language"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textColor="@color/kappa_cream"
+                        android:textColorHint="@color/kappa_text_muted" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_profile_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Choose Avatar"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+                <TextView
+                    android:id="@+id/text_profile_avatar_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="No avatar selected"
+                    android:textAppearance="@style/TextAppearance.Kappa.Muted" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_profile_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Save Profile" />
+
+                <TextView
+                    android:id="@+id/text_profile_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/TextAppearance.Kappa.Muted"
+                    android:visibility="gone" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Logout"
+                    style="@style/Widget.Kappa.Button.Secondary" />
+
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-        <LinearLayout
-            android:id="@+id/section_profile_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Update nickname"
-            style="@style/Widget.Kappa.TextInput">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_profile_nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:textColor="@color/kappa_cream"
-                android:textColorHint="@color/kappa_text_muted" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Update country"
-            style="@style/Widget.Kappa.TextInput">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_profile_country"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="@color/kappa_cream"
-                android:textColorHint="@color/kappa_text_muted" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Update language"
-            style="@style/Widget.Kappa.TextInput">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_profile_language"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:textColor="@color/kappa_cream"
-                android:textColorHint="@color/kappa_text_muted" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_profile_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Choose Avatar"
-            style="@style/Widget.Kappa.Button.Secondary" />
-
-        <TextView
-            android:id="@+id/text_profile_avatar_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="No avatar selected"
-            android:textAppearance="@style/TextAppearance.Kappa.Muted" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_profile_save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Save Profile" />
-
-        <TextView
-            android:id="@+id/text_profile_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.Kappa.Muted"
-            android:visibility="gone" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Logout"
-            style="@style/Widget.Kappa.Button.Secondary" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

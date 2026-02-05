@@ -17,8 +17,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.kappa.app.R
 import com.kappa.app.reseller.presentation.ResellerViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ResellerToolsFragment : Fragment() {
 
     private val viewModel: ResellerViewModel by viewModels()
@@ -107,7 +109,13 @@ class ResellerToolsFragment : Fragment() {
         }
 
         addSellerButton.setOnClickListener {
-            viewModel.addSeller("seller_${System.currentTimeMillis().toString().takeLast(4)}")
+            val sellerId = limitSellerInput.text?.toString()?.trim().orEmpty()
+            if (sellerId.isBlank()) {
+                messageText.text = "Enter seller id or username"
+                messageText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            viewModel.addSeller(sellerId)
         }
 
         setLimitsButton.setOnClickListener {
@@ -160,14 +168,14 @@ class ResellerToolsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.viewState.collect { state ->
-                    sellerAdapter.submitRows(state.sellers.map { "Seller: $it" to "Status: Active" })
+                    sellerAdapter.submitRows(state.sellers.map { "Seller: ${it.sellerId}" to "Status: Active" })
                     limitsAdapter.submitRows(
-                        state.limits.map { it.sellerId to "Total ${it.totalLimit} • Daily ${it.dailyLimit}" }
+                        state.limits.map { it.sellerId to "Total ${it.totalLimit} - Daily ${it.dailyLimit}" }
                     )
                     salesAdapter.submitRows(
                         state.sales.map {
-                            "${it.saleId} • ${it.currency} ${it.amount}" to
-                                "Seller ${it.sellerId} • Buyer ${it.buyerId} • Dest ${it.destinationAccount}"
+                            "${it.saleId} - ${it.currency} ${it.amount}" to
+                                "Seller ${it.sellerId} - Buyer ${it.buyerId} - Dest ${it.destinationAccount}"
                         }
                     )
                     proofsAdapter.submitRows(
@@ -184,3 +192,4 @@ class ResellerToolsFragment : Fragment() {
         }
     }
 }
+

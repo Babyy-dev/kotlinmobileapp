@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.kappa.app.R
+import com.kappa.app.agency.presentation.AgencyApplicationAdapter
 import com.kappa.app.agency.presentation.AgencyViewModel
 import com.kappa.app.main.SimpleRowAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +52,10 @@ class AgencyToolsFragment : Fragment() {
 
         val roomsAdapter = SimpleRowAdapter()
         val hostsAdapter = SimpleRowAdapter()
-        val appsAdapter = SimpleRowAdapter()
+        val appsAdapter = AgencyApplicationAdapter(
+            onApprove = { app -> agencyViewModel.approveApplication(app.id) },
+            onReject = { app -> agencyViewModel.rejectApplication(app.id) }
+        )
         val teamsAdapter = SimpleRowAdapter()
         val commissionsAdapter = SimpleRowAdapter()
         roomsRecycler.adapter = roomsAdapter
@@ -95,21 +99,9 @@ class AgencyToolsFragment : Fragment() {
                     }
                     val totalDiamonds = state.commissions.sumOf { it.diamondsAmount }
                     totalDiamondsText.text = "Total: $totalDiamonds"
-                    roomsAdapter.submitRows(
-                        listOf(
-                            "Room A" to "Active",
-                            "Room B" to "Active"
-                        )
-                    )
-                    hostsAdapter.submitRows(
-                        listOf(
-                            "Host01" to "Diamonds: 1200",
-                            "Host02" to "Diamonds: 800"
-                        )
-                    )
-                    appsAdapter.submitRows(
-                        listOfNotNull(state.agencyApplication?.let { "Agency" to it.status })
-                    )
+                    roomsAdapter.submitRows(state.rooms)
+                    hostsAdapter.submitRows(state.hosts)
+                    appsAdapter.submitItems(state.agencyApplications)
                     teamsAdapter.submitRows(state.teams.map { it.name to "Owner: ${it.ownerUserId}" })
                     commissionsAdapter.submitRows(
                         state.commissions.map { it.id to "Diamonds: ${it.diamondsAmount} • USD ${it.commissionUsd}" }

@@ -201,6 +201,68 @@ object ResellerApplications : Table("reseller_applications") {
     override val primaryKey = PrimaryKey(id)
 }
 
+object ResellerSellers : Table("reseller_sellers") {
+    val id = uuid("id")
+    val resellerId = uuid("reseller_id").index()
+    val sellerId = uuid("seller_id").index()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object ResellerSellerLimits : Table("reseller_seller_limits") {
+    val resellerId = uuid("reseller_id").index()
+    val sellerId = uuid("seller_id").index()
+    val totalLimit = long("total_limit")
+    val dailyLimit = long("daily_limit")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(resellerId, sellerId)
+}
+
+object ResellerSales : Table("reseller_sales") {
+    val id = uuid("id")
+    val resellerId = uuid("reseller_id").index()
+    val sellerId = uuid("seller_id").index()
+    val buyerId = uuid("buyer_id").index()
+    val externalSaleId = varchar("external_sale_id", 64).nullable()
+    val amount = long("amount")
+    val currency = varchar("currency", 12)
+    val destinationAccount = varchar("destination_account", 120)
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object ResellerPaymentProofs : Table("reseller_payment_proofs") {
+    val id = uuid("id")
+    val resellerId = uuid("reseller_id").index()
+    val uri = varchar("uri", 512)
+    val amount = long("amount")
+    val date = varchar("date", 32)
+    val beneficiary = varchar("beneficiary", 120)
+    val note = varchar("note", 255).nullable()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object ResellerAuditLogs : Table("reseller_audit_logs") {
+    val id = uuid("id")
+    val resellerId = uuid("reseller_id").index()
+    val actorId = uuid("actor_id").index()
+    val action = varchar("action", 120)
+    val message = varchar("message", 500).nullable()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AgencyAuditLogs : Table("agency_audit_logs") {
+    val id = uuid("id")
+    val agencyId = uuid("agency_id").index()
+    val actorId = uuid("actor_id").index()
+    val action = varchar("action", 120)
+    val message = varchar("message", 500).nullable()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
 object Announcements : Table("announcements") {
     val id = uuid("id")
     val title = varchar("title", 120)
@@ -213,6 +275,8 @@ object Announcements : Table("announcements") {
 object Rooms : Table("rooms") {
     val id = uuid("id")
     val agencyId = uuid("agency_id").nullable()
+    val familyId = uuid("family_id").nullable().index()
+    val country = varchar("country", 64).nullable()
     val name = varchar("name", 120)
     val maxSeats = integer("max_seats").nullable()
     val seatMode = varchar("seat_mode", 16)
@@ -273,4 +337,119 @@ object RefreshTokens : Table("refresh_tokens") {
     val userId = uuid("user_id")
     val expiresAt = long("expires_at")
     override val primaryKey = PrimaryKey(token)
+}
+
+object AdminGlobalConfigs : Table("admin_global_configs") {
+    val id = uuid("id")
+    val rtp = double("rtp")
+    val houseEdge = double("house_edge")
+    val minRtp = double("min_rtp")
+    val maxRtp = double("max_rtp")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AdminGameConfigs : Table("admin_game_configs") {
+    val id = uuid("id")
+    val gameName = varchar("game_name", 120)
+    val rtp = double("rtp")
+    val houseEdge = double("house_edge")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AdminUserConfigs : Table("admin_user_configs") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val qualification = varchar("qualification", 32)
+    val rtp = double("rtp")
+    val houseEdge = double("house_edge")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AdminQualificationConfigs : Table("admin_qualification_configs") {
+    val id = uuid("id")
+    val qualification = varchar("qualification", 32)
+    val rtp = double("rtp")
+    val houseEdge = double("house_edge")
+    val minPlayedUsd = long("min_played_usd")
+    val durationDays = integer("duration_days")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AdminLockRules : Table("admin_lock_rules") {
+    val id = uuid("id")
+    val name = varchar("name", 120)
+    val cooldownMinutes = integer("cooldown_minutes")
+    val minTurnover = long("min_turnover")
+    val maxLoss = long("max_loss")
+    val periodMinutes = integer("period_minutes")
+    val maxActionsPerPeriod = integer("max_actions_per_period")
+    val scope = varchar("scope", 24)
+    val actions = varchar("actions", 255)
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object AdminAuditLogs : Table("admin_audit_logs") {
+    val id = uuid("id")
+    val actorId = uuid("actor_id").index()
+    val action = varchar("action", 120)
+    val message = varchar("message", 500).nullable()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Families : Table("families") {
+    val id = uuid("id")
+    val name = varchar("name", 120)
+    val code = varchar("code", 16).uniqueIndex()
+    val ownerId = uuid("owner_id").index()
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object FamilyMembers : Table("family_members") {
+    val id = uuid("id")
+    val familyId = uuid("family_id").index()
+    val userId = uuid("user_id").index()
+    val role = varchar("role", 24)
+    val joinedAt = long("joined_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object Friends : Table("friends") {
+    val id = uuid("id")
+    val userId = uuid("user_id").index()
+    val friendId = uuid("friend_id").index()
+    val status = varchar("status", 16)
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object InboxThreads : Table("inbox_threads") {
+    val id = uuid("id")
+    val userA = uuid("user_a").index()
+    val userB = uuid("user_b").index()
+    val lastMessage = varchar("last_message", 500).nullable()
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object InboxMessages : Table("inbox_messages") {
+    val id = uuid("id")
+    val threadId = uuid("thread_id").index()
+    val senderId = uuid("sender_id").index()
+    val message = varchar("message", 500)
+    val createdAt = long("created_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
+object InboxThreadReads : Table("inbox_thread_reads") {
+    val threadId = uuid("thread_id").index()
+    val userId = uuid("user_id").index()
+    val lastReadAt = long("last_read_at")
+    override val primaryKey = PrimaryKey(threadId, userId)
 }

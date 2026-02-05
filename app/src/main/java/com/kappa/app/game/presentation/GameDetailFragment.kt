@@ -98,9 +98,11 @@ class GameDetailFragment : Fragment() {
             }
             viewModel.sendAction(actionType)
             if (gameType == GameType.GIFT_RUSH) {
-                val activeRoom = audioViewModel.viewState.value.activeRoom
-                if (activeRoom != null) {
-                    audioViewModel.sendGift(50, null)
+                val giftId = arguments?.getString("gift_id")
+                if (giftId.isNullOrBlank()) {
+                    viewModel.setMessage("Missing gift id")
+                } else {
+                    viewModel.sendGiftPlay(giftId, 1)
                 }
             }
         }

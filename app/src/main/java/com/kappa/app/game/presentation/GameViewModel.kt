@@ -21,6 +21,8 @@ data class GameViewState(
     val balance: Long = 5000,
     val pot: Long = 0,
     val timeLeft: Int = 0,
+    val phase: String = "lobby",
+    val gameStatus: String = "",
     val players: List<GamePlayer> = emptyList(),
     val isJoined: Boolean = false,
     val message: String? = null
@@ -45,7 +47,6 @@ class GameViewModel @Inject constructor(
                     is GameSessionEvent.Joined -> {
                         _viewState.value = _viewState.value.copy(
                             sessionId = event.sessionId,
-                            balance = event.balance,
                             isJoined = true,
                             message = "Joined game"
                         )
@@ -53,15 +54,16 @@ class GameViewModel @Inject constructor(
                     is GameSessionEvent.State -> {
                         _viewState.value = _viewState.value.copy(
                             players = event.players,
-                            timeLeft = event.timeLeft,
-                            pot = event.pot
+                            timeLeft = if (event.timeLeft > 0) event.timeLeft else computeCountdown(event.updatedAt),
+                            phase = event.phase,
+                            pot = if (event.pot > 0) event.pot else event.players.size.toLong()
                         )
                     }
                     is GameSessionEvent.Result -> {
-                        val reward = event.rewards[_viewState.value.userId] ?: 0L
                         _viewState.value = _viewState.value.copy(
-                            balance = _viewState.value.balance + reward,
-                            message = "Game finished"
+                            gameStatus = event.status,
+                            balance = event.balance ?: _viewState.value.balance,
+                            message = event.reward?.let { "Reward: $it" } ?: "Game finished"
                         )
                     }
                     is GameSessionEvent.Error -> {
@@ -104,12 +106,40 @@ class GameViewModel @Inject constructor(
         }
         val action = GameAction(
             roomId = state.roomId,
-            gameId = state.gameId,
-            sessionId = state.sessionId,
-            actionType = actionType,
-            timestamp = System.currentTimeMillis()
+            userId = state.userId,
+            action = actionType,
+            payload = mapOf(
+                "gameId" to state.gameId,
+                "timestamp" to System.currentTimeMillis()
+            )
         )
         repository.sendAction(action)
+    }
+
+    fun sendGiftPlay(giftId: String, quantity: Int) {
+        val state = _viewState.value
+        if (!state.isJoined || state.sessionId.isBlank()) {
+            _viewState.value = state.copy(message = "Join game first")
+            return
+        }
+        repository.sendGiftPlay(
+            roomId = state.roomId,
+            userId = state.userId,
+            sessionId = state.sessionId,
+            giftId = giftId,
+            quantity = quantity
+        )
+    }
+
+    fun setMessage(text: String) {
+        _viewState.value = _viewState.value.copy(message = text)
+    }
+
+    private fun computeCountdown(updatedAt: Long): Int {
+        if (updatedAt <= 0L) return 0
+        val elapsed = (System.currentTimeMillis() - updatedAt).coerceAtLeast(0L)
+        val remaining = 30 - (elapsed / 1000).toInt()
+        return remaining.coerceAtLeast(0)
     }
 
     private fun allowAction(): Boolean {

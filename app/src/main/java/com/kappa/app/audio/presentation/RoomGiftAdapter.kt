@@ -13,7 +13,8 @@ data class GiftItem(
     val name: String,
     val price: Long,
     val conversionRate: Double,
-    val category: GiftCategory
+    val category: GiftCategory,
+    val giftType: String
 )
 
 enum class GiftCategory {

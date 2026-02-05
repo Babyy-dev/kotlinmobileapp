@@ -40,6 +40,7 @@ class RoomsAdapter(
         private val modeText: TextView = itemView.findViewById(R.id.text_room_mode)
         private val lockText: TextView = itemView.findViewById(R.id.text_room_lock)
         private val badgeText: TextView = itemView.findViewById(R.id.text_room_badge)
+        private val countryText: TextView = itemView.findViewById(R.id.text_room_country)
         private val countText: TextView = itemView.findViewById(R.id.text_room_count)
         private val joinButton: MaterialButton = itemView.findViewById(R.id.button_join_room)
 
@@ -49,7 +50,8 @@ class RoomsAdapter(
             lockText.text = if (room.requiresPassword) "Locked" else "Open"
             badgeText.visibility = if (room.isActive) View.VISIBLE else View.INVISIBLE
             badgeText.text = if (room.isActive) "LIVE" else "OFF"
-            countText.text = "${room.participantCount} listening"
+            countryText.text = room.country ?: "Global"
+            countText.text = "${room.participantCount}/${room.maxSeats} listening"
             joinButton.isEnabled = room.isActive
             joinButton.setOnClickListener { onJoinClicked(room) }
         }

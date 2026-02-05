@@ -36,6 +36,13 @@ class RoomMessagesAdapter : RecyclerView.Adapter<RoomMessagesAdapter.MessageView
         fun bind(message: RoomMessage) {
             userText.text = message.username
             messageText.text = message.message
+            val isReward = message.messageType.equals("REWARD", ignoreCase = true)
+            val accent = if (isReward) {
+                itemView.context.getColor(R.color.kappa_gold_300)
+            } else {
+                itemView.context.getColor(R.color.kappa_mint_100)
+            }
+            messageText.setTextColor(accent)
         }
     }
 }

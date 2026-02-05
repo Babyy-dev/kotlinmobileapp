@@ -1,261 +1,298 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_emerald">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+    <ImageView
+        android:id="@+id/image_agency_top_bg"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_top_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
+    <ImageView
+        android:id="@+id/image_agency_bottom_bg"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_bottom_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scroll_agency"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="140dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_profile_header">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:background="@drawable/bg_profile_header">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Agency Center"
-                    android:textAppearance="@style/TextAppearance.Kappa.Headline"
-                    android:textColor="@color/kappa_gold_300" />
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Gerencie equipes e comissões."
-                    android:textAppearance="@style/TextAppearance.Kappa.Body"
-                    android:textColor="@color/kappa_mint_100" />
-            </LinearLayout>
-        </FrameLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Agency Center"
+                        android:textAppearance="@style/TextAppearance.Kappa.Headline"
+                        android:textColor="@color/kappa_gold_300" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:strokeColor="@color/kappa_outline"
-            app:strokeWidth="1dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Gerencie equipes e comissoes."
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_mint_100" />
+                </LinearLayout>
+            </FrameLayout>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_admin_panel_soft"
-                android:padding="16dp">
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:strokeColor="@color/kappa_outline"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Status"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section"
-                    android:textColor="@color/kappa_gold_300" />
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_admin_panel_soft"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/text_agency_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Applications: 0 • Teams: 0 • Commissions: 0"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body"
-                    android:textColor="@color/kappa_mint_100" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Status"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_gold_300" />
 
-                <TextView
-                    android:id="@+id/text_agency_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:textAppearance="@style/TextAppearance.Kappa.Muted"
-                    android:textColor="@color/kappa_mint_100"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/text_agency_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Applications: 0 • Teams: 0 • Commissions: 0"
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_mint_100" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:strokeColor="@color/kappa_outline"
-            app:strokeWidth="1dp">
+                    <TextView
+                        android:id="@+id/text_agency_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textAppearance="@style/TextAppearance.Kappa.Muted"
+                        android:textColor="@color/kappa_mint_100"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_admin_panel_soft"
-                android:padding="16dp">
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:strokeColor="@color/kappa_outline"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Withdrawable Diamonds"
-                    android:textAppearance="@style/TextAppearance.Kappa.Section"
-                    android:textColor="@color/kappa_gold_300" />
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_admin_panel_soft"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/text_agency_total_diamonds"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Total: 0"
-                    android:textAppearance="@style/TextAppearance.Kappa.Body"
-                    android:textColor="@color/kappa_mint_100" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Withdrawable Diamonds"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_gold_300" />
 
-                <TextView
-                    android:id="@+id/text_agency_commission_rule"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="USD 10 = USD 2.2 commission"
-                    android:textAppearance="@style/TextAppearance.Kappa.Muted"
-                    android:textColor="@color/kappa_mint_100" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/text_agency_total_diamonds"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Total: 0"
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_mint_100" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Agency Rooms"
-            android:textAppearance="@style/TextAppearance.Kappa.Section"
-            android:textColor="@color/kappa_gold_300" />
+                    <TextView
+                        android:id="@+id/text_agency_commission_rule"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="USD 10 = USD 2.2 commission"
+                        android:textAppearance="@style/TextAppearance.Kappa.Muted"
+                        android:textColor="@color/kappa_mint_100" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_agency_rooms"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Agency Rooms"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_gold_300" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Linked Hosts"
-            android:textAppearance="@style/TextAppearance.Kappa.Section"
-            android:textColor="@color/kappa_gold_300" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_agency_hosts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Applications"
-            android:textAppearance="@style/TextAppearance.Kappa.Section"
-            android:textColor="@color/kappa_gold_300" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_agency_applications"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Teams"
-            android:textAppearance="@style/TextAppearance.Kappa.Section"
-            android:textColor="@color/kappa_gold_300" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_agency_teams"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Commissions"
-            android:textAppearance="@style/TextAppearance.Kappa.Section"
-            android:textColor="@color/kappa_gold_300" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_agency_commissions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Team name"
-            style="@style/Widget.Kappa.TextInput">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_agency_team"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_agency_rooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_agency_create_team"
-            style="@style/Widget.Kappa.Button.Glow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Create Team" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Linked Hosts"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_gold_300" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_agency_apply"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Apply for Agency"
-            style="@style/Widget.Kappa.Button.Secondary" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_agency_hosts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_reseller_apply"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Apply for Reseller"
-            style="@style/Widget.Kappa.Button.Secondary" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Applications"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_gold_300" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_agency_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Refresh"
-            style="@style/Widget.Kappa.Button.Secondary" />
-    </LinearLayout>
-</ScrollView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_agency_applications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Teams"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_gold_300" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_agency_teams"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Commissions"
+                android:textAppearance="@style/TextAppearance.Kappa.Section"
+                android:textColor="@color/kappa_gold_300" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_agency_commissions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Team name"
+                style="@style/Widget.Kappa.TextInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_agency_team"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_agency_create_team"
+                style="@style/Widget.Kappa.Button.Glow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Create Team" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_agency_apply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Apply for Agency"
+                style="@style/Widget.Kappa.Button.Secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_reseller_apply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Apply for Reseller"
+                style="@style/Widget.Kappa.Button.Secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_agency_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Refresh"
+                style="@style/Widget.Kappa.Button.Secondary" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

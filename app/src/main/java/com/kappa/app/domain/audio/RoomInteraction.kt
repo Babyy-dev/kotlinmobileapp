@@ -5,7 +5,8 @@ data class RoomMessage(
     val userId: String,
     val username: String,
     val message: String,
-    val createdAt: Long
+    val createdAt: Long,
+    val messageType: String = "CHAT"
 )
 
 data class GiftLog(

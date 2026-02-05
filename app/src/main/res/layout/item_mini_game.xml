@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="100dp"
+    android:layout_marginEnd="10dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@color/kappa_surface"
+    app:strokeColor="@color/kappa_outline"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/text_mini_game_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Game"
+            android:textAppearance="@style/TextAppearance.Kappa.Section"
+            android:textColor="@color/kappa_gold_300" />
+
+        <TextView
+            android:id="@+id/text_mini_game_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Description"
+            android:textAppearance="@style/TextAppearance.Kappa.Muted" />
+
+        <TextView
+            android:id="@+id/text_mini_game_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="200 coins"
+            android:textAppearance="@style/TextAppearance.Kappa.Body"
+            android:textColor="@color/kappa_mint_100" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

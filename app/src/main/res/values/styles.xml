@@ -20,6 +20,12 @@
         <item name="android:textColor">@color/kappa_mint_50</item>
     </style>
 
+    <style name="TextAppearance.Kappa.Nav" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textColor">@color/kappa_mint_100</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
     <style name="TextAppearance.Kappa.Section.Dark" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:fontFamily">@font/cinzel</item>
         <item name="android:textColor">@color/kappa_charcoal</item>

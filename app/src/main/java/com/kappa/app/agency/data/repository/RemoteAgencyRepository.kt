@@ -11,10 +11,13 @@ import com.kappa.app.core.network.ErrorMapper
 import com.kappa.app.core.network.model.AgencyApplicationDto
 import com.kappa.app.core.network.model.AgencyApplicationRequestDto
 import com.kappa.app.core.network.model.AgencyCommissionDto
+import com.kappa.app.core.network.model.AgencyRoomDto
+import com.kappa.app.core.network.model.AgencyHostDto
 import com.kappa.app.core.network.model.ResellerApplicationDto
 import com.kappa.app.core.network.model.TeamDto
 import com.kappa.app.core.network.model.TeamCreateRequestDto
 import com.kappa.app.core.network.model.toDomain
+import com.kappa.app.core.network.model.toRow
 import javax.inject.Inject
 
 class RemoteAgencyRepository @Inject constructor(
@@ -76,6 +79,30 @@ class RemoteAgencyRepository @Inject constructor(
         return safeCall<List<AgencyCommissionDto>, List<AgencyCommission>>(
             call = { apiService.getMyCommissions(limit) }
         ) { list -> list.map(AgencyCommissionDto::toDomain) }
+    }
+
+    override suspend fun approveAgencyApplication(id: String): Result<Unit> {
+        return safeCall(
+            call = { apiService.approveAgencyApplication(id) }
+        ) { Unit }
+    }
+
+    override suspend fun rejectAgencyApplication(id: String): Result<Unit> {
+        return safeCall(
+            call = { apiService.rejectAgencyApplication(id) }
+        ) { Unit }
+    }
+
+    override suspend fun listAgencyRooms(): Result<List<Pair<String, String>>> {
+        return safeCall<List<AgencyRoomDto>, List<Pair<String, String>>>(
+            call = { apiService.getAgencyRooms() }
+        ) { list -> list.map(AgencyRoomDto::toRow) }
+    }
+
+    override suspend fun listAgencyHosts(): Result<List<Pair<String, String>>> {
+        return safeCall<List<AgencyHostDto>, List<Pair<String, String>>>(
+            call = { apiService.getAgencyHosts() }
+        ) { list -> list.map(AgencyHostDto::toRow) }
     }
 
     private suspend fun <T, R> safeCall(

@@ -93,6 +93,12 @@ class ProfileFragment : Fragment() {
         val adminButton = view.findViewById<MaterialButton>(R.id.button_role_admin)
         val agencyButton = view.findViewById<MaterialButton>(R.id.button_role_agency)
         val resellerButton = view.findViewById<MaterialButton>(R.id.button_role_reseller)
+        val walletButton = view.findViewById<MaterialButton>(R.id.button_menu_wallet)
+        val rechargeButton = view.findViewById<MaterialButton>(R.id.button_menu_recharge)
+        val backpackButton = view.findViewById<MaterialButton>(R.id.button_menu_backpack)
+        val settingsButton = view.findViewById<MaterialButton>(R.id.button_menu_settings)
+        val vipButton = view.findViewById<MaterialButton>(R.id.button_menu_vip)
+        val starPathButton = view.findViewById<MaterialButton>(R.id.button_menu_starpath)
 
         userViewModel.loadUser("me")
 
@@ -197,6 +203,25 @@ class ProfileFragment : Fragment() {
         }
         resellerButton.setOnClickListener {
             findNavController().navigate(R.id.navigation_reseller_tools)
+        }
+
+        walletButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_wallet)
+        }
+        rechargeButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_recharge)
+        }
+        backpackButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_backpack)
+        }
+        settingsButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_settings)
+        }
+        vipButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_vip)
+        }
+        starPathButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_star_path)
         }
     }
 

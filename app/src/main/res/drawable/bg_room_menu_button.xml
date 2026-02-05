@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <bitmap
+            android:gravity="fill"
+            android:src="@drawable/btn_potalive_teal" />
+    </item>
+    <item android:inset="2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="18dp" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/kappa_gold_500" />
+        </shape>
+    </item>
+</layer-list>

@@ -219,6 +219,14 @@ class EconomyService {
         }
     }
 
+    fun getGiftCost(giftId: UUID): Long? {
+        return transaction {
+            Gifts.select { Gifts.id eq giftId }
+                .singleOrNull()
+                ?.get(Gifts.costCoins)
+        }
+    }
+
     fun createGift(request: GiftCreateRequest): GiftCatalogResponse {
         require(request.name.isNotBlank()) { "Gift name is required" }
         require(request.costCoins > 0) { "Gift cost must be greater than 0" }

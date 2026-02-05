@@ -16,4 +16,8 @@ interface AgencyRepository {
     suspend fun joinTeam(teamId: String): Result<Unit>
     suspend fun leaveTeam(teamId: String): Result<Unit>
     suspend fun listMyCommissions(limit: Int = 20): Result<List<AgencyCommission>>
+    suspend fun approveAgencyApplication(id: String): Result<Unit>
+    suspend fun rejectAgencyApplication(id: String): Result<Unit>
+    suspend fun listAgencyRooms(): Result<List<Pair<String, String>>>
+    suspend fun listAgencyHosts(): Result<List<Pair<String, String>>>
 }

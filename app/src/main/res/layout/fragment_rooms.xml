@@ -1,61 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_screen_emerald"
-    android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".audio.presentation.RoomsFragment">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="104dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_top_header">
+    <ImageView
+        android:id="@+id/image_rooms_top_bg"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_top_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_rooms_bottom_bg"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/potalive_bottom_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scroll_rooms"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="140dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="bottom"
-            android:paddingStart="28dp"
-            android:paddingEnd="28dp"
-            android:paddingBottom="14dp"
-            android:weightSum="3">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/potalive_header">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="14dp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/button_rooms_myroom"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_pill_teal"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_rooms"
+                        android:tint="@color/kappa_cream" />
+
+                    <ImageButton
+                        android:id="@+id/button_rooms_notifications"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_pill_teal"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_bell"
+                        android:tint="@color/kappa_cream" />
+
+                    <ImageButton
+                        android:id="@+id/button_rooms_search"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_pill_teal"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_search"
+                        android:tint="@color/kappa_cream" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="bottom"
+                    android:paddingStart="28dp"
+                    android:paddingEnd="28dp"
+                    android:paddingBottom="14dp"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:id="@+id/tab_rooms_meu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Meu"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_gold_300" />
+
+                    <TextView
+                        android:id="@+id/tab_rooms_popular"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Popular"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_cream" />
+
+                    <TextView
+                        android:id="@+id/tab_rooms_posts"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Postagens"
+                        android:textAppearance="@style/TextAppearance.Kappa.Section"
+                        android:textColor="@color/kappa_cream" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/pager_rooms_banner"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_rooms_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                app:tabIndicatorColor="@color/kappa_gold_300"
+                app:tabSelectedTextColor="@color/kappa_gold_300"
+                app:tabTextColor="@color/kappa_mint_100" />
 
             <TextView
-                android:id="@+id/tab_rooms_meu"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Meu"
+                android:text="Top mini-games"
                 android:textAppearance="@style/TextAppearance.Kappa.Section"
                 android:textColor="@color/kappa_gold_300" />
 
-            <TextView
-                android:id="@+id/tab_rooms_popular"
-                android:layout_width="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_rooms_games"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Popular"
-                android:textAppearance="@style/TextAppearance.Kappa.Section"
-                android:textColor="@color/kappa_cream" />
-
-            <TextView
-                android:id="@+id/tab_rooms_posts"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Postagens"
-                android:textAppearance="@style/TextAppearance.Kappa.Section"
-                android:textColor="@color/kappa_cream" />
-        </LinearLayout>
-    </FrameLayout>
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_card_glass"
+                android:padding="8dp" />
 
     <LinearLayout
         android:id="@+id/section_rooms_meu"
@@ -373,6 +482,22 @@
         </LinearLayout>
     </FrameLayout>
 
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_countries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            app:singleSelection="true"
+            app:chipSpacing="8dp" />
+    </HorizontalScrollView>
+
     <ProgressBar
         android:id="@+id/progress_rooms"
         android:layout_width="wrap_content"
@@ -515,6 +640,8 @@
                     android:textColor="@color/kappa_mint_100" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

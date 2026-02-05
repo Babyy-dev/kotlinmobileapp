@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game name"
+        style="@style/Widget.Kappa.TextInput">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_admin_game_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/kappa_cream"
+            android:textColorHint="@color/kappa_text_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="RTP (%)"
+        style="@style/Widget.Kappa.TextInput">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_admin_game_rtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:textColor="@color/kappa_cream"
+            android:textColorHint="@color/kappa_text_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="House Edge (%)"
+        style="@style/Widget.Kappa.TextInput">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_admin_game_house"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:textColor="@color/kappa_cream"
+            android:textColorHint="@color/kappa_text_muted" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

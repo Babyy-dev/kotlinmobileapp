@@ -3,6 +3,7 @@ package com.kappa.app.game.di
 import com.google.gson.Gson
 import com.kappa.app.core.network.providePlainOkHttpClient
 import com.kappa.app.game.data.GameRepository
+import com.kappa.app.core.network.ApiService
 import com.kappa.app.game.data.WebSocketGameRepository
 import dagger.Module
 import dagger.Provides
@@ -27,8 +28,9 @@ object GameModule {
     @Singleton
     fun provideGameRepository(
         okHttpClient: OkHttpClient,
-        gson: Gson
+        gson: Gson,
+        apiService: ApiService
     ): GameRepository {
-        return WebSocketGameRepository(okHttpClient, gson, CoroutineScope(Dispatchers.IO))
+        return WebSocketGameRepository(okHttpClient, gson, apiService, CoroutineScope(Dispatchers.IO))
     }
 }

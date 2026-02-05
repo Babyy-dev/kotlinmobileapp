@@ -54,6 +54,42 @@
         tools:layout="@layout/fragment_profile" />
 
     <fragment
+        android:id="@+id/navigation_wallet"
+        android:name="com.kappa.app.main.WalletFragment"
+        android:label="Wallet"
+        tools:layout="@layout/fragment_wallet" />
+
+    <fragment
+        android:id="@+id/navigation_recharge"
+        android:name="com.kappa.app.main.RechargeFragment"
+        android:label="Recharge"
+        tools:layout="@layout/fragment_recharge" />
+
+    <fragment
+        android:id="@+id/navigation_backpack"
+        android:name="com.kappa.app.main.BackpackFragment"
+        android:label="Backpack"
+        tools:layout="@layout/fragment_backpack" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.kappa.app.main.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/navigation_vip"
+        android:name="com.kappa.app.main.VipFragment"
+        android:label="VIP"
+        tools:layout="@layout/fragment_vip" />
+
+    <fragment
+        android:id="@+id/navigation_star_path"
+        android:name="com.kappa.app.main.StarPathFragment"
+        android:label="Star Path"
+        tools:layout="@layout/fragment_star_path" />
+
+    <fragment
         android:id="@+id/navigation_admin_dashboard"
         android:name="com.kappa.app.main.AdminDashboardFragment"
         android:label="Admin"

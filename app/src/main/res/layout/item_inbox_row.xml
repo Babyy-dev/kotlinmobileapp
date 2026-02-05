@@ -86,4 +86,16 @@
         android:src="@drawable/ic_inbox"
         android:tint="@color/kappa_gold_300" />
 
+    <TextView
+        android:id="@+id/text_inbox_unread"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_inbox_unread"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/kappa_cream"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
 </LinearLayout>

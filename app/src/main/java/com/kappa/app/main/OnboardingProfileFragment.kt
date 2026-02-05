@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.kappa.app.R
 import com.kappa.app.core.storage.PreferencesManager
 import com.kappa.app.user.presentation.UserViewModel
@@ -73,7 +75,7 @@ class OnboardingProfileFragment : Fragment() {
 
         val displayNameInput = view.findViewById<TextInputEditText>(R.id.input_onboarding_display_name)
         val countryInput = view.findViewById<TextInputEditText>(R.id.input_onboarding_country)
-        val languageInput = view.findViewById<TextInputEditText>(R.id.input_onboarding_language)
+        val languageInput = view.findViewById<MaterialAutoCompleteTextView>(R.id.input_onboarding_language)
         val avatarButton = view.findViewById<MaterialButton>(R.id.button_onboarding_avatar)
         val continueButton = view.findViewById<MaterialButton>(R.id.button_onboarding_profile_continue)
         val progressBar = view.findViewById<ProgressBar>(R.id.progress_onboarding_profile)
@@ -89,6 +91,19 @@ class OnboardingProfileFragment : Fragment() {
             countryInput.setText(initialCountry)
         }
 
+        val languageOptions = resources.getStringArray(R.array.supported_languages).toList()
+        val languageAdapter = ArrayAdapter(requireContext(), R.layout.item_country, languageOptions)
+        languageInput.setAdapter(languageAdapter)
+        languageInput.threshold = 0
+        languageInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                languageInput.showDropDown()
+            }
+        }
+        languageInput.setOnClickListener {
+            languageInput.showDropDown()
+        }
+
         userViewModel.loadUser("me")
 
         avatarButton.setOnClickListener {
@@ -99,28 +114,45 @@ class OnboardingProfileFragment : Fragment() {
             val displayName = displayNameInput.text?.toString()?.trim()
             val country = countryInput.text?.toString()?.trim()
             val language = languageInput.text?.toString()?.trim()
+            val avatarBytes = selectedAvatarBytes
 
-            val shouldUpdate = !displayName.isNullOrBlank() ||
-                !country.isNullOrBlank() ||
-                !language.isNullOrBlank()
+            if (displayName.isNullOrBlank()) {
+                messageText.text = "Please enter your display name"
+                messageText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            if (country.isNullOrBlank()) {
+                messageText.text = "Please select your country"
+                messageText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            if (language.isNullOrBlank()) {
+                messageText.text = "Please select your language"
+                messageText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            if (languageOptions.none { it.equals(language, ignoreCase = true) }) {
+                messageText.text = "Please select one of the supported languages"
+                messageText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+            if (avatarBytes != null && avatarBytes.isEmpty()) {
+                messageText.text = "Avatar file is invalid"
+                messageText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
 
             pendingComplete = true
+            messageText.visibility = View.GONE
 
-            if (shouldUpdate) {
-                userViewModel.updateProfile(
-                    nickname = displayName?.ifBlank { null },
-                    country = country?.ifBlank { null },
-                    language = language?.ifBlank { null }
-                )
-            }
+            userViewModel.updateProfile(
+                nickname = displayName,
+                country = country,
+                language = language
+            )
 
-            val avatarBytes = selectedAvatarBytes
             if (avatarBytes != null) {
                 userViewModel.uploadAvatar(avatarBytes, selectedAvatarName, selectedAvatarMime)
-            }
-
-            if (!shouldUpdate && avatarBytes == null) {
-                completeOnboarding()
             }
         }
 

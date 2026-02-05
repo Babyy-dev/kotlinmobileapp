@@ -16,10 +16,12 @@
         <!-- Logo/Icon at top -->
         <ImageView
             android:id="@+id/image_login_logo"
-            android:layout_width="132dp"
-            android:layout_height="132dp"
+            android:layout_width="220dp"
+            android:layout_height="120dp"
             android:layout_marginTop="48dp"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
             android:src="@drawable/logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,22 +81,45 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Username Input -->
-                    <com.google.android.material.textfield.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Username"
                         android:layout_marginBottom="16dp"
-                        style="@style/Widget.Kappa.TextInput">
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/input_username"
-                            android:layout_width="match_parent"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:textColor="@color/kappa_cream"
-                            android:textColorHint="@color/kappa_text_muted" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:hint="Code"
+                            style="@style/Widget.Kappa.TextInput">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/input_country_code"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:hint="Phone number"
+                            style="@style/Widget.Kappa.TextInput">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_phone_login"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="phone"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                     <!-- Password Input -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -129,6 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Use phone instead"
+                    android:visibility="gone"
                     style="@style/Widget.Kappa.Button.Text" />
 
                 <LinearLayout

@@ -18,8 +18,11 @@ import javax.inject.Inject
 data class AgencyViewState(
     val agencyApplication: AgencyApplication? = null,
     val resellerApplication: ResellerApplication? = null,
+    val agencyApplications: List<AgencyApplication> = emptyList(),
     val teams: List<Team> = emptyList(),
     val commissions: List<AgencyCommission> = emptyList(),
+    val rooms: List<Pair<String, String>> = emptyList(),
+    val hosts: List<Pair<String, String>> = emptyList(),
     val isRefreshing: Boolean = false,
     val error: String? = null,
     val actionMessage: String? = null
@@ -57,13 +60,24 @@ class AgencyViewModel @Inject constructor(
                 emitError(it.message)
                 emptyList()
             }
+            val rooms = repository.listAgencyRooms().getOrElse {
+                emitError(it.message)
+                emptyList()
+            }
+            val hosts = repository.listAgencyHosts().getOrElse {
+                emitError(it.message)
+                emptyList()
+            }
 
             _viewState.update {
                 it.copy(
                     agencyApplication = agencyApps.firstOrNull(),
                     resellerApplication = resellerApps.firstOrNull(),
+                    agencyApplications = agencyApps,
                     teams = teams,
                     commissions = commissions,
+                    rooms = rooms,
+                    hosts = hosts,
                     isRefreshing = false
                 )
             }
@@ -143,6 +157,30 @@ class AgencyViewModel @Inject constructor(
             repository.leaveTeam(teamId)
                 .onSuccess {
                     _viewState.update { it.copy(actionMessage = "Left team") }
+                }
+                .onFailure { emitError(it.message) }
+            refreshAll()
+        }
+    }
+
+    fun approveApplication(id: String) {
+        viewModelScope.launch {
+            _viewState.update { it.copy(isRefreshing = true, actionMessage = null, error = null) }
+            repository.approveAgencyApplication(id)
+                .onSuccess {
+                    _viewState.update { it.copy(actionMessage = "Application approved") }
+                }
+                .onFailure { emitError(it.message) }
+            refreshAll()
+        }
+    }
+
+    fun rejectApplication(id: String) {
+        viewModelScope.launch {
+            _viewState.update { it.copy(isRefreshing = true, actionMessage = null, error = null) }
+            repository.rejectAgencyApplication(id)
+                .onSuccess {
+                    _viewState.update { it.copy(actionMessage = "Application rejected") }
                 }
                 .onFailure { emitError(it.message) }
             refreshAll()

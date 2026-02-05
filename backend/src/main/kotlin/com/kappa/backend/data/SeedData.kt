@@ -62,6 +62,7 @@ object SeedData {
         Rooms.insert {
             it[id] = loungeRoomId
             it[name] = "Kappa Lounge"
+            it[country] = "UAE"
             it[seatMode] = SeatMode.FREE.name
             it[Rooms.maxSeats] = 28
             it[Rooms.passwordHash] = null
@@ -75,6 +76,7 @@ object SeedData {
         Rooms.insert {
             it[id] = stageRoomId
             it[name] = "Agency Stage"
+            it[country] = "Bahrain"
             it[seatMode] = SeatMode.BLOCKED.name
             it[Rooms.maxSeats] = 28
             it[Rooms.passwordHash] = null

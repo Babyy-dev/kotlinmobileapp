@@ -84,6 +84,10 @@ class MainActivity : AppCompatActivity() {
 
             // Use setupWithNavController - this handles everything automatically.
             navView.setupWithNavController(navController)
+            navView.setOnItemReselectedListener { item ->
+                // Reselecting the same tab pops to its root destination.
+                navController.popBackStack(item.itemId, false)
+            }
 
             Timber.d("Navigation setup complete!")
             Timber.d("Using NavigationUI.setupWithNavController() - this handles all navigation automatically")

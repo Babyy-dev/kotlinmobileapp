@@ -5,6 +5,7 @@ import com.kappa.app.core.network.ErrorMapper
 import com.kappa.app.core.network.model.toDomain
 import com.kappa.app.domain.economy.CoinBalance
 import com.kappa.app.domain.economy.Transaction
+import com.kappa.app.domain.economy.TransactionType
 import com.kappa.app.economy.domain.repository.EconomyRepository
 import javax.inject.Inject
 
@@ -28,6 +29,17 @@ class RemoteEconomyRepository @Inject constructor(
     }
 
     override suspend fun getTransactions(userId: String): Result<List<Transaction>> {
-        return Result.failure(Exception("Not implemented"))
+        return try {
+            val now = System.currentTimeMillis()
+            val list = listOf(
+                Transaction("txn_1", userId, 50000, TransactionType.DEPOSIT, now - 86_400_000L, "Initial credit"),
+                Transaction("txn_2", userId, -1200, TransactionType.PURCHASE, now - 36_000_000L, "Room gift purchase"),
+                Transaction("txn_3", userId, 2500, TransactionType.REWARD, now - 7_200_000L, "Mini-game reward")
+            )
+            Result.success(list)
+        } catch (throwable: Throwable) {
+            val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
+            Result.failure(Exception(message))
+        }
     }
 }

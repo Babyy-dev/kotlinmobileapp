@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:background="@drawable/bg_room_banner"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/text_banner_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Banner"
+        android:textAppearance="@style/TextAppearance.Kappa.Headline"
+        android:textColor="@color/kappa_gold_300" />
+
+    <TextView
+        android:id="@+id/text_banner_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_gravity="bottom|start"
+        android:text="Subtitle"
+        android:textAppearance="@style/TextAppearance.Kappa.Body"
+        android:textColor="@color/kappa_mint_100" />
+</FrameLayout>

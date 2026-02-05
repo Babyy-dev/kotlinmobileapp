@@ -43,3 +43,15 @@ data class AgencyCommissionDto(
     val commissionUsd: String,
     val createdAt: Long
 )
+
+data class AgencyRoomDto(
+    val id: String,
+    val name: String,
+    val status: String
+)
+
+data class AgencyHostDto(
+    val id: String,
+    val name: String,
+    val diamonds: Long
+)

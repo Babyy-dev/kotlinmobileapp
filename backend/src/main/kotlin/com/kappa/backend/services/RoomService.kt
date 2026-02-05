@@ -55,7 +55,8 @@ class RoomService(
                         seatMode = SeatMode.valueOf(row[Rooms.seatMode]),
                         participantCount = participantCount(roomId),
                         maxSeats = maxSeats,
-                        requiresPassword = row[Rooms.passwordHash] != null
+                        requiresPassword = row[Rooms.passwordHash] != null,
+                        country = row[Rooms.country]
                     )
                 }
         }
@@ -106,7 +107,8 @@ class RoomService(
                 seatMode = SeatMode.valueOf(roomRow[Rooms.seatMode]),
                 participantCount = participantCount(roomId),
                 maxSeats = roomRow[Rooms.maxSeats] ?: 28,
-                requiresPassword = roomRow[Rooms.passwordHash] != null
+                requiresPassword = roomRow[Rooms.passwordHash] != null,
+                country = roomRow[Rooms.country]
             )
 
             JoinRoomResult(
@@ -119,22 +121,25 @@ class RoomService(
         }
     }
 
-    fun createRoom(name: String, seatMode: String, maxSeats: Int, password: String?): RoomResponse {
+    fun createRoom(name: String, seatMode: String, maxSeats: Int, password: String?, country: String?): RoomResponse {
         return transaction {
             val now = System.currentTimeMillis()
             val roomId = UUID.randomUUID()
             val resolvedSeatMode = runCatching { SeatMode.valueOf(seatMode) }.getOrDefault(SeatMode.FREE)
             val resolvedMaxSeats = maxSeats.coerceIn(1, 28)
             val passwordHash = password?.trim()?.takeIf { it.isNotBlank() }?.let { BCrypt.hashpw(it, BCrypt.gensalt()) }
+            val resolvedCountry = country?.trim()?.ifBlank { null } ?: "Global"
             Rooms.insert {
                 it[id] = roomId
                 it[Rooms.name] = name
+                it[Rooms.country] = resolvedCountry
                 it[Rooms.seatMode] = resolvedSeatMode.name
                 it[Rooms.maxSeats] = resolvedMaxSeats
                 it[Rooms.passwordHash] = passwordHash
                 it[status] = "active"
                 it[createdAt] = now
                 it[agencyId] = null
+                it[familyId] = null
             }
             (1..resolvedMaxSeats).forEach { seatNumber ->
                 RoomSeats.insert {
@@ -151,7 +156,27 @@ class RoomService(
                 seatMode = resolvedSeatMode,
                 participantCount = 0,
                 maxSeats = resolvedMaxSeats,
-                requiresPassword = passwordHash != null
+                requiresPassword = passwordHash != null,
+                country = resolvedCountry
+            )
+        }
+    }
+
+    fun assignFamily(roomId: UUID, familyId: UUID?): RoomResponse? {
+        return transaction {
+            val roomRow = Rooms.select { Rooms.id eq roomId }.singleOrNull() ?: return@transaction null
+            Rooms.update({ Rooms.id eq roomId }) {
+                it[Rooms.familyId] = familyId
+            }
+            RoomResponse(
+                id = roomRow[Rooms.id].toString(),
+                name = roomRow[Rooms.name],
+                isActive = roomRow[Rooms.status] == "active",
+                seatMode = SeatMode.valueOf(roomRow[Rooms.seatMode]),
+                participantCount = participantCount(roomId),
+                maxSeats = roomRow[Rooms.maxSeats] ?: 28,
+                requiresPassword = roomRow[Rooms.passwordHash] != null,
+                country = roomRow[Rooms.country]
             )
         }
     }

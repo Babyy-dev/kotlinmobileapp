@@ -195,3 +195,37 @@ class QualificationConfigAdapter(
         }
     }
 }
+
+class AdminAuditLogAdapter : RecyclerView.Adapter<AdminAuditLogAdapter.LogViewHolder>() {
+
+    private val items = mutableListOf<AdminAuditLog>()
+
+    fun submitLogs(logs: List<AdminAuditLog>) {
+        items.clear()
+        items.addAll(logs)
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_admin_audit_log, parent, false)
+        return LogViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    class LogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val actionText = itemView.findViewById<TextView>(R.id.text_admin_audit_action)
+        private val messageText = itemView.findViewById<TextView>(R.id.text_admin_audit_message)
+        private val timeText = itemView.findViewById<TextView>(R.id.text_admin_audit_time)
+
+        fun bind(log: AdminAuditLog) {
+            actionText.text = log.action
+            messageText.text = log.message ?: "No details"
+            timeText.text = log.createdAt.toString()
+        }
+    }
+}

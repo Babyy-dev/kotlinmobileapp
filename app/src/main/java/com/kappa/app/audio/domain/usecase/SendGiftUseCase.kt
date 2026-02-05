@@ -7,7 +7,15 @@ import javax.inject.Inject
 class SendGiftUseCase @Inject constructor(
     private val audioRepository: AudioRepository
 ) {
-    suspend operator fun invoke(roomId: String, amount: Long, recipientId: String?): Result<GiftLog> {
-        return audioRepository.sendGift(roomId, amount, recipientId)
+    suspend operator fun invoke(
+        roomId: String,
+        amount: Long,
+        recipientId: String?,
+        giftId: String?,
+        giftType: String?,
+        target: String? = null,
+        recipientIds: List<String>? = null
+    ): Result<GiftLog> {
+        return audioRepository.sendGift(roomId, amount, recipientId, giftId, giftType, target, recipientIds)
     }
 }

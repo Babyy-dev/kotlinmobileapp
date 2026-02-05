@@ -1,11 +1,13 @@
 package com.kappa.backend.services
 
 import com.kappa.backend.data.Agencies
+import com.kappa.backend.data.AgencyAuditLogs
 import com.kappa.backend.data.AgencyApplications
 import com.kappa.backend.data.ResellerApplications
 import com.kappa.backend.data.TeamGroups
 import com.kappa.backend.data.TeamMembers
 import com.kappa.backend.data.Users
+import com.kappa.backend.models.AgencyLogResponse
 import com.kappa.backend.models.AgencyApplicationResponse
 import com.kappa.backend.models.AgencyResponse
 import com.kappa.backend.models.AgencyUpdateRequest
@@ -51,6 +53,7 @@ class AgencyService {
                 it[createdAt] = now
                 it[reviewedAt] = null
             }
+            logAction(null, userId, "AGENCY_APPLY", "Agency application ${appId}")
             AgencyApplicationResponse(
                 id = appId.toString(),
                 userId = userId.toString(),
@@ -84,6 +87,7 @@ class AgencyService {
                 it[createdAt] = now
                 it[reviewedAt] = null
             }
+            logAction(null, userId, "RESELLER_APPLY", "Reseller application ${appId}")
             ResellerApplicationResponse(
                 id = appId.toString(),
                 userId = userId.toString(),
@@ -154,6 +158,9 @@ class AgencyService {
                     it[Users.role] = UserRole.AGENCY.name
                     it[Users.agencyId] = agencyId
                 }
+                logAction(agencyId, row[AgencyApplications.userId], "AGENCY_APPROVED", "Agency ${agencyId}")
+            } else {
+                logAction(null, row[AgencyApplications.userId], "AGENCY_REJECTED", "Agency application ${appId}")
             }
             AgencyApplicationResponse(
                 id = row[AgencyApplications.id].toString(),
@@ -183,6 +190,9 @@ class AgencyService {
                 Users.update({ Users.id eq row[ResellerApplications.userId] }) {
                     it[Users.role] = UserRole.RESELLER.name
                 }
+                logAction(null, row[ResellerApplications.userId], "RESELLER_APPROVED", "Reseller ${row[ResellerApplications.userId]}")
+            } else {
+                logAction(null, row[ResellerApplications.userId], "RESELLER_REJECTED", "Reseller application ${appId}")
             }
             ResellerApplicationResponse(
                 id = row[ResellerApplications.id].toString(),
@@ -247,6 +257,7 @@ class AgencyService {
                 it[TeamMembers.role] = "OWNER"
                 it[TeamMembers.joinedAt] = now
             }
+            logAction(user[Users.agencyId], userId, "TEAM_CREATE", "Team ${teamId}")
             TeamResponse(
                 id = teamId.toString(),
                 name = name.trim(),
@@ -274,13 +285,24 @@ class AgencyService {
                 it[TeamMembers.role] = "MEMBER"
                 it[TeamMembers.joinedAt] = System.currentTimeMillis()
             }
+            val agencyId = TeamGroups.select { TeamGroups.id eq teamId }
+                .singleOrNull()
+                ?.get(TeamGroups.agencyId)
+            logAction(agencyId, userId, "TEAM_JOIN", "Team ${teamId}")
             true
         }
     }
 
     fun leaveTeam(userId: UUID, teamId: UUID): Boolean {
         return transaction {
-            TeamMembers.deleteWhere { (TeamMembers.teamId eq teamId) and (TeamMembers.userId eq userId) } > 0
+            val deleted = TeamMembers.deleteWhere { (TeamMembers.teamId eq teamId) and (TeamMembers.userId eq userId) } > 0
+            if (deleted) {
+                val agencyId = TeamGroups.select { TeamGroups.id eq teamId }
+                    .singleOrNull()
+                    ?.get(TeamGroups.agencyId)
+                logAction(agencyId, userId, "TEAM_LEAVE", "Team ${teamId}")
+            }
+            deleted
         }
     }
 
@@ -315,6 +337,25 @@ class AgencyService {
             query.orderBy(Agencies.createdAt, SortOrder.DESC)
                 .limit(resolvedLimit)
                 .map { row -> row.toAgencyResponse() }
+        }
+    }
+
+    fun listLogs(agencyId: UUID, limit: Int): List<AgencyLogResponse> {
+        val resolvedLimit = limit.coerceIn(1, 200)
+        return transaction {
+            AgencyAuditLogs.select { AgencyAuditLogs.agencyId eq agencyId }
+                .orderBy(AgencyAuditLogs.createdAt, SortOrder.DESC)
+                .limit(resolvedLimit)
+                .map { row ->
+                    AgencyLogResponse(
+                        id = row[AgencyAuditLogs.id].toString(),
+                        agencyId = row[AgencyAuditLogs.agencyId].toString(),
+                        actorId = row[AgencyAuditLogs.actorId].toString(),
+                        action = row[AgencyAuditLogs.action],
+                        message = row[AgencyAuditLogs.message],
+                        createdAt = row[AgencyAuditLogs.createdAt]
+                    )
+                }
         }
     }
 
@@ -370,5 +411,23 @@ class AgencyService {
             status = this[Agencies.status],
             createdAt = this[Agencies.createdAt]
         )
+    }
+
+    private fun logAction(agencyId: UUID?, actorId: UUID, action: String, message: String?) {
+        val resolvedAgency = agencyId ?: Users.select { Users.id eq actorId }
+            .singleOrNull()
+            ?.get(Users.agencyId)
+        val now = System.currentTimeMillis()
+        if (resolvedAgency == null) {
+            return
+        }
+        AgencyAuditLogs.insert {
+            it[id] = UUID.randomUUID()
+            it[AgencyAuditLogs.agencyId] = resolvedAgency
+            it[AgencyAuditLogs.actorId] = actorId
+            it[AgencyAuditLogs.action] = action
+            it[AgencyAuditLogs.message] = message
+            it[AgencyAuditLogs.createdAt] = now
+        }
     }
 }

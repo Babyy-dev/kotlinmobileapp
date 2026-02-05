@@ -18,6 +18,8 @@ private const val DEFAULT_LIVEKIT_KEY = "devkey"
 private const val DEFAULT_LIVEKIT_SECRET = "devsecret"
 private const val DEFAULT_LIVEKIT_TTL = 3600L
 private const val DEFAULT_OTP_EXPOSE_CODE = true
+private const val DEFAULT_SOCKET_HOST = "0.0.0.0"
+private const val DEFAULT_SOCKET_PORT = 8081
 
 data class AppConfig(
     val dbUrl: String,
@@ -39,7 +41,9 @@ data class AppConfig(
     val twilioApiKeySecret: String,
     val twilioAuthToken: String,
     val twilioFromNumber: String,
-    val otpExposeCode: Boolean
+    val otpExposeCode: Boolean,
+    val socketHost: String,
+    val socketPort: Int
 )
 
 fun Application.loadConfig(): AppConfig {
@@ -64,7 +68,9 @@ fun Application.loadConfig(): AppConfig {
         twilioApiKeySecret = config.stringOrEnv("twilio.apiKeySecret", "KAPPA_TWILIO_API_KEY_SECRET", ""),
         twilioAuthToken = config.stringOrEnv("twilio.authToken", "KAPPA_TWILIO_AUTH_TOKEN", ""),
         twilioFromNumber = config.stringOrEnv("twilio.fromNumber", "KAPPA_TWILIO_FROM", ""),
-        otpExposeCode = config.booleanOrEnv("otp.exposeCode", "KAPPA_OTP_EXPOSE_CODE", DEFAULT_OTP_EXPOSE_CODE)
+        otpExposeCode = config.booleanOrEnv("otp.exposeCode", "KAPPA_OTP_EXPOSE_CODE", DEFAULT_OTP_EXPOSE_CODE),
+        socketHost = config.stringOrEnv("socket.host", "KAPPA_SOCKET_HOST", DEFAULT_SOCKET_HOST),
+        socketPort = config.intOrEnv("socket.port", "KAPPA_SOCKET_PORT", DEFAULT_SOCKET_PORT)
     )
 }
 
@@ -92,4 +98,13 @@ private fun ApplicationConfig.booleanOrEnv(path: String, envKey: String, default
     }
     val configValue = propertyOrNull(path)?.getString()
     return configValue?.toBooleanStrictOrNull() ?: defaultValue
+}
+
+private fun ApplicationConfig.intOrEnv(path: String, envKey: String, defaultValue: Int): Int {
+    val envValue = System.getenv(envKey)
+    if (!envValue.isNullOrBlank()) {
+        return envValue.toIntOrNull() ?: defaultValue
+    }
+    val configValue = propertyOrNull(path)?.getString()
+    return configValue?.toIntOrNull() ?: defaultValue
 }

@@ -34,14 +34,28 @@ class OnboardingCountryFragment : Fragment() {
         val errorText = view.findViewById<TextView>(R.id.text_onboarding_country_error)
         val nextButton = view.findViewById<MaterialButton>(R.id.button_onboarding_country_next)
 
-        val countries = loadCountries()
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, countries)
+        val countryOptions = loadCountries()
+        val displayNames = countryOptions.map { it.displayName }
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_country, displayNames)
         countryInput.setAdapter(adapter)
+        countryInput.threshold = 1
+        countryInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                countryInput.showDropDown()
+            }
+        }
+        countryInput.setOnClickListener {
+            countryInput.showDropDown()
+        }
 
         nextButton.setOnClickListener {
             val rawCountry = countryInput.text?.toString()?.trim().orEmpty()
             val country = normalizeCountryName(rawCountry)
-            if (country.isBlank()) {
+            val isValid = countryOptions.any { option ->
+                option.name.equals(country, ignoreCase = true) ||
+                    option.displayName.equals(rawCountry, ignoreCase = true)
+            }
+            if (country.isBlank() || !isValid) {
                 errorText.text = "Please select your country"
                 errorText.visibility = View.VISIBLE
                 return@setOnClickListener
@@ -52,7 +66,7 @@ class OnboardingCountryFragment : Fragment() {
         }
     }
 
-    private fun loadCountries(): List<String> {
+    private fun loadCountries(): List<CountryOption> {
         val localeCountries = runCatching {
             Locale.getISOCountries()
                 .mapNotNull { code ->
@@ -64,26 +78,27 @@ class OnboardingCountryFragment : Fragment() {
                     )
                 }
                 .sortedBy { it.name }
-                .map { it.displayName }
         }.getOrNull()
 
         if (!localeCountries.isNullOrEmpty()) {
             return localeCountries
         }
 
-        val context = context ?: return resources.getStringArray(R.array.country_list).toList()
-        return try {
+        val context = context ?: return emptyList()
+        val fallback = try {
             context.assets.open("countries.json").bufferedReader().use { reader ->
                 val json = reader.readText()
                 val array = JSONArray(json)
                 List(array.length()) { index ->
                     array.optString(index)
                 }.filter { it.isNotBlank() }
-            }.ifEmpty {
-                resources.getStringArray(R.array.country_list).toList()
             }
         } catch (error: IOException) {
             resources.getStringArray(R.array.country_list).toList()
+        }
+
+        return fallback.map { name ->
+            CountryOption(code = "", name = name, displayName = name)
         }
     }
 

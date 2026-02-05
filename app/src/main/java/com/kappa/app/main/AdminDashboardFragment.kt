@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.kappa.app.R
 import com.kappa.app.admin.presentation.AdminDashboardViewModel
@@ -19,10 +20,14 @@ import com.kappa.app.admin.presentation.AdminGameConfigAdapter
 import com.kappa.app.admin.presentation.AdminUserConfigAdapter
 import com.kappa.app.admin.presentation.AdminLockAdapter
 import com.kappa.app.admin.presentation.QualificationConfigAdapter
+import com.kappa.app.admin.presentation.AdminAuditLogAdapter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AdminDashboardFragment : Fragment() {
 
     private val viewModel: AdminDashboardViewModel by viewModels()
@@ -45,6 +50,7 @@ class AdminDashboardFragment : Fragment() {
         val usersRecycler = view.findViewById<RecyclerView>(R.id.recycler_admin_users)
         val locksRecycler = view.findViewById<RecyclerView>(R.id.recycler_admin_locks)
         val qualRecycler = view.findViewById<RecyclerView>(R.id.recycler_admin_qualifications)
+        val auditRecycler = view.findViewById<RecyclerView>(R.id.recycler_admin_audit_logs)
         val withdrawMinInput = view.findViewById<TextInputEditText>(R.id.input_admin_withdraw_min)
         val withdrawMultipleInput = view.findViewById<TextInputEditText>(R.id.input_admin_withdraw_multiple)
         val saveWithdrawButton = view.findViewById<MaterialButton>(R.id.button_admin_save_withdrawal)
@@ -53,19 +59,15 @@ class AdminDashboardFragment : Fragment() {
         val addLockButton = view.findViewById<MaterialButton>(R.id.button_admin_add_lock)
 
         val gameAdapter = AdminGameConfigAdapter(
-            onEdit = { config ->
-                viewModel.updateGameConfig(config.copy(rtp = config.rtp + 0.1))
-            },
+            onEdit = { config -> showGameConfigDialog(config) },
             onDelete = { config -> viewModel.deleteGameConfig(config.id) }
         )
         val userAdapter = AdminUserConfigAdapter(
-            onEdit = { config ->
-                viewModel.updateUserConfig(config.copy(rtp = config.rtp + 0.1))
-            },
+            onEdit = { config -> showUserConfigDialog(config) },
             onDelete = { config -> viewModel.deleteUserConfig(config.id) }
         )
         val lockAdapter = AdminLockAdapter(
-            onEdit = { rule -> viewModel.updateLockRule(rule.copy(cooldownMinutes = rule.cooldownMinutes + 5)) },
+            onEdit = { rule -> showLockRuleDialog(rule) },
             onDelete = { rule -> viewModel.deleteLockRule(rule.id) }
         )
         val qualificationAdapter = QualificationConfigAdapter(
@@ -73,11 +75,13 @@ class AdminDashboardFragment : Fragment() {
                 viewModel.updateQualificationConfig(config.copy(rtp = config.rtp + 0.5))
             }
         )
+        val auditAdapter = AdminAuditLogAdapter()
 
         gamesRecycler.adapter = gameAdapter
         usersRecycler.adapter = userAdapter
         locksRecycler.adapter = lockAdapter
         qualRecycler.adapter = qualificationAdapter
+        auditRecycler.adapter = auditAdapter
 
         saveGlobalButton.setOnClickListener {
             val rtp = rtpInput.text?.toString()?.trim()?.toDoubleOrNull()
@@ -95,42 +99,9 @@ class AdminDashboardFragment : Fragment() {
             }
         }
 
-        addGameButton.setOnClickListener {
-            viewModel.addGameConfig(
-                AdminGameConfig(
-                    id = "g${System.currentTimeMillis()}",
-                    gameName = "New Game",
-                    rtp = viewModel.viewState.value.globalRtp,
-                    houseEdge = viewModel.viewState.value.globalHouseEdge
-                )
-            )
-        }
-        addUserButton.setOnClickListener {
-            viewModel.addUserConfig(
-                AdminUserConfig(
-                    id = "u${System.currentTimeMillis()}",
-                    userId = "user_${viewModel.viewState.value.userConfigs.size + 1}",
-                    qualification = "Standard",
-                    rtp = viewModel.viewState.value.globalRtp,
-                    houseEdge = viewModel.viewState.value.globalHouseEdge
-                )
-            )
-        }
-        addLockButton.setOnClickListener {
-            viewModel.addLockRule(
-                AdminLockRule(
-                    id = "r${System.currentTimeMillis()}",
-                    name = "Rule ${viewModel.viewState.value.lockRules.size + 1}",
-                    cooldownMinutes = 15,
-                    minTurnover = 1000,
-                    maxLoss = 500,
-                    periodMinutes = 1440,
-                    maxActionsPerPeriod = 5,
-                    scope = "user",
-                    actions = listOf("withdrawals", "gifts")
-                )
-            )
-        }
+        addGameButton.setOnClickListener { showGameConfigDialog(null) }
+        addUserButton.setOnClickListener { showUserConfigDialog(null) }
+        addLockButton.setOnClickListener { showLockRuleDialog(null) }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -151,6 +122,7 @@ class AdminDashboardFragment : Fragment() {
                     userAdapter.submitItems(state.userConfigs)
                     lockAdapter.submitLocks(state.lockRules)
                     qualificationAdapter.submitItems(state.qualificationConfigs)
+                    auditAdapter.submitLogs(state.auditLogs)
                     if (state.message != null) {
                         messageText.text = state.message
                         messageText.visibility = View.VISIBLE
@@ -161,5 +133,163 @@ class AdminDashboardFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showGameConfigDialog(existing: AdminGameConfig?) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_admin_game_config, null)
+        val nameInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_game_name)
+        val rtpInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_game_rtp)
+        val houseInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_game_house)
+        val isEdit = existing != null
+        if (existing != null) {
+            nameInput.setText(existing.gameName)
+            rtpInput.setText(existing.rtp.toString())
+            houseInput.setText(existing.houseEdge.toString())
+        } else {
+            val defaults = viewModel.viewState.value
+            rtpInput.setText(defaults.globalRtp.toString())
+            houseInput.setText(defaults.globalHouseEdge.toString())
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(if (isEdit) "Edit Game Config" else "Add Game Config")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val name = nameInput.text?.toString()?.trim().orEmpty()
+                val rtp = rtpInput.text?.toString()?.trim()?.toDoubleOrNull()
+                val house = houseInput.text?.toString()?.trim()?.toDoubleOrNull()
+                if (name.isBlank() || rtp == null || house == null) {
+                    return@setPositiveButton
+                }
+                val config = AdminGameConfig(
+                    id = existing?.id ?: "g${System.currentTimeMillis()}",
+                    gameName = name,
+                    rtp = rtp,
+                    houseEdge = house
+                )
+                if (isEdit) {
+                    viewModel.updateGameConfig(config)
+                } else {
+                    viewModel.addGameConfig(config)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showUserConfigDialog(existing: AdminUserConfig?) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_admin_user_config, null)
+        val userIdInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_user_id)
+        val qualificationInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_user_qualification)
+        val rtpInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_user_rtp)
+        val houseInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_user_house)
+        val isEdit = existing != null
+        if (existing != null) {
+            userIdInput.setText(existing.userId)
+            qualificationInput.setText(existing.qualification)
+            rtpInput.setText(existing.rtp.toString())
+            houseInput.setText(existing.houseEdge.toString())
+        } else {
+            val defaults = viewModel.viewState.value
+            rtpInput.setText(defaults.globalRtp.toString())
+            houseInput.setText(defaults.globalHouseEdge.toString())
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(if (isEdit) "Edit User Config" else "Add User Config")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val userId = userIdInput.text?.toString()?.trim().orEmpty()
+                val qualification = qualificationInput.text?.toString()?.trim().orEmpty()
+                val rtp = rtpInput.text?.toString()?.trim()?.toDoubleOrNull()
+                val house = houseInput.text?.toString()?.trim()?.toDoubleOrNull()
+                if (userId.isBlank() || qualification.isBlank() || rtp == null || house == null) {
+                    return@setPositiveButton
+                }
+                val config = AdminUserConfig(
+                    id = existing?.id ?: "u${System.currentTimeMillis()}",
+                    userId = userId,
+                    qualification = qualification,
+                    rtp = rtp,
+                    houseEdge = house
+                )
+                if (isEdit) {
+                    viewModel.updateUserConfig(config)
+                } else {
+                    viewModel.addUserConfig(config)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showLockRuleDialog(existing: AdminLockRule?) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_admin_lock_rule, null)
+        val nameInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_name)
+        val cooldownInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_cooldown)
+        val turnoverInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_turnover)
+        val lossInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_loss)
+        val periodInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_period)
+        val maxActionsInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_max_actions)
+        val scopeInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_scope)
+        val actionsInput = dialogView.findViewById<TextInputEditText>(R.id.input_admin_lock_actions)
+        val isEdit = existing != null
+
+        if (existing != null) {
+            nameInput.setText(existing.name)
+            cooldownInput.setText(existing.cooldownMinutes.toString())
+            turnoverInput.setText(existing.minTurnover.toString())
+            lossInput.setText(existing.maxLoss.toString())
+            periodInput.setText(existing.periodMinutes.toString())
+            maxActionsInput.setText(existing.maxActionsPerPeriod.toString())
+            scopeInput.setText(existing.scope)
+            actionsInput.setText(existing.actions.joinToString(","))
+        } else {
+            cooldownInput.setText("15")
+            turnoverInput.setText("1000")
+            lossInput.setText("500")
+            periodInput.setText("1440")
+            maxActionsInput.setText("5")
+            scopeInput.setText("user")
+            actionsInput.setText("withdrawals,gifts")
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(if (isEdit) "Edit Lock Rule" else "Add Lock Rule")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val name = nameInput.text?.toString()?.trim().orEmpty()
+                val cooldown = cooldownInput.text?.toString()?.trim()?.toIntOrNull() ?: 0
+                val turnover = turnoverInput.text?.toString()?.trim()?.toLongOrNull() ?: 0
+                val maxLoss = lossInput.text?.toString()?.trim()?.toLongOrNull() ?: 0
+                val period = periodInput.text?.toString()?.trim()?.toIntOrNull() ?: 0
+                val maxActions = maxActionsInput.text?.toString()?.trim()?.toIntOrNull() ?: 0
+                val scope = scopeInput.text?.toString()?.trim().orEmpty()
+                val actions = actionsInput.text?.toString()?.split(",")
+                    ?.map { it.trim() }
+                    ?.filter { it.isNotBlank() }
+                    .orEmpty()
+                if (name.isBlank()) {
+                    return@setPositiveButton
+                }
+                val rule = AdminLockRule(
+                    id = existing?.id ?: "r${System.currentTimeMillis()}",
+                    name = name,
+                    cooldownMinutes = cooldown,
+                    minTurnover = turnover,
+                    maxLoss = maxLoss,
+                    periodMinutes = period,
+                    maxActionsPerPeriod = maxActions,
+                    scope = if (scope.isBlank()) "user" else scope,
+                    actions = if (actions.isEmpty()) listOf("withdrawals") else actions
+                )
+                if (isEdit) {
+                    viewModel.updateLockRule(rule)
+                } else {
+                    viewModel.addLockRule(rule)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

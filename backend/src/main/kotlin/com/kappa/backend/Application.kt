@@ -6,17 +6,24 @@ import com.kappa.backend.models.ApiResponse
 import com.kappa.backend.routes.agencyRoutes
 import com.kappa.backend.routes.authRoutes
 import com.kappa.backend.routes.economyRoutes
+import com.kappa.backend.routes.gameRoutes
 import com.kappa.backend.routes.roomRoutes
+import com.kappa.backend.routes.socialRoutes
+import com.kappa.backend.routes.adminRoutes
+import com.kappa.backend.routes.resellerRoutes
 import com.kappa.backend.routes.userRoutes
 import com.kappa.backend.services.AuthService
 import com.kappa.backend.services.AgencyService
 import com.kappa.backend.services.EconomyService
+import com.kappa.backend.services.GameSessionRegistry
 import com.kappa.backend.services.LiveKitTokenService
 import com.kappa.backend.services.RoomInteractionService
 import com.kappa.backend.services.RoomService
+import com.kappa.backend.services.ResellerService
 import com.kappa.backend.services.SlotService
 import com.kappa.backend.services.TokenService
 import com.kappa.backend.services.TwilioSmsService
+import com.kappa.backend.socket.GameSocketServer
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -52,11 +59,19 @@ fun Application.module() {
     val smsService = TwilioSmsService(config)
     val authService = AuthService(config, smsService)
     val economyService = EconomyService()
+    val gameSessionRegistry = GameSessionRegistry()
     val slotService = SlotService()
     val agencyService = AgencyService()
+    val resellerService = ResellerService(economyService)
     val tokenService = TokenService(config)
     val roomService = RoomService(config, LiveKitTokenService(config))
     val roomInteractionService = RoomInteractionService()
+    val gameSocketServer = GameSocketServer(
+        config.socketHost,
+        config.socketPort,
+        gameSessionRegistry,
+        economyService
+    )
 
     install(CallLogging) {
         level = Level.INFO
@@ -119,8 +134,19 @@ fun Application.module() {
                 userRoutes(authService)
                 economyRoutes(economyService, slotService)
                 roomRoutes(roomService, authService, roomInteractionService)
+                gameRoutes(roomService, gameSessionRegistry)
+                socialRoutes()
                 agencyRoutes(agencyService)
+                adminRoutes()
+                resellerRoutes(resellerService)
             }
         }
+    }
+
+    environment.monitor.subscribe(io.ktor.server.application.ApplicationStarted) {
+        gameSocketServer.start()
+    }
+    environment.monitor.subscribe(io.ktor.server.application.ApplicationStopped) {
+        gameSocketServer.stop()
     }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_admin_panel_soft"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/text_admin_audit_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ACTION"
+        android:textAppearance="@style/TextAppearance.Kappa.Section"
+        android:textColor="@color/kappa_gold_300" />
+
+    <TextView
+        android:id="@+id/text_admin_audit_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Details..."
+        android:textAppearance="@style/TextAppearance.Kappa.Body"
+        android:textColor="@color/kappa_mint_100" />
+
+    <TextView
+        android:id="@+id/text_admin_audit_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Time"
+        android:textAppearance="@style/TextAppearance.Kappa.Muted"
+        android:textColor="@color/kappa_text_muted" />
+</LinearLayout>

@@ -29,7 +29,8 @@ data class RoomResponse(
     val seatMode: SeatMode,
     val participantCount: Int,
     val maxSeats: Int,
-    val requiresPassword: Boolean
+    val requiresPassword: Boolean,
+    val country: String? = null
 )
 
 @Serializable
@@ -61,7 +62,8 @@ data class RoomCreateRequest(
     val name: String,
     val seatMode: SeatMode = SeatMode.FREE,
     val maxSeats: Int = 28,
-    val password: String? = null
+    val password: String? = null,
+    val country: String? = null
 )
 
 @Serializable

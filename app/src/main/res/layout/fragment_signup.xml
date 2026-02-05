@@ -15,10 +15,12 @@
 
         <ImageView
             android:id="@+id/image_signup_logo"
-            android:layout_width="132dp"
-            android:layout_height="132dp"
+            android:layout_width="220dp"
+            android:layout_height="120dp"
             android:layout_marginTop="32dp"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
             android:src="@drawable/logo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
