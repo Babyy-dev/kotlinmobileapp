@@ -54,7 +54,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val countryCodeInput = view.findViewById<MaterialAutoCompleteTextView>(R.id.input_country_code)
-        val phoneInputLogin = view.findViewById<TextInputEditText>(R.id.input_phone_login)
+        val usernameInput = view.findViewById<TextInputEditText>(R.id.input_username)
         val passwordInput = view.findViewById<TextInputEditText>(R.id.input_password)
         val loginButton = view.findViewById<MaterialButton>(R.id.button_login)
         val signupButton = view.findViewById<MaterialButton>(R.id.button_go_signup)
@@ -81,20 +81,12 @@ class LoginFragment : Fragment() {
         countryCodeInput.setOnClickListener { countryCodeInput.showDropDown() }
 
         loginButton.setOnClickListener {
-            val codeText = countryCodeInput.text?.toString()?.trim().orEmpty()
-            val phone = phoneInputLogin.text?.toString()?.trim().orEmpty()
+            val username = usernameInput.text?.toString()?.trim().orEmpty()
             val password = passwordInput.text?.toString()?.trim().orEmpty()
-            val dialCode = codeOptions.firstOrNull { it.displayName == codeText }?.dialCode ?: "+1"
-            val e164 = when {
-                phone.isBlank() -> ""
-                phone.startsWith("+") -> phone
-                phone.any { it.isLetter() } -> phone
-                else -> "$dialCode$phone"
-            }
-            if (e164.isNotEmpty() && password.isNotEmpty()) {
-                authViewModel.login(e164, password)
+            if (username.isNotEmpty() && password.isNotEmpty()) {
+                authViewModel.login(username, password)
             } else {
-                errorText.text = "Please enter phone and password"
+                errorText.text = "Please enter username and password"
                 errorText.visibility = View.VISIBLE
             }
         }
@@ -103,7 +95,7 @@ class LoginFragment : Fragment() {
             val showingPhone = phoneLayout.visibility == View.VISIBLE
             phoneLayout.visibility = if (showingPhone) View.GONE else View.VISIBLE
             passwordLayout.visibility = if (showingPhone) View.VISIBLE else View.GONE
-            toggleButton.text = if (showingPhone) "Use phone instead" else "Use password instead"
+            toggleButton.text = if (showingPhone) "Use phone no. instead" else "Use password instead"
             errorText.visibility = View.GONE
             messageText.visibility = View.GONE
             authViewModel.clearError()
@@ -114,9 +106,17 @@ class LoginFragment : Fragment() {
         }
 
         sendOtpButton.setOnClickListener {
+            val codeText = countryCodeInput.text?.toString()?.trim().orEmpty()
             val phone = phoneInput.text?.toString()?.trim().orEmpty()
-            if (phone.isNotEmpty()) {
-                authViewModel.requestOtp(phone)
+            val dialCode = codeOptions.firstOrNull { it.displayName == codeText }?.dialCode ?: "+1"
+            val e164 = when {
+                phone.isBlank() -> ""
+                phone.startsWith("+") -> phone
+                phone.any { it.isLetter() } -> phone
+                else -> "$dialCode$phone"
+            }
+            if (e164.isNotEmpty()) {
+                authViewModel.requestOtp(e164)
             } else {
                 errorText.text = "Please enter phone number"
                 errorText.visibility = View.VISIBLE
@@ -124,10 +124,18 @@ class LoginFragment : Fragment() {
         }
 
         verifyOtpButton.setOnClickListener {
+            val codeText = countryCodeInput.text?.toString()?.trim().orEmpty()
             val phone = phoneInput.text?.toString()?.trim().orEmpty()
             val code = otpInput.text?.toString()?.trim().orEmpty()
-            if (phone.isNotEmpty() && code.isNotEmpty()) {
-                authViewModel.verifyOtp(phone, code)
+            val dialCode = codeOptions.firstOrNull { it.displayName == codeText }?.dialCode ?: "+1"
+            val e164 = when {
+                phone.isBlank() -> ""
+                phone.startsWith("+") -> phone
+                phone.any { it.isLetter() } -> phone
+                else -> "$dialCode$phone"
+            }
+            if (e164.isNotEmpty() && code.isNotEmpty()) {
+                authViewModel.verifyOtp(e164, code)
             } else {
                 errorText.text = "Please enter phone and OTP"
                 errorText.visibility = View.VISIBLE
@@ -199,9 +207,8 @@ class LoginFragment : Fragment() {
         Locale.getISOCountries().forEach { iso ->
             val code = phoneUtil.getCountryCodeForRegion(iso)
             if (code > 0) {
-                val name = Locale("", iso).getDisplayCountry(Locale.ENGLISH)
                 val dial = "+$code"
-                val display = "${flagEmoji(iso)} $dial $name"
+                val display = "${flagEmoji(iso)} $dial"
                 options.add(CountryCodeOption(iso, dial, display))
             }
         }

@@ -81,45 +81,21 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:orientation="horizontal">
+                        android:hint="Username"
+                        style="@style/Widget.Kappa.TextInput">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="0dp"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/input_username"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_weight="1"
-                            android:hint="Code"
-                            style="@style/Widget.Kappa.TextInput">
-
-                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                                android:id="@+id/input_country_code"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="text"
-                                android:textColor="@color/kappa_cream"
-                                android:textColorHint="@color/kappa_text_muted" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:hint="Phone number"
-                            style="@style/Widget.Kappa.TextInput">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/input_phone_login"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="phone"
-                                android:textColor="@color/kappa_cream"
-                                android:textColorHint="@color/kappa_text_muted" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </LinearLayout>
+                            android:inputType="text"
+                            android:textColor="@color/kappa_cream"
+                            android:textColorHint="@color/kappa_text_muted" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Password Input -->
                     <com.google.android.material.textfield.TextInputLayout
@@ -153,8 +129,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Use phone instead"
-                    android:visibility="gone"
+                    android:text="Use phone no. instead"
                     style="@style/Widget.Kappa.Button.Text" />
 
                 <LinearLayout
@@ -173,21 +148,45 @@
                         android:textAppearance="@style/TextAppearance.Kappa.Section"
                         android:textColor="@color/kappa_teal_950" />
 
-                    <com.google.android.material.textfield.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Phone number"
                         android:layout_marginTop="8dp"
-                        style="@style/Widget.Kappa.TextInput">
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/input_phone"
-                            android:layout_width="match_parent"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="phone"
-                            android:textColor="@color/kappa_cream"
-                            android:textColorHint="@color/kappa_text_muted" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:hint="Code"
+                            style="@style/Widget.Kappa.TextInput">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/input_country_code"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:hint="Phone number"
+                            style="@style/Widget.Kappa.TextInput">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/input_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="phone"
+                                android:textColor="@color/kappa_cream"
+                                android:textColorHint="@color/kappa_text_muted" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"

@@ -73,7 +73,7 @@ fun Route.authRoutes(authService: AuthService) {
     }
 
     post("auth/guest") {
-        val request = call.receive<GuestLoginRequest>()
+        val request = runCatching { call.receive<GuestLoginRequest>() }.getOrElse { GuestLoginRequest() }
         val response = authService.guestLogin(request)
         call.respond(ApiResponse(success = true, data = response))
     }
