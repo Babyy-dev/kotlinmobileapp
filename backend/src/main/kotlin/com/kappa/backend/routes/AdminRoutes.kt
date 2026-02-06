@@ -18,13 +18,13 @@ import com.kappa.backend.models.BannerUploadResponse
 import com.kappa.backend.models.HomeBanner
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
+import io.ktor.http.content.readAllParts
 import io.ktor.http.content.streamProvider
 import io.ktor.server.application.call
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
-import io.ktor.server.request.forEachPart
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -532,7 +532,8 @@ fun Route.adminRoutes() {
         )
         val multipart = call.receiveMultipart()
         var uploadedUrl: String? = null
-        multipart.forEachPart { part ->
+        val parts = multipart.readAllParts()
+        for (part in parts) {
             if (part is PartData.FileItem) {
                 val extension = part.originalFileName
                     ?.substringAfterLast('.', "")

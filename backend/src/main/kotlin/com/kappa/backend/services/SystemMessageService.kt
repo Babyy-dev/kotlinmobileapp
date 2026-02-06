@@ -68,7 +68,7 @@ class SystemMessageService {
             it[username] = "system"
             it[email] = "system@kappa.local"
             it[passwordHash] = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt())
-            it[role] = UserRole.USER.name
+            it[Users.role] = UserRole.USER.name
             it[status] = "active"
             it[isGuest] = false
             it[createdAt] = now
