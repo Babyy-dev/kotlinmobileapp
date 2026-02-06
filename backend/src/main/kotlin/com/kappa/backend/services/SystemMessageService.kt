@@ -25,16 +25,16 @@ class SystemMessageService {
             val now = System.currentTimeMillis()
 
             InboxThreads.update({ InboxThreads.id eq threadId }) {
-                it[lastMessage] = trimmed
-                it[updatedAt] = now
+                it[InboxThreads.lastMessage] = trimmed
+                it[InboxThreads.updatedAt] = now
             }
 
             InboxMessages.insert {
                 it[id] = UUID.randomUUID()
                 it[InboxMessages.threadId] = threadId
                 it[InboxMessages.senderId] = systemId
-                it[message] = trimmed
-                it[createdAt] = now
+                it[InboxMessages.message] = trimmed
+                it[InboxMessages.createdAt] = now
             }
 
             val existingRead = InboxThreadReads.select {
@@ -44,13 +44,13 @@ class SystemMessageService {
                 InboxThreadReads.insert {
                     it[InboxThreadReads.threadId] = threadId
                     it[InboxThreadReads.userId] = systemId
-                    it[lastReadAt] = now
+                    it[InboxThreadReads.lastReadAt] = now
                 }
             } else {
                 InboxThreadReads.update(
                     { (InboxThreadReads.threadId eq threadId) and (InboxThreadReads.userId eq systemId) }
                 ) {
-                    it[lastReadAt] = now
+                    it[InboxThreadReads.lastReadAt] = now
                 }
             }
         }
@@ -64,14 +64,14 @@ class SystemMessageService {
         val now = System.currentTimeMillis()
         val systemId = UUID.randomUUID()
         Users.insert {
-            it[id] = systemId
-            it[username] = "system"
-            it[email] = "system@kappa.local"
-            it[passwordHash] = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt())
+            it[Users.id] = systemId
+            it[Users.username] = "system"
+            it[Users.email] = "system@kappa.local"
+            it[Users.passwordHash] = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt())
             it[Users.role] = UserRole.USER.name
-            it[status] = "active"
-            it[isGuest] = false
-            it[createdAt] = now
+            it[Users.status] = "active"
+            it[Users.isGuest] = false
+            it[Users.createdAt] = now
         }
         return systemId
     }
@@ -86,11 +86,11 @@ class SystemMessageService {
         }
         val threadId = UUID.randomUUID()
         InboxThreads.insert {
-            it[id] = threadId
+            it[InboxThreads.id] = threadId
             it[InboxThreads.userA] = userA
             it[InboxThreads.userB] = userB
-            it[lastMessage] = null
-            it[updatedAt] = System.currentTimeMillis()
+            it[InboxThreads.lastMessage] = null
+            it[InboxThreads.updatedAt] = System.currentTimeMillis()
         }
         return threadId
     }
