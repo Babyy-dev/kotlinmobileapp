@@ -22,21 +22,21 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/api/\"")
-            buildConfigField("String", "LIVEKIT_URL", "\"ws://10.0.2.2:7880\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/\"")
+            buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
             buildConfigField("String", "GAME_WS_URL", "\"http://10.0.2.2:8081\"")
-            buildConfigField("String", "ADMIN_API_BASE", "\"http://10.0.2.2:8080/api/admin/\"")
-            buildConfigField("String", "RESELLER_API_BASE", "\"http://10.0.2.2:8080/api/reseller/\"")
-            buildConfigField("String", "AGENCY_API_BASE", "\"http://10.0.2.2:8080/api/agency/\"")
+            buildConfigField("String", "ADMIN_API_BASE", "\"https://api.appkappa.com/admin/\"")
+            buildConfigField("String", "RESELLER_API_BASE", "\"https://api.appkappa.com/reseller/\"")
+            buildConfigField("String", "AGENCY_API_BASE", "\"https://api.appkappa.com/agency/\"")
         }
         release {
             isMinifyEnabled = true
-            buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.appkappa.com/\"")
             buildConfigField("String", "LIVEKIT_URL", "\"wss://kappa-gqnky3mx.livekit.cloud\"")
             buildConfigField("String", "GAME_WS_URL", "\"wss://example.com/games\"")
-            buildConfigField("String", "ADMIN_API_BASE", "\"https://api.appkappa.com/api/admin/\"")
-            buildConfigField("String", "RESELLER_API_BASE", "\"https://api.appkappa.com/api/reseller/\"")
-            buildConfigField("String", "AGENCY_API_BASE", "\"https://api.appkappa.com/api/agency/\"")
+            buildConfigField("String", "ADMIN_API_BASE", "\"https://api.appkappa.com/admin/\"")
+            buildConfigField("String", "RESELLER_API_BASE", "\"https://api.appkappa.com/reseller/\"")
+            buildConfigField("String", "AGENCY_API_BASE", "\"https://api.appkappa.com/agency/\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
