@@ -36,7 +36,10 @@ import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
-class EconomyService {
+class EconomyService(
+    private val googlePlayBillingService: GooglePlayBillingService,
+    private val systemMessageService: SystemMessageService
+) {
     fun getCoinBalance(userId: UUID): CoinBalanceResponse {
         return transaction {
             val row = CoinWallets.select { CoinWallets.userId eq userId }.singleOrNull()
@@ -151,7 +154,8 @@ class EconomyService {
                         name = row[CoinPackages.name],
                         coinAmount = row[CoinPackages.coinAmount],
                         priceUsd = row[CoinPackages.priceUsd].toPlainString(),
-                        isActive = row[CoinPackages.isActive]
+                        isActive = row[CoinPackages.isActive],
+                        storeProductId = row[CoinPackages.storeProductId]
                     )
                 }
         }
@@ -170,6 +174,7 @@ class EconomyService {
                 it[coinAmount] = request.coinAmount
                 it[priceUsd] = price
                 it[isActive] = request.isActive
+                it[storeProductId] = request.storeProductId?.trim()?.ifBlank { null }
                 it[createdAt] = System.currentTimeMillis()
             }
             CoinPackageResponse(
@@ -177,7 +182,8 @@ class EconomyService {
                 name = request.name.trim(),
                 coinAmount = request.coinAmount,
                 priceUsd = price.toPlainString(),
-                isActive = request.isActive
+                isActive = request.isActive,
+                storeProductId = request.storeProductId?.trim()?.ifBlank { null }
             )
         }
     }
@@ -192,13 +198,15 @@ class EconomyService {
                 it[coinAmount] = request.coinAmount
                 it[priceUsd] = price
                 it[isActive] = request.isActive
+                it[storeProductId] = request.storeProductId?.trim()?.ifBlank { null }
             }
             CoinPackageResponse(
                 id = row[CoinPackages.id].toString(),
                 name = request.name.trim(),
                 coinAmount = request.coinAmount,
                 priceUsd = price.toPlainString(),
-                isActive = request.isActive
+                isActive = request.isActive,
+                storeProductId = request.storeProductId?.trim()?.ifBlank { null }
             )
         }
     }
@@ -354,9 +362,10 @@ class EconomyService {
     }
 
     fun purchaseCoins(userId: UUID, packageId: UUID, provider: String, providerTxId: String): CoinPurchaseResponse {
-        return transaction {
+        val response = transaction {
             val packageRow = CoinPackages.select { CoinPackages.id eq packageId }.singleOrNull()
                 ?: throw IllegalArgumentException("Package not found")
+            val packageCoins = packageRow[CoinPackages.coinAmount]
             val now = System.currentTimeMillis()
             val purchaseId = UUID.randomUUID()
             CoinPurchases.insert {
@@ -368,13 +377,89 @@ class EconomyService {
                 it[CoinPurchases.status] = "COMPLETED"
                 it[createdAt] = now
             }
-            val balance = adjustBalance(userId, packageRow[CoinPackages.coinAmount], "PURCHASE")
+            val balance = adjustBalance(userId, packageCoins, "PURCHASE")
             CoinPurchaseResponse(
                 id = purchaseId.toString(),
                 status = "COMPLETED",
                 coinBalance = balance.balance
             )
         }
+        val packageCoins = transaction {
+            CoinPackages.select { CoinPackages.id eq packageId }
+                .singleOrNull()
+                ?.get(CoinPackages.coinAmount)
+                ?: 0L
+        }
+        systemMessageService.sendSystemMessage(userId, "Recharge successful: +$packageCoins coins")
+        return response
+    }
+
+    fun verifyGooglePlayPurchase(
+        userId: UUID,
+        packageId: UUID,
+        productId: String,
+        purchaseToken: String,
+        orderId: String?
+    ): CoinPurchaseResponse {
+        require(productId.isNotBlank()) { "Product id is required" }
+        require(purchaseToken.isNotBlank()) { "Purchase token is required" }
+        val response = transaction {
+            val packageRow = CoinPackages.select { CoinPackages.id eq packageId }.singleOrNull()
+                ?: throw IllegalArgumentException("Package not found")
+            val packageCoins = packageRow[CoinPackages.coinAmount]
+
+            val existing = CoinPurchases.select {
+                (CoinPurchases.provider eq "GOOGLE_PLAY") and
+                    (CoinPurchases.providerTxId eq purchaseToken)
+            }.singleOrNull()
+
+            if (existing != null) {
+                val balance = getCoinBalance(userId)
+                return@transaction CoinPurchaseResponse(
+                    id = existing[CoinPurchases.id].toString(),
+                    status = existing[CoinPurchases.status],
+                    coinBalance = balance.balance
+                )
+            }
+
+            val storeProductId = packageRow[CoinPackages.storeProductId]
+            if (!storeProductId.isNullOrBlank() && storeProductId != productId) {
+                throw IllegalArgumentException("Product id mismatch")
+            }
+
+            val purchase = googlePlayBillingService.verifyProductPurchase(productId, purchaseToken)
+            if (purchase.purchaseState != 0) {
+                throw IllegalArgumentException("Purchase not completed")
+            }
+
+            val now = System.currentTimeMillis()
+            val purchaseId = UUID.randomUUID()
+            CoinPurchases.insert {
+                it[id] = purchaseId
+                it[CoinPurchases.userId] = userId
+                it[CoinPurchases.packageId] = packageId
+                it[CoinPurchases.provider] = "GOOGLE_PLAY"
+                it[CoinPurchases.providerTxId] = purchaseToken
+                it[CoinPurchases.status] = "VERIFIED"
+                it[createdAt] = now
+            }
+
+            val balance = adjustBalance(userId, packageRow[CoinPackages.coinAmount], "PURCHASE_GOOGLE")
+            val response = CoinPurchaseResponse(
+                id = purchaseId.toString(),
+                status = "VERIFIED",
+                coinBalance = balance.balance
+            )
+            response
+        }
+        val packageCoins = transaction {
+            CoinPackages.select { CoinPackages.id eq packageId }
+                .singleOrNull()
+                ?.get(CoinPackages.coinAmount)
+                ?: 0L
+        }
+        systemMessageService.sendSystemMessage(userId, "Google Play recharge verified: +$packageCoins coins")
+        return response
     }
 
     fun refundPurchase(purchaseId: UUID): CoinPurchaseResponse? {

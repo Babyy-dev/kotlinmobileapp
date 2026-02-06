@@ -19,6 +19,7 @@ import com.kappa.backend.models.InboxMessageRequest
 import com.kappa.backend.models.InboxMessageResponse
 import com.kappa.backend.models.InboxThreadResponse
 import com.kappa.backend.models.RoomResponse
+import com.kappa.backend.services.SystemMessageService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -39,7 +40,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
-fun Route.socialRoutes() {
+fun Route.socialRoutes(systemMessageService: SystemMessageService) {
     get("inbox/threads") {
         val principal = call.principal<JWTPrincipal>()
         val userId = principal?.subject ?: return@get call.respond(
@@ -262,6 +263,10 @@ fun Route.socialRoutes() {
                 it[createdAt] = System.currentTimeMillis()
             }
         }
+        val friendName = transaction {
+            Users.select { Users.id eq userUuid }.singleOrNull()?.get(Users.username) ?: "User"
+        }
+        systemMessageService.sendSystemMessage(friendUuid, "You are now connected with $friendName.")
         call.respond(ApiResponse(success = true, data = Unit, message = "Friend added"))
     }
 

@@ -7,6 +7,7 @@ import com.kappa.backend.routes.agencyRoutes
 import com.kappa.backend.routes.authRoutes
 import com.kappa.backend.routes.economyRoutes
 import com.kappa.backend.routes.gameRoutes
+import com.kappa.backend.routes.homeRoutes
 import com.kappa.backend.routes.roomRoutes
 import com.kappa.backend.routes.socialRoutes
 import com.kappa.backend.routes.adminRoutes
@@ -16,11 +17,13 @@ import com.kappa.backend.services.AuthService
 import com.kappa.backend.services.AgencyService
 import com.kappa.backend.services.EconomyService
 import com.kappa.backend.services.GameSessionRegistry
+import com.kappa.backend.services.GooglePlayBillingService
 import com.kappa.backend.services.LiveKitTokenService
 import com.kappa.backend.services.RoomInteractionService
 import com.kappa.backend.services.RoomService
 import com.kappa.backend.services.ResellerService
 import com.kappa.backend.services.SlotService
+import com.kappa.backend.services.SystemMessageService
 import com.kappa.backend.services.TokenService
 import com.kappa.backend.services.TwilioSmsService
 import com.kappa.backend.socket.GameSocketServer
@@ -58,10 +61,12 @@ fun Application.module() {
 
     val smsService = TwilioSmsService(config)
     val authService = AuthService(config, smsService)
-    val economyService = EconomyService()
+    val systemMessageService = SystemMessageService()
+    val googlePlayBillingService = GooglePlayBillingService(config)
+    val economyService = EconomyService(googlePlayBillingService, systemMessageService)
     val gameSessionRegistry = GameSessionRegistry()
     val slotService = SlotService()
-    val agencyService = AgencyService()
+    val agencyService = AgencyService(systemMessageService)
     val resellerService = ResellerService(economyService)
     val tokenService = TokenService(config)
     val roomService = RoomService(config, LiveKitTokenService(config))
@@ -135,7 +140,8 @@ fun Application.module() {
                 economyRoutes(economyService, slotService)
                 roomRoutes(roomService, authService, roomInteractionService)
                 gameRoutes(roomService, gameSessionRegistry)
-                socialRoutes()
+                homeRoutes()
+                socialRoutes(systemMessageService)
                 agencyRoutes(agencyService)
                 adminRoutes()
                 resellerRoutes(resellerService)

@@ -1,6 +1,7 @@
 package com.kappa.app.core.network
 
 import com.kappa.app.core.network.model.CoinBalanceDto
+import com.kappa.app.core.network.model.CoinTransactionDto
 import com.kappa.app.core.network.model.GuestLoginRequest
 import com.kappa.app.core.network.model.GiftSendDto
 import com.kappa.app.core.network.model.GiftSendRequest
@@ -57,6 +58,7 @@ import com.kappa.app.core.network.model.ResellerSendCoinsResponseDto
 import com.kappa.app.core.network.model.GiftCatalogDto
 import com.kappa.app.core.network.model.HomeBannerDto
 import com.kappa.app.core.network.model.MiniGameDto
+import com.kappa.app.core.network.model.BannerUploadResponseDto
 import com.kappa.app.core.network.model.SearchResultDto
 import com.kappa.app.core.network.model.AgencyRoomDto
 import com.kappa.app.core.network.model.AgencyHostDto
@@ -110,6 +112,9 @@ interface ApiService {
 
     @GET("coins/balance")
     suspend fun getCoinBalance(): BaseApiResponse<CoinBalanceDto>
+
+    @GET("coins/transactions")
+    suspend fun getCoinTransactions(@Query("limit") limit: Int? = null): BaseApiResponse<List<CoinTransactionDto>>
 
     @GET("rooms")
     suspend fun getRooms(): BaseApiResponse<List<RoomDto>>
@@ -288,6 +293,10 @@ interface ApiService {
 
     @GET("admin/audit-logs")
     suspend fun getAdminAuditLogs(): BaseApiResponse<List<AdminAuditLogDto>>
+
+    @Multipart
+    @POST("admin/banners/upload")
+    suspend fun uploadAdminBanner(@Part file: MultipartBody.Part): BaseApiResponse<BannerUploadResponseDto>
 
     // Agency / reseller
     @POST("agency/apply")

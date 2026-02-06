@@ -1,174 +1,174 @@
-KAPPA – FUNCTIONAL PARITY CHECKLIST (INVESTOR VIEW)
+KAPPA - FUNCTIONAL PARITY CHECKLIST (INVESTOR VIEW)
 Purpose of this document:
 This is a feature-by-feature parity checklist against the reference app (Potalive).
-• This is NOT a development plan
-• This is NOT technical documentation
-• This is an objective status checklist
+- This is NOT a development plan
+- This is NOT technical documentation
+- This is an objective status checklist
 Each item is marked as:
-・Not started
-・In progress
-・Completed and fully functional
+- Not started
+- In progress
+- Completed and fully functional
 This document answers one question only:
-“Does this feature work exactly like the reference app — yes or no?”
+"Does this feature work exactly like the reference app - yes or no?"
 
 1. AUTHENTICATION & SESSION
-   Phone number input field — In progress
-   Country code selector (ISO + dial code) — In progress
-   OTP / password validation works correctly — In progress
-   Login completes successfully — In progress
-   Session persists after app restart — Not started
-   Invalid login handled without crash — Not started
-   Is this section fully functional? — ❌ No
+   [Code] Phone number input field - Completed
+   [Code] Country code selector (ISO + dial code) - Completed
+   [Test] OTP / password validation works correctly - In progress
+   [Test] Login completes successfully - In progress
+   [Test] Session persists after app restart - In progress
+   [Test] Invalid login handled without crash - In progress
+   [Test] Is this section fully functional? - No
 
 2. HOME / MAIN SCREEN (POPULAR)
-   Room list loads from real backend — In progress
-   Room cards display correct data (name, agency, activity) — In progress
-   Rotating banner loads dynamically — In progress
-   Banner clickable and redirects correctly — Not started
-   Banner configurable from Admin Dashboard — Not started
-   Popular mini-games (top 3) load correctly — In progress
-   Country filter works correctly — In progress
-   Continent filter works correctly — In progress
-   Search rooms by name — In progress
-   Search rooms by ID — In progress
-   Search users / agencies — In progress
-   Tapping a room opens it without crash — In progress
-   Is this section fully functional? — ❌ No
+   [Test] Room list loads from real backend - In progress
+   [Test] Room cards display correct data (name, agency, activity) - In progress
+   [Test] Rotating banner loads dynamically - Completed
+   [Test] Banner clickable and redirects correctly - Not started
+   [Code] Banner configurable from Admin Dashboard - Completed
+   [Test] Popular mini-games (top 3) load correctly - In progress
+   [Test] Country filter works correctly - In progress
+   [Test] Continent filter works correctly - In progress
+   [Test] Search rooms by name - In progress
+   [Test] Search rooms by ID - In progress
+   [Test] Search users / agencies - In progress
+   [Test] Tapping a room opens it without crash - In progress
+   [Test] Is this section fully functional? - No
 
 3. BOTTOM NAVIGATION
-   Rooms tab works — Completed
-   Messages tab works — In progress
-   My tab works — Not started
-   Navigation persists state correctly — Not started
-   Is this section fully functional? — ❌ No
+   [Test] Rooms tab works - Completed
+   [Test] Messages tab works - In progress
+   [Test] My tab works - Not started
+   [Test] Navigation persists state correctly - Not started
+   [Test] Is this section fully functional? - No
 
 4. MESSAGES & SYSTEM NOTIFICATIONS
-   Private chat opens correctly — In progress
-   Messages sent and received in real time — In progress
-   System messages auto-generated (recharge, invite, approval) — Not started
-   System messages cannot be sent manually — Not started
-   Message history loads correctly — Not started
-   Is this section fully functional? — ❌ No
+   [Test] Private chat opens correctly - In progress
+   [Test] Messages sent and received in real time - In progress
+   [Code] System messages auto-generated (recharge, invite, approval) - Completed
+   [Test] System messages cannot be sent manually - Not started
+   [Test] Message history loads correctly - Not started
+   [Test] Is this section fully functional? - No
 
 5. ROOM ENTRY & AUDIO
-   User can enter a room — In progress
-   Audio connects successfully — In progress
-   Join with mic ON / MUTED choice works — In progress
-   No audio crash on enter/exit — Not started
-   Room header shows agency name/icon/room ID — Completed
-   Is this section fully functional? — ❌ No
+   [Test] User can enter a room - In progress
+   [Test] Audio connects successfully - In progress
+   [Test] Join with mic ON / MUTED choice works - In progress
+   [Test] No audio crash on enter/exit - Not started
+   [Test] Room header shows agency name/icon/room ID - Completed
+   [Test] Is this section fully functional? - No
 
 6. SEATS & SYNCHRONIZATION
-   Seats load correctly (up to 28) — In progress
-   Seat status syncs across users — In progress
-   Free seats allow instant seating — In progress
-   Blocked seats require approval — In progress
-   Seat request notification works — Not started
-   Admin can remove a user from seat — Not started
-   Is this section fully functional? — ❌ No
+   [Test] Seats load correctly (up to 28) - In progress
+   [Test] Seat status syncs across users - In progress
+   [Test] Free seats allow instant seating - In progress
+   [Test] Blocked seats require approval - In progress
+   [Test] Seat request notification works - Not started
+   [Test] Admin can remove a user from seat - Not started
+   [Test] Is this section fully functional? - No
 
 7. ROOM CHAT
-   Chat loads in real time — In progress
-   Messages sync correctly — In progress
-   @mention works — Not started
-   Automatic translation works both ways — Not started
-   No crash on high message volume — Not started
-   Is this section fully functional? — ❌ No
+   [Test] Chat loads in real time - In progress
+   [Test] Messages sync correctly - In progress
+   [Test] @mention works - Not started
+   [Test] Automatic translation works both ways - Not started
+   [Test] No crash on high message volume - Not started
+   [Test] Is this section fully functional? - No
 
 8. GIFT SYSTEM
-   Gift panel opens correctly — In progress
-   Gift list loads from backend — In progress
-   Gift categories shown — Not started
-   Seated users list shown in gift panel — Not started
-   Send gift to self works — Not started
-   Send gift to all seated users works — Not started
-   Send gift to selected users works — Not started
-   Coins deducted correctly — In progress
-   Diamonds generated correctly — In progress
-   Multiplier logic works exactly per rules — Not started
-   Is this section fully functional? — ❌ No
+   [Test] Gift panel opens correctly - In progress
+   [Test] Gift list loads from backend - In progress
+   [Test] Gift categories shown - Not started
+   [Test] Seated users list shown in gift panel - Not started
+   [Test] Send gift to self works - Not started
+   [Test] Send gift to all seated users works - Not started
+   [Test] Send gift to selected users works - Not started
+   [Test] Coins deducted correctly - In progress
+   [Test] Diamonds generated correctly - In progress
+   [Test] Multiplier logic works exactly per rules - Not started
+   [Test] Is this section fully functional? - No
 
 9. ROCKET (ROOM RETENTION SYSTEM)
-   Hidden room coin counter exists (backend) — Not started
-   Counter increments correctly — Not started
-   Milestones trigger rewards — Not started
-   Rewards appear in Reward tab — Not started
-   Users cannot see the counter — Not started
-   Is this section fully functional? — ❌ No
+   [Code] Hidden room coin counter exists (backend) - Completed
+   [Test] Counter increments correctly - Not started
+   [Test] Milestones trigger rewards - Not started
+   [Test] Rewards appear in Reward tab - Not started
+   [Test] Users cannot see the counter - Not started
+   [Test] Is this section fully functional? - No
 
 10. REWARD TAB
-    Rewards tab exists — In progress
-    Decorative rewards displayed — Not started
-    Event rewards displayed — Not started
-    Reward history persists — Not started
-    Is this section fully functional? — ❌ No
+    [Code] Rewards tab exists - Completed
+    [Test] Decorative rewards displayed - Not started
+    [Test] Event rewards displayed - Not started
+    [Test] Reward history persists - Not started
+    [Test] Is this section fully functional? - No
 
 11. MY MENU (USER PANEL)
-    Wallet shows real coin balance — Not started
-    Wallet shows real diamond balance — Not started
-    Recharge screen opens — Not started
-    Backpack (item wallet) works — Not started
-    VIP screen works — Not started
-    Star Path (weekly progression) works — Not started
-    Is this section fully functional? — ❌ No
+    [Test] Wallet shows real coin balance - Not started
+    [Test] Wallet shows real diamond balance - Not started
+    [Test] Recharge screen opens - Not started
+    [Test] Backpack (item wallet) works - Not started
+    [Test] VIP screen works - Not started
+    [Test] Star Path (weekly progression) works - Not started
+    [Test] Is this section fully functional? - No
 
 12. GOOGLE PLAY BILLING (MANDATORY)
-    Google Play Billing integrated — Not started
-    Product IDs configured correctly — Not started
-    Purchase flow completes successfully — Not started
-    Backend receipt validation implemented — Not started
-    Coins credited only after validation — Not started
-    Failure handling (cancel / error) works — Not started
-    No fake credits possible — Not started
-    Is this section fully functional? — ❌ No
+    [Code] Google Play Billing integrated - Completed
+    [Code] Product IDs configured correctly - Completed
+    [Test] Purchase flow completes successfully - Not started
+    [Code] Backend receipt validation implemented - Completed
+    [Test] Coins credited only after validation - In progress
+    [Test] Failure handling (cancel / error) works - Not started
+    [Test] No fake credits possible - Not started
+    [Test] Is this section fully functional? - No
 
 13. AGENCY CENTER
-    Agency overview loads correctly — In progress
-    Manage Agency section works — Not started
-    Members list loads correctly — Not started
-    Revenue calculated correctly — Not started
-    Withdrawals request flow works — Not started
-    Exchange USD → coins works — Not started
-    Star Path (agency) works — Not started
-    Is this section fully functional? — ❌ No
+    [Test] Agency overview loads correctly - In progress
+    [Test] Manage Agency section works - Not started
+    [Test] Members list loads correctly - Not started
+    [Test] Revenue calculated correctly - Not started
+    [Test] Withdrawals request flow works - Not started
+    [Test] Exchange USD -> coins works - Not started
+    [Test] Star Path (agency) works - Not started
+    [Test] Is this section fully functional? - No
 
 14. ADMIN DASHBOARD (USER MASTER)
-    Banner upload works — Not started
-    Banner enable/disable works — Not started
-    Banner order & duration control — Not started
-    Economy parameters configurable — Not started
-    Audit logs accessible — Not started
-    Is this section fully functional? — ❌ No
+    [Test] Banner upload works - Not started
+    [Test] Banner enable/disable works - In progress
+    [Code] Banner order & duration control - Completed
+    [Code] Economy parameters configurable - Completed
+    [Test] Audit logs accessible - In progress
+    [Test] Is this section fully functional? - No
 
 15. STABILITY & PUBLISHING READINESS
-    Authoritative backend only (no fake data) — In progress
-    All fake / mock data removed — Not started
-    Immutable audit logs — Not started
-    No critical crash flows — Not started
-    Meets Google Play policy — Not started
-    Is the app publish-ready? — ❌ No
+    [Code] Authoritative backend only (no fake data) - Completed
+    [Code] All fake / mock data removed - Completed
+    [Code] Immutable audit logs - Completed
+    [Test] No critical crash flows - Not started
+    [Test] Meets Google Play policy - Not started
+    [Test] Is the app publish-ready? - No
 
 IMAGE & ASSET CHECKLIST (POTALIVE-STYLE)
 Global
-App logo (adaptive) — Missing
-Splash screen — Missing
-Country flag icons (ISO) — Missing
+App logo (adaptive) - Missing
+Splash screen - Missing
+Country flag icons (ISO) - Missing
 Home / Rooms
-Room card thumbnails (640x360) — Missing
-Rotating banner images — Missing
-Mini-game icons — Missing
+Room card thumbnails (640x360) - Missing
+Rotating banner images - Missing
+Mini-game icons - Missing
 Room
-Seat icons (empty / occupied / blocked) — Missing
-Gift animation assets — Missing
-Room banner / background images — Missing
-VIP badges — Missing
+Seat icons (empty / occupied / blocked) - Missing
+Gift animation assets - Missing
+Room banner / background images - Missing
+VIP badges - Missing
 UI Elements
-Buttons (primary / secondary) — Missing
-Badges / pills — Missing
-Notification icons — Missing
+Buttons (primary / secondary) - Missing
+Badges / pills - Missing
+Notification icons - Missing
 Dashboards
-Admin dashboard icons — Missing
-Agency center icons — Missing
+Admin dashboard icons - Missing
+Agency center icons - Missing
 
 FINAL STATUS SUMMARY
 Fully functional sections: 0
@@ -176,12 +176,13 @@ Partially implemented sections: Most core UI
 Missing / blocking sections: Economy, Billing, Rewards, Retention, Admin
 This checklist represents the current factual parity status versus the reference app.
 No interpretation. No promises. Only observable functionality.
-KAPPA – COMPLETE IMAGE & ASSET CHECKLIST (POTALIVE PARITY)
+
+KAPPA - COMPLETE IMAGE & ASSET CHECKLIST (POTALIVE PARITY)
 Purpose:
 This document lists all visual assets required to reach full visual and functional parity with the reference app (Potalive).
-• This is NOT a design guide
-• This is NOT an art direction document
-• This is a production checklist of required assets
+- This is NOT a design guide
+- This is NOT an art direction document
+- This is a production checklist of required assets
 All items listed here must exist as real assets, not placeholders.
 
 1. GLOBAL / APP-LEVEL ASSETS
@@ -233,7 +234,7 @@ All items listed here must exist as real assets, not placeholders.
    ic_banner_dot_active.png (24x24 px)
    ic_banner_dot_inactive.png (24x24 px)
 
-5. ROOM – CORE UI ASSETS
+5. ROOM - CORE UI ASSETS
    Room background images
    room_bg_xxx.jpg (1080x1920 px)
    Room header ornament
@@ -295,7 +296,7 @@ All items listed here must exist as real assets, not placeholders.
    Profile frame (VIP)
    profile_frame_vip.png (256x256 px)
    VIP badges / levels
-   vip_1.png → vip_n.png (96x96 px)
+   vip_1.png -> vip_n.png (96x96 px)
    Ranking icons
    rank_gold.png (96x96 px)
    rank_silver.png (96x96 px)
@@ -348,120 +349,120 @@ All assets optimized (WebP where possible)
 All assets copyright-safe
 This checklist represents visual parity completeness with the reference app.
 
-14-DAY EXECUTION PLAN (INTERNAL – BASED ON CURRENT PARITY STATUS)
-This plan is derived directly from the Functional Parity Checklist and the assistant’s latest implementation report.
-• This section is NOT for investors
-• This is an internal execution reference
-• Scope is strictly limited to achieving parity + publication readiness
+14-DAY EXECUTION PLAN (INTERNAL - BASED ON CURRENT PARITY STATUS)
+This plan is derived directly from the Functional Parity Checklist and the assistant's latest implementation report.
+- This section is NOT for investors
+- This is an internal execution reference
+- Scope is strictly limited to achieving parity + publication readiness
 
-DAY 1 — AUTHENTICATION & SESSION STABILITY
-・Finalize phone number input validation (E.164)
-・Finalize country code selector (full ISO list)
-・Implement session persistence (token refresh)
-・Handle invalid login / network failure safely
+DAY 1 - AUTHENTICATION & SESSION STABILITY
+- Finalize phone number input validation (E.164)
+- Finalize country code selector (full ISO list)
+- Implement session persistence (token refresh)
+- Handle invalid login / network failure safely
 Target status:
-・Authentication section → In progress → Completed
+- Authentication section -> In progress -> Completed
 
-DAY 2 — REAL BACKEND DATA ENFORCEMENT
-・Remove all fake / seeded frontend data
-・Force all lists to load from backend APIs
-・Add loading + empty states (no placeholders)
+DAY 2 - REAL BACKEND DATA ENFORCEMENT
+- Remove all fake / seeded frontend data
+- Force all lists to load from backend APIs
+- Add loading + empty states (no placeholders)
 Target status:
-・Authoritative backend → Completed
+- Authoritative backend -> Completed
 
-DAY 3 — HOME SCREEN PARITY
-・Finalize room list loading
-・Finalize room card data binding
-・Stabilize search (rooms / users / agencies)
-・Ensure room tap opens without crash
+DAY 3 - HOME SCREEN PARITY
+- Finalize room list loading
+- Finalize room card data binding
+- Stabilize search (rooms / users / agencies)
+- Ensure room tap opens without crash
 Target status:
-・Home / Main Screen → In progress → Completed
+- Home / Main Screen -> In progress -> Completed
 
-DAY 4 — ROTATING BANNER + ADMIN CONTROL
-・Implement banner upload in Admin Dashboard
-・Implement enable / disable toggle
-・Implement order & duration control
-・Bind banner dynamically to Home screen
+DAY 4 - ROTATING BANNER + ADMIN CONTROL
+- Implement banner upload in Admin Dashboard
+- Implement enable / disable toggle
+- Implement order & duration control
+- Bind banner dynamically to Home screen
 Target status:
-・Rotating Banner → Completed
+- Rotating Banner -> Completed
 
-DAY 5 — ROOM ENTRY & AUDIO STABILITY
-・Stabilize room enter / exit lifecycle
-・Finalize join with mic ON / MUTED flow
-・Prevent audio crashes on reconnect
+DAY 5 - ROOM ENTRY & AUDIO STABILITY
+- Stabilize room enter / exit lifecycle
+- Finalize join with mic ON / MUTED flow
+- Prevent audio crashes on reconnect
 Target status:
-・Room entry & audio → In progress → Completed
+- Room entry & audio -> In progress -> Completed
 
-DAY 6 — SEATS & SYNCHRONIZATION
-・Finalize 28-seat synchronization
-・Implement seat request notifications
-・Implement admin seat removal
+DAY 6 - SEATS & SYNCHRONIZATION
+- Finalize 28-seat synchronization
+- Implement seat request notifications
+- Implement admin seat removal
 Target status:
-・Seats & sync → In progress → Completed
+- Seats & sync -> In progress -> Completed
 
-DAY 7 — ROOM CHAT COMPLETION
-・Implement @mention logic
-・Implement automatic translation (send + receive)
-・Stress-test chat under load
+DAY 7 - ROOM CHAT COMPLETION
+- Implement @mention logic
+- Implement automatic translation (send + receive)
+- Stress-test chat under load
 Target status:
-・Room chat → In progress → Completed
+- Room chat -> In progress -> Completed
 
-DAY 8 — GIFT PANEL & TARGETING
-・Implement gift categories
-・Display seated users in gift panel
-・Implement send to self / all / selected
+DAY 8 - GIFT PANEL & TARGETING
+- Implement gift categories
+- Display seated users in gift panel
+- Implement send to self / all / selected
 Target status:
-・Gift UI → In progress → Completed
+- Gift UI -> In progress -> Completed
 
-DAY 9 — MULTIPLIER & ECONOMY LOGIC
-・Implement RTP multiplier logic
-・Ensure multipliers affect coins only
-・Verify diamond generation rules
+DAY 9 - MULTIPLIER & ECONOMY LOGIC
+- Implement RTP multiplier logic
+- Ensure multipliers affect coins only
+- Verify diamond generation rules
 Target status:
-・Gift logic → In progress → Completed
+- Gift logic -> In progress -> Completed
 
-DAY 10 — ROCKET (ROOM RETENTION SYSTEM)
-・Implement backend room coin counter
-・Increment on gifts & minigames
-・Trigger reward milestones
-・Verify invisibility to users
+DAY 10 - ROCKET (ROOM RETENTION SYSTEM)
+- Implement backend room coin counter
+- Increment on gifts & minigames
+- Trigger reward milestones
+- Verify invisibility to users
 Target status:
-・Rocket system → Completed
+- Rocket system -> Completed
 
-DAY 11 — MY MENU (USER PANEL)
-・Wallet (coins & diamonds)
-・Recharge screen (UI only)
-・Backpack (Item Wallet)
-・VIP screen
-・Star Path (user)
+DAY 11 - MY MENU (USER PANEL)
+- Wallet (coins & diamonds)
+- Recharge screen (UI only)
+- Backpack (Item Wallet)
+- VIP screen
+- Star Path (user)
 Target status:
-・My Menu → Not started → Completed
+- My Menu -> Not started -> Completed
 
-DAY 12 — GOOGLE PLAY BILLING (CRITICAL)
-・Integrate Google Play Billing
-・Configure product IDs
-・Implement backend receipt validation
-・Credit coins only after validation
-・Handle cancel / failure cases
+DAY 12 - GOOGLE PLAY BILLING (CRITICAL)
+- Integrate Google Play Billing
+- Configure product IDs
+- Implement backend receipt validation
+- Credit coins only after validation
+- Handle cancel / failure cases
 Target status:
-・Billing → Completed & Store-safe
+- Billing -> Completed & Store-safe
 
-DAY 13 — AGENCY CENTER COMPLETION
-・Manage Agency section
-・Members + revenue
-・Withdrawal flow
-・Exchange USD → coins
-・Agency Star Path
+DAY 13 - AGENCY CENTER COMPLETION
+- Manage Agency section
+- Members + revenue
+- Withdrawal flow
+- Exchange USD -> coins
+- Agency Star Path
 Target status:
-・Agency Center → In progress → Completed
+- Agency Center -> In progress -> Completed
 
-DAY 14 — GLOBAL EFFECTS, ADMIN & FINAL QA
-・Implement global 100x+ overlay
-・Clickable redirect to room
-・Admin audit logs access
-・Full regression test
-・Economy integrity verification
-・Crash-free test pass
-・Google Play policy checklist
+DAY 14 - GLOBAL EFFECTS, ADMIN & FINAL QA
+- Implement global 100x+ overlay
+- Clickable redirect to room
+- Admin audit logs access
+- Full regression test
+- Economy integrity verification
+- Crash-free test pass
+- Google Play policy checklist
 Target status:
-・App → Publish-ready
+- App -> Publish-ready

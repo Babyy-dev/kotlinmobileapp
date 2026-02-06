@@ -5,7 +5,6 @@ import com.kappa.app.core.network.ErrorMapper
 import com.kappa.app.core.network.model.toDomain
 import com.kappa.app.domain.economy.CoinBalance
 import com.kappa.app.domain.economy.Transaction
-import com.kappa.app.domain.economy.TransactionType
 import com.kappa.app.economy.domain.repository.EconomyRepository
 import javax.inject.Inject
 
@@ -30,13 +29,13 @@ class RemoteEconomyRepository @Inject constructor(
 
     override suspend fun getTransactions(userId: String): Result<List<Transaction>> {
         return try {
-            val now = System.currentTimeMillis()
-            val list = listOf(
-                Transaction("txn_1", userId, 50000, TransactionType.DEPOSIT, now - 86_400_000L, "Initial credit"),
-                Transaction("txn_2", userId, -1200, TransactionType.PURCHASE, now - 36_000_000L, "Room gift purchase"),
-                Transaction("txn_3", userId, 2500, TransactionType.REWARD, now - 7_200_000L, "Mini-game reward")
-            )
-            Result.success(list)
+            val response = apiService.getCoinTransactions(100)
+            val data = response.data
+            if (!response.success || data == null) {
+                Result.failure(Exception(response.error ?: "Failed to load transactions"))
+            } else {
+                Result.success(data.map { it.toDomain() })
+            }
         } catch (throwable: Throwable) {
             val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))
             Result.failure(Exception(message))

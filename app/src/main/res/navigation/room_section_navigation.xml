@@ -24,6 +24,12 @@
         tools:layout="@layout/fragment_room_chat" />
 
     <fragment
+        android:id="@+id/room_section_rewards"
+        android:name="com.kappa.app.audio.presentation.RoomRewardsFragment"
+        android:label="Rewards"
+        tools:layout="@layout/fragment_room_rewards" />
+
+    <fragment
         android:id="@+id/room_section_gifts"
         android:name="com.kappa.app.audio.presentation.RoomGiftsFragment"
         android:label="Gifts"

@@ -4,6 +4,7 @@ import com.kappa.backend.models.ApiResponse
 import com.kappa.backend.models.CoinMutationRequest
 import com.kappa.backend.models.CoinPackageRequest
 import com.kappa.backend.models.CoinPurchaseRequest
+import com.kappa.backend.models.GooglePlayVerifyRequest
 import com.kappa.backend.models.DiamondConversionRequest
 import com.kappa.backend.models.AnnouncementRequest
 import com.kappa.backend.models.GiftCreateRequest
@@ -94,6 +95,28 @@ fun Route.economyRoutes(economyService: EconomyService, slotService: SlotService
             return@post
         }
         val response = economyService.purchaseCoins(UUID.fromString(userId), packageId, request.provider, request.providerTxId)
+        call.respond(ApiResponse(success = true, data = response))
+    }
+
+    post("billing/google/verify") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@post call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val request = call.receive<GooglePlayVerifyRequest>()
+        val packageId = runCatching { UUID.fromString(request.packageId) }.getOrNull()
+        if (packageId == null) {
+            call.respond(HttpStatusCode.BadRequest, ApiResponse<Unit>(success = false, error = "Invalid package id"))
+            return@post
+        }
+        val response = economyService.verifyGooglePlayPurchase(
+            UUID.fromString(userId),
+            packageId,
+            request.productId,
+            request.purchaseToken,
+            request.orderId
+        )
         call.respond(ApiResponse(success = true, data = response))
     }
 

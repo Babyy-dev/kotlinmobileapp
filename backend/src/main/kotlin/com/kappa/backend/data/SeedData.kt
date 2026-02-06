@@ -3,12 +3,15 @@ package com.kappa.backend.data
 import com.kappa.backend.models.SeatMode
 import com.kappa.backend.models.SeatStatus
 import com.kappa.backend.models.UserRole
+import com.kappa.backend.data.HomeBanners
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.mindrot.jbcrypt.BCrypt
 import java.util.UUID
 
 object SeedData {
+    private data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
+
     fun seedIfEmpty() {
         if (Users.selectAll().any()) {
             return
@@ -57,6 +60,7 @@ object SeedData {
 
         seedGifts(now)
         seedCoinPackages(now)
+        seedHomeBanners(now)
 
         val loungeRoomId = UUID.randomUUID()
         Rooms.insert {
@@ -146,17 +150,18 @@ object SeedData {
 
     private fun seedCoinPackages(now: Long) {
         val packages = listOf(
-            Triple("Starter Pack", 1000L, 0.99),
-            Triple("Value Pack", 5500L, 4.99),
-            Triple("Mega Pack", 12000L, 9.99)
+            Quadruple("Starter Pack", 1000L, 0.99, "kappa_starter"),
+            Quadruple("Value Pack", 5500L, 4.99, "kappa_value"),
+            Quadruple("Mega Pack", 12000L, 9.99, "kappa_mega")
         )
-        packages.forEach { (name, coins, price) ->
+        packages.forEach { (name, coins, price, storeId) ->
             CoinPackages.insert {
                 it[id] = UUID.randomUUID()
                 it[CoinPackages.name] = name
                 it[coinAmount] = coins
                 it[priceUsd] = price.toBigDecimal()
                 it[isActive] = true
+                it[storeProductId] = storeId
                 it[createdAt] = now
             }
         }
@@ -169,6 +174,31 @@ object SeedData {
                 it[RoomSeats.seatNumber] = seatNumber
                 it[RoomSeats.userId] = null
                 it[RoomSeats.status] = SeatStatus.FREE.name
+            }
+        }
+    }
+
+    private fun seedHomeBanners(now: Long) {
+        if (HomeBanners.selectAll().any()) {
+            return
+        }
+        val banners = listOf(
+            Triple("More rooms to choose", "Join the most popular lounges", "https://example.com/banner1.png"),
+            Triple("Daily rewards", "Check in to win prizes", "https://example.com/banner2.png"),
+            Triple("Mini game rush", "Play and win coins", "https://example.com/banner3.png")
+        )
+        banners.forEachIndexed { index, banner ->
+            HomeBanners.insert {
+                it[id] = UUID.randomUUID()
+                it[title] = banner.first
+                it[subtitle] = banner.second
+                it[imageUrl] = banner.third
+                it[actionType] = "rooms"
+                it[actionTarget] = "popular"
+                it[sortOrder] = index
+                it[isActive] = true
+                it[createdAt] = now
+                it[updatedAt] = now
             }
         }
     }

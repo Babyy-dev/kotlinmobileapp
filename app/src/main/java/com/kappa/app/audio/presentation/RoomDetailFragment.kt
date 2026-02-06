@@ -84,6 +84,7 @@ class RoomDetailFragment : Fragment() {
         val sectionAudio = view.findViewById<View>(R.id.card_section_audio)
         val sectionSeats = view.findViewById<View>(R.id.card_section_seats)
         val sectionChat = view.findViewById<View>(R.id.card_section_chat)
+        val sectionRewards = view.findViewById<View>(R.id.card_section_rewards)
         val sectionGifts = view.findViewById<View>(R.id.card_section_gifts)
         val sectionTools = view.findViewById<View>(R.id.card_section_tools)
         val chatUnreadBadge = view.findViewById<TextView>(R.id.text_room_chat_unread)
@@ -92,7 +93,7 @@ class RoomDetailFragment : Fragment() {
         val actionGift = view.findViewById<View>(R.id.button_room_action_gift)
         val actionTools = view.findViewById<View>(R.id.button_room_action_tools)
 
-        val sectionCards = listOf(sectionAudio, sectionSeats, sectionChat, sectionGifts, sectionTools)
+        val sectionCards = listOf(sectionAudio, sectionSeats, sectionChat, sectionRewards, sectionGifts, sectionTools)
         val navController = getChildNavController()
         val navOptions = NavOptions.Builder()
             .setEnterAnim(R.anim.slide_in_right)
@@ -120,6 +121,7 @@ class RoomDetailFragment : Fragment() {
             navigateTo(R.id.room_section_chat, R.id.card_section_chat)
             audioViewModel.markMessagesSeen()
         }
+        sectionRewards.setOnClickListener { navigateTo(R.id.room_section_rewards, R.id.card_section_rewards) }
         sectionGifts.setOnClickListener { navigateTo(R.id.room_section_gifts, R.id.card_section_gifts) }
         sectionTools.setOnClickListener { navigateTo(R.id.room_section_tools, R.id.card_section_tools) }
 
@@ -127,6 +129,7 @@ class RoomDetailFragment : Fragment() {
             val selected = when (destination.id) {
                 R.id.room_section_audio -> R.id.card_section_audio
                 R.id.room_section_seats -> R.id.card_section_seats
+                R.id.room_section_rewards -> R.id.card_section_rewards
                 R.id.room_section_gifts -> R.id.card_section_gifts
                 R.id.room_section_tools -> R.id.card_section_tools
                 else -> R.id.card_section_chat

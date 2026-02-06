@@ -272,6 +272,20 @@ object Announcements : Table("announcements") {
     override val primaryKey = PrimaryKey(id)
 }
 
+object HomeBanners : Table("home_banners") {
+    val id = uuid("id")
+    val title = varchar("title", 160)
+    val subtitle = varchar("subtitle", 255).nullable()
+    val imageUrl = varchar("image_url", 512)
+    val actionType = varchar("action_type", 32)
+    val actionTarget = varchar("action_target", 120).nullable()
+    val sortOrder = integer("sort_order")
+    val isActive = bool("is_active")
+    val createdAt = long("created_at")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(id)
+}
+
 object Rooms : Table("rooms") {
     val id = uuid("id")
     val agencyId = uuid("agency_id").nullable()
@@ -330,6 +344,13 @@ object RoomGifts : Table("room_gifts") {
     val amountCoins = long("amount_coins")
     val createdAt = long("created_at")
     override val primaryKey = PrimaryKey(id)
+}
+
+object RoomCoinCounters : Table("room_coin_counters") {
+    val roomId = uuid("room_id").uniqueIndex()
+    val totalCoins = long("total_coins")
+    val updatedAt = long("updated_at")
+    override val primaryKey = PrimaryKey(roomId)
 }
 
 object RefreshTokens : Table("refresh_tokens") {

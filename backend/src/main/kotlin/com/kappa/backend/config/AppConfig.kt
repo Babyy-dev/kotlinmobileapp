@@ -20,6 +20,7 @@ private const val DEFAULT_LIVEKIT_TTL = 3600L
 private const val DEFAULT_OTP_EXPOSE_CODE = true
 private const val DEFAULT_SOCKET_HOST = "0.0.0.0"
 private const val DEFAULT_SOCKET_PORT = 8081
+private const val DEFAULT_GOOGLE_PLAY_ENABLED = false
 
 data class AppConfig(
     val dbUrl: String,
@@ -43,7 +44,10 @@ data class AppConfig(
     val twilioFromNumber: String,
     val otpExposeCode: Boolean,
     val socketHost: String,
-    val socketPort: Int
+    val socketPort: Int,
+    val googlePlayEnabled: Boolean,
+    val googlePlayPackageName: String,
+    val googlePlayServiceAccountPath: String
 )
 
 fun Application.loadConfig(): AppConfig {
@@ -70,7 +74,10 @@ fun Application.loadConfig(): AppConfig {
         twilioFromNumber = config.stringOrEnv("twilio.fromNumber", "KAPPA_TWILIO_FROM", ""),
         otpExposeCode = config.booleanOrEnv("otp.exposeCode", "KAPPA_OTP_EXPOSE_CODE", DEFAULT_OTP_EXPOSE_CODE),
         socketHost = config.stringOrEnv("socket.host", "KAPPA_SOCKET_HOST", DEFAULT_SOCKET_HOST),
-        socketPort = config.intOrEnv("socket.port", "KAPPA_SOCKET_PORT", DEFAULT_SOCKET_PORT)
+        socketPort = config.intOrEnv("socket.port", "KAPPA_SOCKET_PORT", DEFAULT_SOCKET_PORT),
+        googlePlayEnabled = config.booleanOrEnv("googleplay.enabled", "KAPPA_GOOGLEPLAY_ENABLED", DEFAULT_GOOGLE_PLAY_ENABLED),
+        googlePlayPackageName = config.stringOrEnv("googleplay.packageName", "KAPPA_GOOGLEPLAY_PACKAGE", ""),
+        googlePlayServiceAccountPath = config.stringOrEnv("googleplay.serviceAccountPath", "KAPPA_GOOGLEPLAY_SERVICE_ACCOUNT", "")
     )
 }
 

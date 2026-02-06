@@ -11,6 +11,7 @@ import com.kappa.backend.data.Gifts
 import com.kappa.backend.data.RoomMessages
 import com.kappa.backend.data.RoomParticipants
 import com.kappa.backend.data.Rooms
+import com.kappa.backend.data.RoomCoinCounters
 import com.kappa.backend.data.Users
 import com.kappa.backend.models.GiftSendResponse
 import com.kappa.backend.models.RoomMessageResponse
@@ -249,6 +250,8 @@ class RoomInteractionService {
                 it[GiftTransactions.createdAt] = now
             }
 
+            incrementRoomCounter(roomId, totalCost, now)
+
             recipients.forEach { recipient ->
                 creditDiamonds(recipient, diamondsPerRecipient, giftTransactionId)
                 val agencyId = Users.select { Users.id eq recipient }
@@ -355,5 +358,23 @@ class RoomInteractionService {
             .singleOrNull()
             ?.get(CoinWallets.balance)
             ?: 0L
+    }
+
+    private fun incrementRoomCounter(roomId: UUID, amount: Long, now: Long) {
+        if (amount <= 0) return
+        val row = RoomCoinCounters.select { RoomCoinCounters.roomId eq roomId }.singleOrNull()
+        val newTotal = (row?.get(RoomCoinCounters.totalCoins) ?: 0L) + amount
+        if (row == null) {
+            RoomCoinCounters.insert {
+                it[RoomCoinCounters.roomId] = roomId
+                it[RoomCoinCounters.totalCoins] = newTotal
+                it[RoomCoinCounters.updatedAt] = now
+            }
+        } else {
+            RoomCoinCounters.update({ RoomCoinCounters.roomId eq roomId }) {
+                it[totalCoins] = newTotal
+                it[updatedAt] = now
+            }
+        }
     }
 }

@@ -322,6 +322,55 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/card_section_rewards"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_room_menu_button_selector"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top|start"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/ic_room_ornament" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/ic_room_ornament" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_star" />
+
+                    <TextView
+                        android:id="@+id/text_section_rewards"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Rewards"
+                        android:textAppearance="@style/TextAppearance.Kappa.Body"
+                        android:textColor="@color/kappa_cream" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
                 android:id="@+id/card_section_gifts"
                 android:layout_width="match_parent"
                 android:layout_height="68dp"

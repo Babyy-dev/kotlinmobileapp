@@ -8,6 +8,8 @@ import com.kappa.app.domain.audio.SeatMode
 import com.kappa.app.domain.audio.RoomSeat
 import com.kappa.app.domain.audio.SeatStatus
 import com.kappa.app.domain.economy.CoinBalance
+import com.kappa.app.domain.economy.Transaction
+import com.kappa.app.domain.economy.TransactionType
 import com.kappa.app.domain.user.Role
 import com.kappa.app.domain.user.User
 import com.kappa.app.domain.home.HomeBanner
@@ -37,6 +39,23 @@ fun CoinBalanceDto.toDomain(): CoinBalance {
         userId = userId,
         balance = balance,
         currency = currency
+    )
+}
+
+fun CoinTransactionDto.toDomain(): Transaction {
+    val resolvedType = when (type.uppercase()) {
+        "PURCHASE", "PURCHASE_GOOGLE" -> TransactionType.PURCHASE
+        "REWARD" -> TransactionType.REWARD
+        "DEBIT", "GIFT" -> TransactionType.WITHDRAWAL
+        else -> TransactionType.DEPOSIT
+    }
+    return Transaction(
+        id = id,
+        userId = userId,
+        amount = if (resolvedType == TransactionType.WITHDRAWAL) -amount else amount,
+        type = resolvedType,
+        timestamp = createdAt,
+        description = type
     )
 }
 

@@ -5,12 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kappa.app.R
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class GameHubFragment : Fragment() {
+
+    private val viewModel: GameHubViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,13 +44,22 @@ class GameHubFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 
-        adapter.submitList(
-            listOf(
-                GameCard(GameType.LUCKY_DRAW, "Lucky Draw", "Spin and win rewards", 200),
-                GameCard(GameType.BATTLE, "Battle Arena", "Score more in 30 seconds", 300),
-                GameCard(GameType.GIFT_RUSH, "Gift Rush", "Send gifts to climb the rank", 500),
-                GameCard(GameType.TAP_SPEED, "Tap Speed", "Fastest taps win", 150)
-            )
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    val mapped = state.games.map { game ->
+                        val type = when (game.id.lowercase()) {
+                            "lucky_draw" -> GameType.LUCKY_DRAW
+                            "battle_arena" -> GameType.BATTLE
+                            "gift_rush" -> GameType.GIFT_RUSH
+                            "tap_speed" -> GameType.TAP_SPEED
+                            else -> GameType.LUCKY_DRAW
+                        }
+                        GameCard(type, game.title, game.description, game.entryFee)
+                    }
+                    adapter.submitList(mapped)
+                }
+            }
+        }
     }
 }

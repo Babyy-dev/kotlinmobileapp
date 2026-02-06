@@ -24,10 +24,12 @@ import com.kappa.backend.data.SlotPlays
 import com.kappa.backend.data.TeamGroups
 import com.kappa.backend.data.TeamMembers
 import com.kappa.backend.data.Announcements
+import com.kappa.backend.data.HomeBanners
 import com.kappa.backend.data.PhoneOtps
 import com.kappa.backend.data.RefreshTokens
 import com.kappa.backend.data.RoomBans
 import com.kappa.backend.data.RoomGifts
+import com.kappa.backend.data.RoomCoinCounters
 import com.kappa.backend.data.RoomMessages
 import com.kappa.backend.data.RoomParticipants
 import com.kappa.backend.data.RoomSeats
@@ -94,6 +96,7 @@ object DatabaseFactory {
                 AgencyCommissions,
                 SlotPlays,
                 Announcements,
+                HomeBanners,
                 PhoneOtps,
                 Rooms,
                 RoomSeats,
@@ -101,6 +104,7 @@ object DatabaseFactory {
                 RoomBans,
                 RoomMessages,
                 RoomGifts,
+                RoomCoinCounters,
                 RefreshTokens,
                 Families,
                 FamilyMembers,

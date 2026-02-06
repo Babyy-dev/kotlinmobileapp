@@ -26,7 +26,9 @@ import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
-class AgencyService {
+class AgencyService(
+    private val systemMessageService: SystemMessageService
+) {
     fun applyForAgency(userId: UUID, agencyName: String): AgencyApplicationResponse {
         require(agencyName.isNotBlank()) { "Agency name is required" }
         return transaction {
@@ -170,6 +172,15 @@ class AgencyService {
                 createdAt = row[AgencyApplications.createdAt],
                 reviewedAt = now
             )
+        }.also { response ->
+            if (response != null) {
+                val message = if (approved) {
+                    "Your agency application was approved."
+                } else {
+                    "Your agency application was rejected."
+                }
+                systemMessageService.sendSystemMessage(UUID.fromString(response.userId), message)
+            }
         }
     }
 
@@ -201,6 +212,15 @@ class AgencyService {
                 createdAt = row[ResellerApplications.createdAt],
                 reviewedAt = now
             )
+        }.also { response ->
+            if (response != null) {
+                val message = if (approved) {
+                    "Your reseller application was approved."
+                } else {
+                    "Your reseller application was rejected."
+                }
+                systemMessageService.sendSystemMessage(UUID.fromString(response.userId), message)
+            }
         }
     }
 

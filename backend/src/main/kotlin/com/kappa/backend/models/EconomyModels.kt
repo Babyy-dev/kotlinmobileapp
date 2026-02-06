@@ -87,7 +87,8 @@ data class CoinPackageResponse(
     val name: String,
     val coinAmount: Long,
     val priceUsd: String,
-    val isActive: Boolean
+    val isActive: Boolean,
+    val storeProductId: String? = null
 )
 
 @Serializable
@@ -95,7 +96,8 @@ data class CoinPackageRequest(
     val name: String,
     val coinAmount: Long,
     val priceUsd: String,
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    val storeProductId: String? = null
 )
 
 @Serializable
@@ -103,6 +105,14 @@ data class CoinPurchaseRequest(
     val packageId: String,
     val provider: String,
     val providerTxId: String
+)
+
+@Serializable
+data class GooglePlayVerifyRequest(
+    val packageId: String,
+    val productId: String,
+    val purchaseToken: String,
+    val orderId: String? = null
 )
 
 @Serializable
