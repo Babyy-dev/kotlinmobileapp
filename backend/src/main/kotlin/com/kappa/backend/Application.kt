@@ -126,6 +126,9 @@ fun Application.module() {
     }
 
     routing {
+        get("/api/health") {
+            call.respond(mapOf("status" to "ok"))
+        }
         get("/admin") {
             call.respondRedirect("/admin/index.html")
         }
