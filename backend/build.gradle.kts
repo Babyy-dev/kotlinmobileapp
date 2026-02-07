@@ -33,7 +33,6 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("org.mindrot:jbcrypt:$bcryptVersion")
     implementation("com.nimbusds:nimbus-jose-jwt:$nimbusVersion")
-    implementation("com.corundumstudio.socketio:netty-socketio:2.0.9")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
 }
 

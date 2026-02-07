@@ -18,6 +18,8 @@ import com.kappa.backend.services.AgencyService
 import com.kappa.backend.services.EconomyService
 import com.kappa.backend.services.GameSessionRegistry
 import com.kappa.backend.services.GooglePlayBillingService
+import com.kappa.backend.services.GameRealtimeService
+import com.kappa.backend.services.LiveKitRoomService
 import com.kappa.backend.services.LiveKitTokenService
 import com.kappa.backend.services.RoomInteractionService
 import com.kappa.backend.services.RoomService
@@ -26,7 +28,6 @@ import com.kappa.backend.services.SlotService
 import com.kappa.backend.services.SystemMessageService
 import com.kappa.backend.services.TokenService
 import com.kappa.backend.services.TwilioSmsService
-import com.kappa.backend.socket.GameSocketServer
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -69,14 +70,11 @@ fun Application.module() {
     val agencyService = AgencyService(systemMessageService)
     val resellerService = ResellerService(economyService)
     val tokenService = TokenService(config)
-    val roomService = RoomService(config, LiveKitTokenService(config))
+    val liveKitTokenService = LiveKitTokenService(config)
+    val roomService = RoomService(config, liveKitTokenService)
     val roomInteractionService = RoomInteractionService()
-    val gameSocketServer = GameSocketServer(
-        config.socketHost,
-        config.socketPort,
-        gameSessionRegistry,
-        economyService
-    )
+    val liveKitRoomService = LiveKitRoomService(config, liveKitTokenService)
+    val gameRealtimeService = GameRealtimeService(gameSessionRegistry, economyService, liveKitRoomService)
 
     install(CallLogging) {
         level = Level.INFO
@@ -139,7 +137,7 @@ fun Application.module() {
                 userRoutes(authService)
                 economyRoutes(economyService, slotService)
                 roomRoutes(roomService, authService, roomInteractionService)
-                gameRoutes(roomService, gameSessionRegistry)
+                gameRoutes(roomService, gameSessionRegistry, gameRealtimeService)
                 homeRoutes()
                 socialRoutes(systemMessageService)
                 agencyRoutes(agencyService)
@@ -149,10 +147,5 @@ fun Application.module() {
         }
     }
 
-    environment.monitor.subscribe(io.ktor.server.application.ApplicationStarted) {
-        gameSocketServer.start()
-    }
-    environment.monitor.subscribe(io.ktor.server.application.ApplicationStopped) {
-        gameSocketServer.stop()
-    }
+    // LiveKit data channel used for realtime updates; no Socket.IO server.
 }

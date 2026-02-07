@@ -20,6 +20,41 @@ This document answers one question only:
    [Test] Invalid login handled without crash - In progress
    [Test] Is this section fully functional? - No
 
+AUTH FLOW TEST CHECKLIST (RUN ON DEBUG APK)
+Step 1: Password login (initial screen)
+- Enter username + password
+- Expect: success -> role dashboard or onboarding
+- Expect: invalid credentials -> error message, no crash
+
+Step 2: Toggle to phone login
+- Tap "Use phone no. instead"
+- Select country code (flag + dial code)
+- Enter phone and request OTP
+- Expect: OTP sent message
+- Enter OTP and verify
+- Expect: login success -> role dashboard or onboarding
+
+Step 3: Signup (username/email/password/phone)
+- Fill username/email/password
+- Select country code + phone
+- Tap "Sign up"
+- Expect: OTP required message and OTP section appears
+- Verify OTP
+- Expect: account activated + login success
+
+Step 4: Phone validation checks
+- Short number -> blocked with error
+- Too long number -> blocked with error
+- Change dial code manually -> flag updates to match
+
+Step 5: Session persistence
+- Close app and reopen
+- Expect: session still active, no relogin
+
+Step 6: Guest login
+- Tap "Continue as Guest"
+- Expect: enters app without crash
+
 2. HOME / MAIN SCREEN (POPULAR)
    [Test] Room list loads from real backend - In progress
    [Test] Room cards display correct data (name, agency, activity) - In progress

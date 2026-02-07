@@ -23,11 +23,14 @@ fun Route.authRoutes(authService: AuthService) {
         if (response == null) {
             val (status, message) = when (result.failure) {
                 AuthService.SignupFailureReason.USERNAME_TAKEN -> HttpStatusCode.Conflict to "Username already exists"
+                AuthService.SignupFailureReason.PHONE_TAKEN -> HttpStatusCode.Conflict to "Phone already registered"
+                AuthService.SignupFailureReason.PHONE_REQUIRED -> HttpStatusCode.BadRequest to "Phone number required"
                 AuthService.SignupFailureReason.INVALID_ROLE -> HttpStatusCode.BadRequest to "Invalid role for signup"
                 AuthService.SignupFailureReason.AGENCY_REQUIRED -> HttpStatusCode.BadRequest to "Agency required for user signup"
                 AuthService.SignupFailureReason.AGENCY_NOT_FOUND -> HttpStatusCode.BadRequest to "Agency not found"
                 AuthService.SignupFailureReason.WEAK_PASSWORD -> HttpStatusCode.BadRequest to "Password must be at least 6 characters"
                 AuthService.SignupFailureReason.INVALID_INPUT -> HttpStatusCode.BadRequest to "Username, email, and password are required"
+                AuthService.SignupFailureReason.OTP_FAILED -> HttpStatusCode.BadGateway to "OTP delivery failed"
                 null -> HttpStatusCode.BadRequest to "Signup failed"
             }
             call.respond(status, ApiResponse<Unit>(success = false, error = message))

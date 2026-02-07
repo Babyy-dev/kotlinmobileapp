@@ -40,15 +40,18 @@ class AuthService(
 
     enum class SignupFailureReason {
         USERNAME_TAKEN,
+        PHONE_TAKEN,
+        PHONE_REQUIRED,
         INVALID_ROLE,
         AGENCY_REQUIRED,
         AGENCY_NOT_FOUND,
         WEAK_PASSWORD,
-        INVALID_INPUT
+        INVALID_INPUT,
+        OTP_FAILED
     }
 
     data class SignupResult(
-        val response: LoginResponse? = null,
+        val response: com.kappa.backend.models.SignupResponse? = null,
         val failure: SignupFailureReason? = null
     )
 
@@ -96,9 +99,13 @@ class AuthService(
         val username = request.username.trim()
         val email = request.email.trim()
         val password = request.password
+        val phone = request.phone?.trim().orEmpty()
 
         if (username.isBlank() || email.isBlank() || password.isBlank()) {
             return SignupResult(failure = SignupFailureReason.INVALID_INPUT)
+        }
+        if (phone.isBlank()) {
+            return SignupResult(failure = SignupFailureReason.PHONE_REQUIRED)
         }
         if (password.length < 6) {
             return SignupResult(failure = SignupFailureReason.WEAK_PASSWORD)
@@ -111,6 +118,24 @@ class AuthService(
         return transaction {
             if (Users.select { Users.username eq username }.any()) {
                 return@transaction SignupResult(failure = SignupFailureReason.USERNAME_TAKEN)
+            }
+            val now = System.currentTimeMillis()
+            val existingByPhone = Users.select { Users.phone eq phone }.singleOrNull()
+            if (existingByPhone != null) {
+                val status = existingByPhone[Users.status]
+                if (status.equals("pending_otp", ignoreCase = true)) {
+                    return@transaction SignupResult(
+                        response = com.kappa.backend.models.SignupResponse(
+                            userId = existingByPhone[Users.id].toString(),
+                            otp = PhoneOtpResponse(
+                                phone = phone,
+                                code = "sent",
+                                expiresAt = now + otpTtlMillis
+                            )
+                        )
+                    )
+                }
+                return@transaction SignupResult(failure = SignupFailureReason.PHONE_TAKEN)
             }
 
             val agencyId = request.agencyId?.let {
@@ -135,7 +160,6 @@ class AuthService(
                 agencyId
             }
 
-            val now = System.currentTimeMillis()
             val userId = UUID.randomUUID()
             val passwordHash = BCrypt.hashpw(password, BCrypt.gensalt())
 
@@ -145,14 +169,14 @@ class AuthService(
                 it[Users.email] = email
                 it[Users.passwordHash] = passwordHash
                 it[Users.role] = resolvedRole.name
-                it[Users.phone] = request.phone?.trim()?.ifBlank { null }
+                it[Users.phone] = phone
                 it[Users.nickname] = request.nickname?.trim()?.ifBlank { null }
                 it[Users.avatarUrl] = request.avatarUrl?.trim()?.ifBlank { null }
                 it[Users.country] = request.country?.trim()?.ifBlank { null }
                 it[Users.language] = request.language?.trim()?.ifBlank { null }
                 it[Users.isGuest] = false
                 it[Users.agencyId] = resolvedAgencyId
-                it[Users.status] = "active"
+                it[Users.status] = "pending_otp"
                 it[Users.createdAt] = now
             }
 
@@ -169,37 +193,31 @@ class AuthService(
                 it[DiamondWallets.updatedAt] = now
             }
 
-            val accessToken = tokenService.generateAccessToken(userId, resolvedRole)
-            val refreshToken = tokenService.generateRefreshToken(userId)
-            val expiresAt = now + config.refreshTokenTtlSeconds * 1000
-
-            RefreshTokens.insert {
-                it[token] = refreshToken
-                it[RefreshTokens.userId] = userId
-                it[RefreshTokens.expiresAt] = expiresAt
-            }
-
-            val userResponse = UserResponse(
-                id = userId.toString(),
-                username = username,
-                email = email,
-                role = resolvedRole,
-                phone = request.phone?.trim()?.ifBlank { null },
-                nickname = request.nickname?.trim()?.ifBlank { null },
-                avatarUrl = request.avatarUrl?.trim()?.ifBlank { null },
-                country = request.country?.trim()?.ifBlank { null },
-                language = request.language?.trim()?.ifBlank { null },
-                isGuest = false,
-                agencyId = resolvedAgencyId?.toString()
-            )
-
             SignupResult(
-                response = LoginResponse(
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
-                    user = userResponse
+                response = com.kappa.backend.models.SignupResponse(
+                    userId = userId.toString(),
+                    otp = PhoneOtpResponse(
+                        phone = phone,
+                        code = "sent",
+                        expiresAt = now + otpTtlMillis
+                    )
                 )
             )
+        }.let { result ->
+            if (result.response == null) {
+                return result
+            }
+            val otpResult = requestOtp(PhoneOtpRequest(phone))
+            if (otpResult.response == null) {
+                SignupResult(failure = SignupFailureReason.OTP_FAILED)
+            } else {
+                result.copy(
+                    response = com.kappa.backend.models.SignupResponse(
+                        userId = result.response.userId,
+                        otp = otpResult.response
+                    )
+                )
+            }
         }
     }
 
@@ -352,13 +370,17 @@ class AuthService(
                     it[DiamondWallets.updatedAt] = now
                 }
             } else {
-                if (!existing[Users.status].equals("active", ignoreCase = true)) {
+                val currentStatus = existing[Users.status]
+                if (!currentStatus.equals("active", ignoreCase = true) &&
+                    !currentStatus.equals("pending_otp", ignoreCase = true)
+                ) {
                     return@transaction null
                 }
                 userId = existing[Users.id]
                 role = UserRole.fromStorage(existing[Users.role])
                 Users.update({ Users.id eq userId }) {
                     it[Users.phone] = phone
+                    it[Users.status] = "active"
                     if (resolvedNickname != null) {
                         it[Users.nickname] = resolvedNickname
                     }

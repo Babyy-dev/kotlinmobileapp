@@ -16,6 +16,11 @@ data class SignupRequest(
     val avatarUrl: String? = null
 )
 
+data class SignupResponse(
+    val userId: String,
+    val otp: PhoneOtpResponse
+)
+
 data class LoginResponse(
     val accessToken: String,
     val refreshToken: String,

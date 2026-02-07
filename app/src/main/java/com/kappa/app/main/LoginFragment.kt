@@ -22,6 +22,8 @@ import com.kappa.app.auth.domain.repository.AuthRepository
 import com.kappa.app.core.storage.PreferencesManager
 import com.kappa.app.domain.user.Role
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.NumberParseException
+import androidx.core.widget.addTextChangedListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -70,15 +72,29 @@ class LoginFragment : Fragment() {
         val errorText = view.findViewById<TextView>(R.id.text_login_error)
         val messageText = view.findViewById<TextView>(R.id.text_login_message)
 
-        val codeOptions = buildCountryCodes()
+        val phoneUtil = PhoneNumberUtil.getInstance()
+        val codeOptions = buildCountryCodes(phoneUtil)
         val adapter = android.widget.ArrayAdapter(
             requireContext(),
             R.layout.item_country,
             codeOptions.map { it.displayName }
         )
         countryCodeInput.setAdapter(adapter)
-        countryCodeInput.setText(codeOptions.firstOrNull()?.displayName.orEmpty(), false)
+        val defaultCode = Locale.getDefault().country
+        val defaultOption = codeOptions.firstOrNull { it.code == defaultCode } ?: codeOptions.first()
+        countryCodeInput.setText(defaultOption.displayName, false)
         countryCodeInput.setOnClickListener { countryCodeInput.showDropDown() }
+        var isUpdatingCode = false
+        countryCodeInput.addTextChangedListener { editable ->
+            if (isUpdatingCode) return@addTextChangedListener
+            val option = resolveCountryOption(editable?.toString().orEmpty(), codeOptions, phoneUtil)
+            val display = option.displayName
+            if (display.isNotEmpty() && editable?.toString() != display) {
+                isUpdatingCode = true
+                countryCodeInput.setText(display, false)
+                isUpdatingCode = false
+            }
+        }
 
         loginButton.setOnClickListener {
             val username = usernameInput.text?.toString()?.trim().orEmpty()
@@ -106,38 +122,26 @@ class LoginFragment : Fragment() {
         }
 
         sendOtpButton.setOnClickListener {
-            val codeText = countryCodeInput.text?.toString()?.trim().orEmpty()
             val phone = phoneInput.text?.toString()?.trim().orEmpty()
-            val dialCode = codeOptions.firstOrNull { it.displayName == codeText }?.dialCode ?: "+1"
-            val e164 = when {
-                phone.isBlank() -> ""
-                phone.startsWith("+") -> phone
-                phone.any { it.isLetter() } -> phone
-                else -> "$dialCode$phone"
-            }
-            if (e164.isNotEmpty()) {
+            val option = resolveCountryOption(countryCodeInput.text?.toString().orEmpty(), codeOptions, phoneUtil)
+            val e164 = validatePhone(phoneUtil, option, phone)
+            if (e164 != null) {
                 authViewModel.requestOtp(e164)
             } else {
-                errorText.text = "Please enter phone number"
+                errorText.text = "Enter a valid phone number"
                 errorText.visibility = View.VISIBLE
             }
         }
 
         verifyOtpButton.setOnClickListener {
-            val codeText = countryCodeInput.text?.toString()?.trim().orEmpty()
             val phone = phoneInput.text?.toString()?.trim().orEmpty()
             val code = otpInput.text?.toString()?.trim().orEmpty()
-            val dialCode = codeOptions.firstOrNull { it.displayName == codeText }?.dialCode ?: "+1"
-            val e164 = when {
-                phone.isBlank() -> ""
-                phone.startsWith("+") -> phone
-                phone.any { it.isLetter() } -> phone
-                else -> "$dialCode$phone"
-            }
-            if (e164.isNotEmpty() && code.isNotEmpty()) {
+            val option = resolveCountryOption(countryCodeInput.text?.toString().orEmpty(), codeOptions, phoneUtil)
+            val e164 = validatePhone(phoneUtil, option, phone)
+            if (e164 != null && code.isNotEmpty()) {
                 authViewModel.verifyOtp(e164, code)
             } else {
-                errorText.text = "Please enter phone and OTP"
+                errorText.text = "Enter a valid phone and OTP"
                 errorText.visibility = View.VISIBLE
             }
         }
@@ -201,8 +205,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun buildCountryCodes(): List<CountryCodeOption> {
-        val phoneUtil = PhoneNumberUtil.getInstance()
+    private fun buildCountryCodes(phoneUtil: PhoneNumberUtil): List<CountryCodeOption> {
         val options = mutableListOf<CountryCodeOption>()
         Locale.getISOCountries().forEach { iso ->
             val code = phoneUtil.getCountryCodeForRegion(iso)
@@ -213,6 +216,42 @@ class LoginFragment : Fragment() {
             }
         }
         return options.sortedBy { it.displayName }
+    }
+
+    private fun resolveCountryOption(
+        input: String,
+        options: List<CountryCodeOption>,
+        phoneUtil: PhoneNumberUtil
+    ): CountryCodeOption {
+        val normalized = input.replace(Regex("[^+0-9]"), "")
+        if (normalized.isNotBlank()) {
+            options.firstOrNull { it.dialCode == normalized }?.let { return it }
+            val codeDigits = normalized.replace("+", "").toIntOrNull()
+            if (codeDigits != null) {
+                val region = phoneUtil.getRegionCodeForCountryCode(codeDigits)
+                options.firstOrNull { it.code == region }?.let { return it }
+            }
+        }
+        return options.first()
+    }
+
+    private fun validatePhone(
+        phoneUtil: PhoneNumberUtil,
+        option: CountryCodeOption,
+        rawPhone: String
+    ): String? {
+        if (rawPhone.isBlank()) return null
+        return try {
+            val parsed = phoneUtil.parse(rawPhone, option.code)
+            val matchesRegion = phoneUtil.getRegionCodeForNumber(parsed) == option.code
+            if (!phoneUtil.isValidNumber(parsed) || !matchesRegion) {
+                null
+            } else {
+                phoneUtil.format(parsed, PhoneNumberUtil.PhoneNumberFormat.E164)
+            }
+        } catch (_: NumberParseException) {
+            null
+        }
     }
 
     private fun flagEmoji(countryCode: String): String {

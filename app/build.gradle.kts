@@ -103,11 +103,6 @@ dependencies {
     // Audio
     implementation(libs.livekit.android)
 
-    // Socket.IO
-    implementation("io.socket:socket.io-client:2.1.0") {
-        exclude(group = "org.json", module = "json")
-    }
-
     // Phone number utilities
     implementation("com.googlecode.libphonenumber:libphonenumber:8.13.32")
 

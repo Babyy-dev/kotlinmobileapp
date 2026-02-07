@@ -4,6 +4,10 @@ import com.kappa.backend.models.ApiResponse
 import com.kappa.backend.models.GameSessionRequest
 import com.kappa.backend.models.GameSessionResponse
 import com.kappa.backend.services.GameSessionRegistry
+import com.kappa.backend.services.GameRealtimeService
+import com.kappa.backend.models.GameJoinRequest
+import com.kappa.backend.models.GameActionRequest
+import com.kappa.backend.models.GameGiftPlayRequest
 import com.kappa.backend.services.RoomService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -17,7 +21,8 @@ import java.util.UUID
 
 fun Route.gameRoutes(
     roomService: RoomService,
-    sessionRegistry: GameSessionRegistry
+    sessionRegistry: GameSessionRegistry,
+    gameRealtimeService: GameRealtimeService
 ) {
     post("games/session") {
         val principal = call.principal<JWTPrincipal>()
@@ -52,5 +57,62 @@ fun Route.gameRoutes(
                 )
             )
         )
+    }
+
+    post("games/join") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@post call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val request = call.receiveOrNull<GameJoinRequest>()
+            ?: return@post call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(success = false, error = "Missing payload")
+            )
+        if (request.userId != userId) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "User mismatch"))
+            return@post
+        }
+        val response = gameRealtimeService.join(request)
+        call.respond(ApiResponse(success = response.status == "ok", data = response, error = response.message))
+    }
+
+    post("games/action") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@post call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val request = call.receiveOrNull<GameActionRequest>()
+            ?: return@post call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(success = false, error = "Missing payload")
+            )
+        if (request.userId != userId) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "User mismatch"))
+            return@post
+        }
+        val response = gameRealtimeService.action(request)
+        call.respond(ApiResponse(success = response.status == "ok", data = response, error = response.message))
+    }
+
+    post("games/gift-play") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal?.subject ?: return@post call.respond(
+            HttpStatusCode.Unauthorized,
+            ApiResponse<Unit>(success = false, error = "Unauthorized")
+        )
+        val request = call.receiveOrNull<GameGiftPlayRequest>()
+            ?: return@post call.respond(
+                HttpStatusCode.BadRequest,
+                ApiResponse<Unit>(success = false, error = "Missing payload")
+            )
+        if (request.userId != userId) {
+            call.respond(HttpStatusCode.Forbidden, ApiResponse<Unit>(success = false, error = "User mismatch"))
+            return@post
+        }
+        val response = gameRealtimeService.giftPlay(request)
+        call.respond(ApiResponse(success = response.status == "ok", data = response, error = response.message))
     }
 }

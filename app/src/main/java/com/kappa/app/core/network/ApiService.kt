@@ -20,6 +20,7 @@ import com.kappa.app.core.network.model.RoomMessageDto
 import com.kappa.app.core.network.model.RoomMessageRequest
 import com.kappa.app.core.network.model.RoomSeatDto
 import com.kappa.app.core.network.model.SignupRequest
+import com.kappa.app.core.network.model.SignupResponse
 import com.kappa.app.core.network.model.UserDto
 import com.kappa.app.core.network.model.MuteParticipantRequest
 import com.kappa.app.core.network.model.AgencyApplicationDto
@@ -27,6 +28,11 @@ import com.kappa.app.core.network.model.AgencyApplicationRequestDto
 import com.kappa.app.core.network.model.AgencyCommissionDto
 import com.kappa.app.core.network.model.GameSessionRequest
 import com.kappa.app.core.network.model.GameSessionResponse
+import com.kappa.app.core.network.model.GameJoinRequest
+import com.kappa.app.core.network.model.GameJoinResponse
+import com.kappa.app.core.network.model.GameActionRequest
+import com.kappa.app.core.network.model.GameActionResponse
+import com.kappa.app.core.network.model.GameGiftPlayRequest
 import com.kappa.app.core.network.model.InboxThreadDto
 import com.kappa.app.core.network.model.InboxMessageRequest
 import com.kappa.app.core.network.model.InboxMessageResponse
@@ -80,7 +86,7 @@ interface ApiService {
     suspend fun login(@Body request: LoginRequest): BaseApiResponse<LoginResponse>
 
     @POST("auth/signup")
-    suspend fun signup(@Body request: SignupRequest): BaseApiResponse<LoginResponse>
+    suspend fun signup(@Body request: SignupRequest): BaseApiResponse<SignupResponse>
 
     @POST("auth/otp/request")
     suspend fun requestOtp(@Body request: PhoneOtpRequest): BaseApiResponse<PhoneOtpResponse>
@@ -206,6 +212,15 @@ interface ApiService {
 
     @POST("games/session")
     suspend fun createGameSession(@Body request: GameSessionRequest): BaseApiResponse<GameSessionResponse>
+
+    @POST("games/join")
+    suspend fun joinGame(@Body request: GameJoinRequest): BaseApiResponse<GameJoinResponse>
+
+    @POST("games/action")
+    suspend fun sendGameAction(@Body request: GameActionRequest): BaseApiResponse<GameActionResponse>
+
+    @POST("games/gift-play")
+    suspend fun sendGameGiftPlay(@Body request: GameGiftPlayRequest): BaseApiResponse<GameActionResponse>
 
     @GET("inbox/threads")
     suspend fun getInboxThreads(): BaseApiResponse<List<InboxThreadDto>>

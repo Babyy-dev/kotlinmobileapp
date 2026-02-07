@@ -1,7 +1,7 @@
 package com.kappa.app.auth.domain.usecase
 
 import com.kappa.app.auth.domain.repository.AuthRepository
-import com.kappa.app.domain.user.User
+import com.kappa.app.auth.domain.model.OtpInfo
 import javax.inject.Inject
 
 /**
@@ -10,7 +10,7 @@ import javax.inject.Inject
 class SignupUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(username: String, email: String, password: String): Result<User> {
-        return authRepository.signup(username, email, password)
+    suspend operator fun invoke(username: String, email: String, password: String, phone: String): Result<OtpInfo> {
+        return authRepository.signup(username, email, password, phone)
     }
 }

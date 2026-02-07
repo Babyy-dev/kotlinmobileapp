@@ -40,4 +40,16 @@ class GameSessionRegistry(
         sessions.remove(sessionId)
         return true
     }
+
+    fun validate(sessionId: String, roomId: String, userId: String): Boolean {
+        val session = sessions[sessionId] ?: return false
+        if (session.roomId != roomId || session.userId != userId) {
+            return false
+        }
+        if (session.expiresAt < System.currentTimeMillis()) {
+            sessions.remove(sessionId)
+            return false
+        }
+        return true
+    }
 }

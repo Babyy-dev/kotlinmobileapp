@@ -19,9 +19,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.kappa.app.R
+import com.kappa.app.core.livekit.LiveKitRoomStore
 import com.kappa.app.core.network.NetworkMonitor
 import dagger.hilt.android.AndroidEntryPoint
 import io.livekit.android.LiveKit
+import io.livekit.android.LiveKitOverrides
 import io.livekit.android.RoomOptions
 import io.livekit.android.room.Room
 import io.livekit.android.room.track.LocalAudioTrackOptions
@@ -260,13 +262,15 @@ class RoomDetailFragment : Fragment() {
         isConnecting = true
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                liveKitRoom = LiveKit.connect(
+                val room = LiveKit.create(
                     requireContext(),
-                    url,
-                    token,
-                    roomOptions = buildRoomOptions()
+                    buildRoomOptions(),
+                    LiveKitOverrides()
                 )
+                room.connect(url, token)
+                liveKitRoom = room
                 liveKitRoom?.localParticipant?.setMicrophoneEnabled(micEnabledOnJoin)
+                liveKitRoom?.let { LiveKitRoomStore.attachRoom(it) }
                 view?.findViewById<TextView>(R.id.text_room_status)?.text = "Connected"
                 cancelReconnect()
             } catch (throwable: Throwable) {
@@ -285,6 +289,7 @@ class RoomDetailFragment : Fragment() {
     private fun disconnectRoom() {
         liveKitRoom?.disconnect()
         liveKitRoom?.release()
+        LiveKitRoomStore.detachRoom()
         liveKitRoom = null
         isConnecting = false
     }

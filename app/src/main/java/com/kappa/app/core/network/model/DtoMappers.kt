@@ -67,6 +67,10 @@ fun PhoneOtpResponse.toDomain(): OtpInfo {
     )
 }
 
+fun SignupResponse.toDomain(): OtpInfo {
+    return otp.toDomain()
+}
+
 fun RoomDto.toDomain(): AudioRoom {
     val resolvedSeatMode = runCatching { SeatMode.valueOf(seatMode) }.getOrDefault(SeatMode.FREE)
     return AudioRoom(

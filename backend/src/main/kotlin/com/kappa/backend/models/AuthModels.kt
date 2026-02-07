@@ -23,6 +23,12 @@ data class SignupRequest(
 )
 
 @Serializable
+data class SignupResponse(
+    val userId: String,
+    val otp: PhoneOtpResponse
+)
+
+@Serializable
 data class LoginResponse(
     val accessToken: String,
     val refreshToken: String,

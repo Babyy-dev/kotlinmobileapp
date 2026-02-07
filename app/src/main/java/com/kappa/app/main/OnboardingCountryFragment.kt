@@ -70,7 +70,7 @@ class OnboardingCountryFragment : Fragment() {
         val localeCountries = runCatching {
             Locale.getISOCountries()
                 .mapNotNull { code ->
-                    val name = Locale("", code).getDisplayCountry(Locale.ENGLISH)
+                    val name = Locale.Builder().setRegion(code).build().getDisplayCountry(Locale.ENGLISH)
                     if (name.isBlank()) null else CountryOption(
                         code = code,
                         name = name,

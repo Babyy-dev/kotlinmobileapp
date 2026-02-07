@@ -23,7 +23,9 @@ data class AuthViewState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
     val error: String? = null,
-    val message: String? = null
+    val message: String? = null,
+    val otpRequired: Boolean = false,
+    val otpPhone: String? = null
 ) : ViewState
 
 /**
@@ -50,7 +52,9 @@ class AuthViewModel @Inject constructor(
                 .onSuccess {
                     _viewState.value = _viewState.value.copy(
                         isLoading = false,
-                        isLoggedIn = true
+                        isLoggedIn = true,
+                        otpRequired = false,
+                        otpPhone = null
                     )
                 }
                 .onFailure { throwable ->
@@ -62,14 +66,21 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signup(username: String, email: String, password: String) {
+    fun signup(username: String, email: String, password: String, phone: String) {
         viewModelScope.launch {
             _viewState.value = _viewState.value.copy(isLoading = true, error = null, message = null)
-            signupUseCase(username, email, password)
-                .onSuccess {
+            signupUseCase(username, email, password, phone)
+                .onSuccess { info ->
+                    val message = if (info.code.equals("sent", ignoreCase = true)) {
+                        "OTP sent to your phone"
+                    } else {
+                        "OTP: ${info.code} (dev only)"
+                    }
                     _viewState.value = _viewState.value.copy(
                         isLoading = false,
-                        isLoggedIn = true
+                        otpRequired = true,
+                        otpPhone = phone,
+                        message = message
                     )
                 }
                 .onFailure { throwable ->
@@ -93,7 +104,9 @@ class AuthViewModel @Inject constructor(
                     }
                     _viewState.value = _viewState.value.copy(
                         isLoading = false,
-                        message = message
+                        message = message,
+                        otpRequired = true,
+                        otpPhone = phone
                     )
                 }
                 .onFailure { throwable ->
@@ -112,7 +125,9 @@ class AuthViewModel @Inject constructor(
                 .onSuccess {
                     _viewState.value = _viewState.value.copy(
                         isLoading = false,
-                        isLoggedIn = true
+                        isLoggedIn = true,
+                        otpRequired = false,
+                        otpPhone = null
                     )
                 }
                 .onFailure { throwable ->
@@ -131,7 +146,9 @@ class AuthViewModel @Inject constructor(
                 .onSuccess {
                     _viewState.value = _viewState.value.copy(
                         isLoading = false,
-                        isLoggedIn = true
+                        isLoggedIn = true,
+                        otpRequired = false,
+                        otpPhone = null
                     )
                 }
                 .onFailure { throwable ->

@@ -42,17 +42,21 @@ class RemoteAuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun signup(username: String, email: String, password: String): Result<User> {
+    override suspend fun signup(username: String, email: String, password: String, phone: String): Result<OtpInfo> {
         return try {
-            val response = apiService.signup(SignupRequest(username = username, email = email, password = password))
+            val response = apiService.signup(
+                SignupRequest(
+                    username = username,
+                    email = email,
+                    password = password,
+                    phone = phone
+                )
+            )
             val data = response.data
             if (!response.success || data == null) {
                 Result.failure(Exception(response.error ?: "Signup failed"))
             } else {
-                preferencesManager.saveAccessToken(data.accessToken)
-                preferencesManager.saveRefreshToken(data.refreshToken)
-                preferencesManager.saveUserId(data.user.id)
-                Result.success(data.user.toDomain())
+                Result.success(data.toDomain())
             }
         } catch (throwable: Throwable) {
             val message = errorMapper.mapToUserMessage(errorMapper.mapToNetworkError(throwable))

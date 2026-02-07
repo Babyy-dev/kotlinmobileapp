@@ -35,4 +35,29 @@ class LiveKitTokenService(private val config: AppConfig) {
         signedJWT.sign(signer)
         return signedJWT.serialize()
     }
+
+    fun generateServerToken(roomName: String): String {
+        val now = Date()
+        val expiresAt = Date(now.time + config.livekitTokenTtlSeconds * 1000)
+        val claims = JWTClaimsSet.Builder()
+            .issuer(config.livekitApiKey)
+            .subject("kappa-backend")
+            .issueTime(now)
+            .expirationTime(expiresAt)
+            .claim(
+                "video",
+                mapOf(
+                    "room" to roomName,
+                    "roomAdmin" to true,
+                    "canPublish" to true,
+                    "canSubscribe" to true,
+                    "canPublishData" to true
+                )
+            )
+            .build()
+        val signer = MACSigner(config.livekitApiSecret)
+        val signedJWT = SignedJWT(JWSHeader(JWSAlgorithm.HS256), claims)
+        signedJWT.sign(signer)
+        return signedJWT.serialize()
+    }
 }
